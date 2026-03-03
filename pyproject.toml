@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moma-hub"
+version = "0.2.0"
+authors = [
+  { name="Digital Duck & Dog Team", email="info@digitalduck.org" },
+]
+description = "MoMaHub (i-grid): Hub-and-spoke distributed AI inference network."
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn[standard]",
+    "aiosqlite",
+    "pydantic>=2.0",
+    "typer",
+    "requests",
+    "httpx",
+    "pyyaml",
+    "pynvml",
+    "streamlit",
+    "pypdf",
+]
+
+[project.optional-dependencies]
+dev     = ["pytest", "pytest-asyncio", "httpx"]
+docling = ["docling"]          # layout-aware PDF: tables, figures, multi-column
+
+[project.urls]
+"Homepage" = "https://github.com/digital-duck/momahub-claude"
+
+[project.scripts]
+moma = "igrid.cli.main:app"
+moma-ui = "igrid.ui.launch:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["igrid*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

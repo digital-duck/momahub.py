@@ -1,0 +1,9 @@
+-- Recipe 05: RAG query dispatched to the grid
+PROMPT rag_answer
+SELECT
+    SYSTEM_ROLE('You are a helpful assistant that answers questions based on provided context.'),
+    RAG_QUERY('What are the key benefits of hub-and-spoke inference?') AS context,
+    GENERATE('Using only the provided context, answer: What are the key benefits of hub-and-spoke inference?')
+USING MODEL 'llama3'
+WITH BUDGET 2000
+ON GRID;

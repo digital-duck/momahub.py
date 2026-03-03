@@ -1,0 +1,7 @@
+# Example arxiv URL list for the paper digest recipe.
+# Lines starting with # are ignored.
+# One URL or arxiv ID per line.
+
+https://arxiv.org/abs/2312.00752
+https://arxiv.org/abs/2406.04692
+2501.12345
