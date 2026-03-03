@@ -32,6 +32,7 @@ st.sidebar.page_link("pages/2_Rewards.py", label="Rewards", icon="💰")
 st.sidebar.page_link("pages/3_Run_SPL.py", label="Run SPL", icon="⚡")
 st.sidebar.page_link("pages/4_Text2SPL.py", label="Text2SPL", icon="✏️")
 st.sidebar.page_link("pages/5_Paper_Digest.py", label="Paper Digest", icon="📚")
+st.sidebar.page_link("pages/6_Chat.py", label="Test Runner", icon="🧪")
 
 health = fetch_health(hub_url)
 if "error" in health:

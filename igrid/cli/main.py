@@ -154,15 +154,32 @@ def list_agents(hub_url: str = typer.Option("")):
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("tasks")
-def list_tasks(hub_url: str = typer.Option(""), limit: int = typer.Option(20)):
+def list_tasks(hub_url: str = typer.Option(""), limit: int = typer.Option(20),
+               detail: bool = typer.Option(False, "--detail", "-d", help="Show latency, tokens, agent, and response")):
     """List recent tasks."""
     cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
     try:
         tasks = httpx.get(f"{url}/tasks?limit={limit}", timeout=5.0).json().get("tasks", [])
         if not tasks: typer.echo("No tasks."); return
-        typer.echo(f"{'TASK_ID':<38} {'STATE':<12} {'MODEL':<20}")
-        typer.echo("-"*72)
-        for t in tasks: typer.echo(f"{t['task_id']:<38} {t['state']:<12} {t['model']:<20}")
+        if detail:
+            for t in tasks:
+                typer.echo(f"{'─'*72}")
+                typer.echo(f"  task_id:  {t['task_id']}")
+                typer.echo(f"  state:    {t['state']}")
+                typer.echo(f"  model:    {t['model']}")
+                typer.echo(f"  agent:    {t.get('agent_id', '')}")
+                typer.echo(f"  tokens:   {t.get('input_tokens', 0)} in / {t.get('output_tokens', 0)} out")
+                typer.echo(f"  latency:  {t.get('latency_ms', 0):.0f} ms")
+                typer.echo(f"  prompt:   {(t.get('prompt', '') or '')[:120]}")
+                content = (t.get('content', '') or '')
+                preview = content[:200].replace('\n', ' ')
+                if content: typer.echo(f"  response: {preview}{'...' if len(content) > 200 else ''}")
+                if t.get('error'): typer.echo(f"  error:    {t['error']}")
+            typer.echo(f"{'─'*72}")
+        else:
+            typer.echo(f"{'TASK_ID':<38} {'STATE':<12} {'MODEL':<20}")
+            typer.echo("-"*72)
+            for t in tasks: typer.echo(f"{t['task_id']:<38} {t['state']:<12} {t['model']:<20}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("logs")
@@ -249,6 +266,86 @@ def rewards(hub_url: str = typer.Option("")):
         typer.echo(f"{'OPERATOR':<20} {'TASKS':>8} {'TOKENS':>12} {'CREDITS':>10}")
         for r in rows: typer.echo(f"{r.get('operator_id',''):<20} {r.get('total_tasks',0):>8} {r.get('total_tokens',0):>12} {r.get('total_credits',0.0):>10.2f}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
+
+@app.command("export")
+def export_results(hub_url: str = typer.Option(""),
+                   output: str = typer.Option("", "--output", "-o", help="Output file path (default: results-<hub_id>.json)"),
+                   label: str = typer.Option("", "--label", "-l", help="Label for this test run (e.g. 'hub-on-machine-A')"),
+                   limit: int = typer.Option(500)):
+    """Export completed task results to a JSON file for offline analysis."""
+    from datetime import datetime
+    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    try:
+        health = httpx.get(f"{url}/health", timeout=5.0).json()
+        hub_id = health.get("hub_id", "unknown")
+        tasks = httpx.get(f"{url}/tasks?limit={limit}", timeout=10.0).json().get("tasks", [])
+        agents = httpx.get(f"{url}/agents", timeout=5.0).json().get("agents", [])
+        rewards = httpx.get(f"{url}/rewards", timeout=5.0).json().get("summary", [])
+        export_data = {
+            "label": label or hub_id,
+            "hub_id": hub_id,
+            "hub_url": url,
+            "exported_at": datetime.utcnow().isoformat() + "Z",
+            "agents": agents,
+            "rewards": rewards,
+            "tasks": tasks,
+        }
+        out_path = output or f"results-{label or hub_id}.json"
+        with open(out_path, "w") as f:
+            json.dump(export_data, f, indent=2)
+        completed = sum(1 for t in tasks if t.get("state") == "COMPLETE")
+        typer.echo(f"Exported {len(tasks)} tasks ({completed} completed) to {out_path}")
+    except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
+
+@app.command("test")
+def test_run(hub_url: str = typer.Option(""),
+             prompts_file: str = typer.Option("", "--prompts", "-p", help="Path to prompts JSON file (default: tests/lan/prompts.json)"),
+             category: Optional[str] = typer.Option(None, "--category", "-c", help="Run only this category (default: all)"),
+             concurrency: int = typer.Option(1, "--concurrency", "-j", help="Parallel task submissions"),
+             repeat: int = typer.Option(1, "--repeat", "-r", help="Repeat the batch N times"),
+             timeout: int = typer.Option(300, "--timeout", help="Per-task timeout in seconds"),
+             label: str = typer.Option("", "--label", "-l", help="Label for this test run"),
+             output: str = typer.Option("", "--output", "-o", help="Save results to JSON file"),
+             list_categories: bool = typer.Option(False, "--list", help="List available categories and exit")):
+    """Run test prompts against the grid and report results."""
+    from tests.e2e.runner import load_prompts, run_categories
+    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    try:
+        prompts_dict = load_prompts(prompts_file or None)
+    except FileNotFoundError:
+        typer.echo("Prompts file not found. Use --prompts to specify path.", err=True)
+        raise typer.Exit(1)
+    if list_categories:
+        for cat, entries in prompts_dict.items():
+            typer.echo(f"  {cat:<30s} ({len(entries)} prompts)")
+        raise typer.Exit(0)
+    cats = [category] if category else None
+    total = sum(len(v) for k, v in prompts_dict.items() if cats is None or k in cats) * repeat
+    typer.echo(f"Running {total} tasks  concurrency={concurrency}  repeat={repeat}  hub={url}")
+    typer.echo("")
+    done = {"n": 0}
+    def on_result(r):
+        done["n"] += 1
+        status = "OK" if r.state == "COMPLETE" else r.state
+        tps_str = f"{r.tps:.1f} tps" if r.tps > 0 else ""
+        typer.echo(f"  [{done['n']:>3}/{total}] {status:<8} {r.model:<20} {r.latency_ms:>8.0f}ms  {r.output_tokens:>5} tok  {tps_str:>10}  {r.agent_id}")
+    report = run_categories(url, prompts_dict, categories=cats, concurrency=concurrency,
+                            timeout_s=timeout, repeat=repeat, on_result=on_result,
+                            label=label or "test")
+    s = report.summary()
+    typer.echo("")
+    typer.echo(f"{'─'*72}")
+    typer.echo(f"  Total:     {s['total']}  |  Completed: {s['completed']}  |  Failed: {s['failed']}  |  Timeout: {s['timed_out']}")
+    if s.get("avg_latency_ms"):
+        typer.echo(f"  Avg latency: {s['avg_latency_ms']:.0f}ms  |  Avg TPS: {s['avg_tps']:.1f}  |  Wall time: {s['wall_time_s']:.1f}s")
+    if s.get("agent_distribution"):
+        typer.echo(f"  Agent distribution:")
+        for agent, count in sorted(s["agent_distribution"].items()):
+            typer.echo(f"    {agent}: {count} tasks")
+    if output:
+        with open(output, "w") as f:
+            json.dump(report.to_json(), f, indent=2)
+        typer.echo(f"  Results saved to {output}")
 
 @app.command("config")
 def config_cmd(set_key: Optional[str] = typer.Option(None, "--set"), show: bool = typer.Option(True)):

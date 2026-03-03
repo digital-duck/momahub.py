@@ -1,0 +1,154 @@
+{
+  "smoke_test": [
+    {
+      "prompt": "What is the capital of France?",
+      "model": "gemma2:2b",
+      "max_tokens": 128,
+      "note": "Simplest possible test — verify pipeline end-to-end"
+    },
+    {
+      "prompt": "List the planets in our solar system in order from the sun.",
+      "model": "llama3.1:8b",
+      "max_tokens": 256,
+      "note": "Factual recall, easy to verify correctness"
+    },
+    {
+      "prompt": "Write a Python function that returns the sum of a list.",
+      "model": "mistral:7b",
+      "max_tokens": 256,
+      "note": "Code generation, verify output is syntactically valid"
+    }
+  ],
+  "multi_agent_dispatch": [
+    {
+      "prompt": "Write a haiku about the ocean.",
+      "model": "llama3.1:8b",
+      "max_tokens": 128
+    },
+    {
+      "prompt": "Write a haiku about a mountain.",
+      "model": "llama3.1:8b",
+      "max_tokens": 128
+    },
+    {
+      "prompt": "Write a haiku about a forest.",
+      "model": "llama3.1:8b",
+      "max_tokens": 128
+    },
+    {
+      "prompt": "Write a haiku about the moon.",
+      "model": "llama3.1:8b",
+      "max_tokens": 128
+    },
+    {
+      "prompt": "Write a haiku about rain.",
+      "model": "llama3.1:8b",
+      "max_tokens": 128
+    },
+    {
+      "prompt": "Write a haiku about fire.",
+      "model": "llama3.1:8b",
+      "max_tokens": 128
+    }
+  ],
+  "model_variety": [
+    {
+      "prompt": "Explain what a hash table is in three sentences.",
+      "model": "mistral:7b",
+      "max_tokens": 256
+    },
+    {
+      "prompt": "Translate 'The quick brown fox jumps over the lazy dog' into French, Spanish, and German.",
+      "model": "qwen2.5:7b",
+      "max_tokens": 256
+    },
+    {
+      "prompt": "Write a bash one-liner that finds all .py files modified in the last 24 hours.",
+      "model": "phi3:3.8b",
+      "max_tokens": 256
+    },
+    {
+      "prompt": "What are the three laws of thermodynamics? Explain each in one sentence.",
+      "model": "gemma2:2b",
+      "max_tokens": 256
+    }
+  ],
+  "stress_long_output": [
+    {
+      "prompt": "Write a detailed 500-word essay about the history of the Internet, from ARPANET to modern day.",
+      "model": "llama3.1:8b",
+      "max_tokens": 2048,
+      "note": "Long generation — measures sustained TPS"
+    },
+    {
+      "prompt": "Write a complete Python implementation of a binary search tree with insert, delete, search, in-order traversal, and balance check methods. Include docstrings and type hints.",
+      "model": "mistral:7b",
+      "max_tokens": 2048,
+      "note": "Complex code generation — sustained output"
+    },
+    {
+      "prompt": "Write a short story (300 words) about a robot learning to paint.",
+      "model": "qwen2.5:7b",
+      "max_tokens": 1024,
+      "note": "Creative writing — tests coherence over longer output"
+    }
+  ],
+  "reasoning_deepseek_r1": [
+    {
+      "prompt": "A farmer has 17 sheep. All but 9 die. How many sheep are left? Think step by step.",
+      "model": "deepseek-r1:8b",
+      "max_tokens": 1024,
+      "note": "Classic trick question — tests whether reasoning chain catches the 'all but 9' phrasing"
+    },
+    {
+      "prompt": "I have 6 eggs. I broke 2, I cooked 2, and I ate 2. How many eggs do I have left? Explain your reasoning.",
+      "model": "deepseek-r1:8b",
+      "max_tokens": 1024,
+      "note": "Ambiguous logic puzzle — the broken/cooked/eaten eggs may overlap. Tests chain-of-thought"
+    },
+    {
+      "prompt": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost? Show your work.",
+      "model": "deepseek-r1:8b",
+      "max_tokens": 512,
+      "note": "Classic cognitive reflection test — correct answer is $0.05, not $0.10"
+    },
+    {
+      "prompt": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets? Reason carefully.",
+      "model": "deepseek-r1:8b",
+      "max_tokens": 512,
+      "note": "Rate reasoning — correct answer is 5 minutes, not 100"
+    },
+    {
+      "prompt": "There are three boxes. One contains only apples, one contains only oranges, and one contains both. All boxes are labeled incorrectly. You can pick one fruit from one box. How do you determine what's in each box? Solve step by step.",
+      "model": "deepseek-r1:7b",
+      "max_tokens": 2048,
+      "note": "Multi-step logic puzzle — tests extended reasoning. Uses 7b distill (Qwen-based) for comparison"
+    },
+    {
+      "prompt": "Prove that the square root of 2 is irrational.",
+      "model": "deepseek-r1:8b",
+      "max_tokens": 2048,
+      "note": "Mathematical proof — tests formal reasoning and long chain-of-thought output"
+    }
+  ],
+  "edge_cases": [
+    {
+      "prompt": "",
+      "model": "llama3.1:8b",
+      "max_tokens": 128,
+      "note": "Empty prompt — should handle gracefully"
+    },
+    {
+      "prompt": "Reply with exactly one word: yes.",
+      "model": "gemma2:2b",
+      "max_tokens": 16,
+      "note": "Minimal output — TPS measurement edge case"
+    },
+    {
+      "prompt": "Count from 1 to 100, each number on a new line.",
+      "model": "phi3:3.8b",
+      "max_tokens": 1024,
+      "note": "Predictable output — easy to verify completeness"
+    }
+  ]
+}
