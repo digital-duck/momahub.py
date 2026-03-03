@@ -1,0 +1,440 @@
+2026-03-03 02:55:27,688 - INFO - --- go_git.py started at 2026-03-03 02:55:27.688084 ---
+2026-03-03 02:55:27,688 - INFO - Owner URL: https://github.com/digital-duck
+2026-03-03 02:55:27,688 - INFO - Branch: main
+2026-03-03 02:55:27,688 - INFO - Commit Message: 'refine'
+2026-03-03 02:55:27,688 - INFO - Log File: './go_git.log'
+2026-03-03 02:55:27,688 - INFO - Dry Run: False
+2026-03-03 02:55:27,688 - INFO - Skip Pull: False
+2026-03-03 02:55:27,688 - INFO - Skip Push: False
+2026-03-03 02:55:27,688 - INFO - Clone Only: False
+2026-03-03 02:55:27,688 - INFO - Parallel Processing: False
+2026-03-03 02:55:27,688 - INFO - Repositories to process: ['C:/Users/p2p2l/projects/wgong/py4kids', 'C:/Users/p2p2l/projects/wgong/DeepCode', 'C:/Users/p2p2l/projects/digital-duck/zinets', 'C:/Users/p2p2l/projects/digital-duck/zinets_radicals', 'C:/Users/p2p2l/projects/digital-duck/st_semantics', 'C:/Users/p2p2l/projects/digital-duck/maniscope', 'C:/Users/p2p2l/projects/digital-duck/semanscope', 'C:/Users/p2p2l/projects/digital-duck/phate-manifold-metrics', 'C:/Users/p2p2l/projects/digital-duck/oracle', 'C:/Users/p2p2l/projects/digital-duck/orascope', 'C:/Users/p2p2l/projects/digital-duck/dd-arxiv', 'C:/Users/p2p2l/projects/digital-duck/dd-logging', 'C:/Users/p2p2l/projects/digital-duck/dd-config', 'C:/Users/p2p2l/projects/digital-duck/dd-db', 'C:/Users/p2p2l/projects/digital-duck/dd-vectordb', 'C:/Users/p2p2l/projects/digital-duck/dd-embed', 'C:/Users/p2p2l/projects/digital-duck/dd-llm', 'C:/Users/p2p2l/projects/digital-duck/anadata', 'C:/Users/p2p2l/projects/digital-duck/SPL', 'C:/Users/p2p2l/projects/digital-duck/SPL-LLM', 'C:/Users/p2p2l/projects/digital-duck/SPL-flow', 'C:/Users/p2p2l/projects/digital-duck/momahub', 'C:/Users/p2p2l/projects/digital-duck/momahub-opus', 'C:/Users/p2p2l/projects/digital-duck/momahub-sonnet', 'C:/Users/p2p2l/projects/digital-duck/momahub-gemini', 'C:/Users/p2p2l/projects/digital-duck/pocoflow', 'C:/Users/p2p2l/projects/digital-duck/markoflow', 'C:/Users/p2p2l/projects/digital-duck/monteflow', 'C:/Users/p2p2l/projects/digital-duck/research-copilot', 'C:/Users/p2p2l/projects/digital-duck/elegant-elefant', 'C:/Users/p2p2l/projects/digital-duck/vibe-coding']
+2026-03-03 02:55:27,688 - INFO - Processing repositories sequentially...
+2026-03-03 02:55:27,734 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:27,734 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/wgong/py4kids ...........
+2026-03-03 02:55:27,734 - INFO - Local repository 'py4kids' found at 'C:/Users/p2p2l/projects/wgong/py4kids'.
+2026-03-03 02:55:27,788 - WARNING - Branch 'main' does not exist in 'py4kids'. Staying on 'master'.
+2026-03-03 02:55:27,788 - INFO - Running 'git pull' in 'py4kids'...
+2026-03-03 02:55:28,415 - INFO - Successfully pulled changes for 'py4kids'.
+2026-03-03 02:55:28,415 - INFO - Running 'git status --porcelain' in 'py4kids' to check for local changes...
+2026-03-03 02:55:28,638 - INFO - Local changes detected in 'py4kids'. Performing commit and push...
+2026-03-03 02:55:28,638 - INFO - Git status output:
+?? lesson-99-misc/utils/git/readme-init-merge.md
+2026-03-03 02:55:28,638 - INFO - Running 'git add .' in 'py4kids'...
+2026-03-03 02:55:29,136 - INFO - Running 'git commit -m "refine"' in 'py4kids'...
+2026-03-03 02:55:30,666 - INFO - Running 'git push' in 'py4kids'...
+2026-03-03 02:55:34,889 - INFO - Successfully committed and pushed changes for 'py4kids'.
+2026-03-03 02:55:34,889 - INFO - 
+>>>>>> SUCCESS: 'py4kids'.
+2026-03-03 02:55:34,890 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:34,890 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/wgong/DeepCode ...........
+2026-03-03 02:55:34,890 - INFO - Local path 'C:/Users/p2p2l/projects/wgong/DeepCode' is not an existing directory.
+2026-03-03 02:55:34,890 - INFO - Checking if 'DeepCode' is a valid Git repository name for cloning.
+2026-03-03 02:55:35,560 - WARNING - Command 'git ls-remote --heads https://github.com/digital-duck/DeepCode.git' in 'C:\Users\p2p2l\projects\digital-duck\momahub.py' failed with exit code 128.
+2026-03-03 02:55:35,560 - WARNING - Stdout: 
+2026-03-03 02:55:35,560 - WARNING - Stderr: remote: Repository not found.
+fatal: repository 'https://github.com/digital-duck/DeepCode.git/' not found
+2026-03-03 02:55:35,560 - ERROR - ERROR executing command: 'git ls-remote --heads https://github.com/digital-duck/DeepCode.git' in 'C:\Users\p2p2l\projects\digital-duck\momahub.py'
+2026-03-03 02:55:35,560 - ERROR - Stderr: remote: Repository not found.
+fatal: repository 'https://github.com/digital-duck/DeepCode.git/' not found
+2026-03-03 02:55:35,560 - ERROR - Stdout: 
+2026-03-03 02:55:35,560 - ERROR - Remote repository 'https://github.com/digital-duck/DeepCode.git' does not exist or is not accessible.
+2026-03-03 02:55:35,560 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:35,560 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/zinets ...........
+2026-03-03 02:55:35,560 - INFO - Local repository 'zinets' found at 'C:/Users/p2p2l/projects/digital-duck/zinets'.
+2026-03-03 02:55:35,586 - INFO - Running 'git pull' in 'zinets'...
+2026-03-03 02:55:36,399 - INFO - Successfully pulled changes for 'zinets'.
+2026-03-03 02:55:36,399 - INFO - Running 'git status --porcelain' in 'zinets' to check for local changes...
+2026-03-03 02:55:36,430 - INFO - Local changes detected in 'zinets'. Performing commit and push...
+2026-03-03 02:55:36,430 - INFO - Git status output:
+M README-PLAN.md
+ M src/go_git_all.sh
+2026-03-03 02:55:36,430 - INFO - Running 'git add .' in 'zinets'...
+2026-03-03 02:55:36,512 - INFO - Running 'git commit -m "refine"' in 'zinets'...
+2026-03-03 02:55:36,606 - INFO - Running 'git push' in 'zinets'...
+2026-03-03 02:55:37,804 - INFO - Successfully committed and pushed changes for 'zinets'.
+2026-03-03 02:55:37,804 - INFO - 
+>>>>>> SUCCESS: 'zinets'.
+2026-03-03 02:55:37,804 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:37,804 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/zinets_radicals ...........
+2026-03-03 02:55:37,804 - INFO - Local repository 'zinets_radicals' found at 'C:/Users/p2p2l/projects/digital-duck/zinets_radicals'.
+2026-03-03 02:55:37,828 - INFO - Running 'git pull' in 'zinets_radicals'...
+2026-03-03 02:55:38,942 - INFO - Successfully pulled changes for 'zinets_radicals'.
+2026-03-03 02:55:38,944 - INFO - Running 'git status --porcelain' in 'zinets_radicals' to check for local changes...
+2026-03-03 02:55:38,975 - INFO - No local changes in 'zinets_radicals'. Done.
+2026-03-03 02:55:38,975 - INFO - 
+>>>>>> SUCCESS: 'zinets_radicals'.
+2026-03-03 02:55:38,975 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:38,977 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/st_semantics ...........
+2026-03-03 02:55:38,977 - INFO - Local repository 'st_semantics' found at 'C:/Users/p2p2l/projects/digital-duck/st_semantics'.
+2026-03-03 02:55:39,000 - INFO - Running 'git pull' in 'st_semantics'...
+2026-03-03 02:55:39,733 - ERROR - ERROR executing command: 'git pull' in 'C:/Users/p2p2l/projects/digital-duck/st_semantics'
+2026-03-03 02:55:39,733 - ERROR - Stderr: fatal: refusing to merge unrelated histories
+2026-03-03 02:55:39,733 - ERROR - Stdout: 
+2026-03-03 02:55:39,733 - ERROR - Failed to process 'st_semantics' due to a Git command error: Command '['git', 'pull']' returned non-zero exit status 128.
+2026-03-03 02:55:39,736 - INFO - 
+>>>>>> SUCCESS: 'st_semantics'.
+2026-03-03 02:55:39,736 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:39,736 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/maniscope ...........
+2026-03-03 02:55:39,736 - INFO - Local repository 'maniscope' found at 'C:/Users/p2p2l/projects/digital-duck/maniscope'.
+2026-03-03 02:55:39,757 - INFO - Running 'git pull' in 'maniscope'...
+2026-03-03 02:55:40,265 - INFO - Successfully pulled changes for 'maniscope'.
+2026-03-03 02:55:40,265 - INFO - Running 'git status --porcelain' in 'maniscope' to check for local changes...
+2026-03-03 02:55:40,290 - INFO - No local changes in 'maniscope'. Done.
+2026-03-03 02:55:40,290 - INFO - 
+>>>>>> SUCCESS: 'maniscope'.
+2026-03-03 02:55:40,290 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:40,292 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/semanscope ...........
+2026-03-03 02:55:40,292 - INFO - Local repository 'semanscope' found at 'C:/Users/p2p2l/projects/digital-duck/semanscope'.
+2026-03-03 02:55:40,314 - INFO - Running 'git pull' in 'semanscope'...
+2026-03-03 02:55:40,853 - INFO - Successfully pulled changes for 'semanscope'.
+2026-03-03 02:55:40,853 - INFO - Running 'git status --porcelain' in 'semanscope' to check for local changes...
+2026-03-03 02:55:41,338 - INFO - No local changes in 'semanscope'. Done.
+2026-03-03 02:55:41,338 - INFO - 
+>>>>>> SUCCESS: 'semanscope'.
+2026-03-03 02:55:41,338 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:41,338 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/phate-manifold-metrics ...........
+2026-03-03 02:55:41,338 - INFO - Local repository 'phate-manifold-metrics' found at 'C:/Users/p2p2l/projects/digital-duck/phate-manifold-metrics'.
+2026-03-03 02:55:41,360 - INFO - Running 'git pull' in 'phate-manifold-metrics'...
+2026-03-03 02:55:41,887 - INFO - Successfully pulled changes for 'phate-manifold-metrics'.
+2026-03-03 02:55:41,887 - INFO - Running 'git status --porcelain' in 'phate-manifold-metrics' to check for local changes...
+2026-03-03 02:55:41,901 - INFO - No local changes in 'phate-manifold-metrics'. Done.
+2026-03-03 02:55:41,916 - INFO - 
+>>>>>> SUCCESS: 'phate-manifold-metrics'.
+2026-03-03 02:55:41,916 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:41,916 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/oracle ...........
+2026-03-03 02:55:41,916 - INFO - Local repository 'oracle' found at 'C:/Users/p2p2l/projects/digital-duck/oracle'.
+2026-03-03 02:55:41,939 - INFO - Running 'git pull' in 'oracle'...
+2026-03-03 02:55:43,042 - INFO - Successfully pulled changes for 'oracle'.
+2026-03-03 02:55:43,042 - INFO - Running 'git status --porcelain' in 'oracle' to check for local changes...
+2026-03-03 02:55:43,070 - INFO - No local changes in 'oracle'. Done.
+2026-03-03 02:55:43,070 - INFO - 
+>>>>>> SUCCESS: 'oracle'.
+2026-03-03 02:55:43,070 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:43,070 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/orascope ...........
+2026-03-03 02:55:43,070 - INFO - Local repository 'orascope' found at 'C:/Users/p2p2l/projects/digital-duck/orascope'.
+2026-03-03 02:55:43,097 - INFO - Running 'git pull' in 'orascope'...
+2026-03-03 02:55:44,198 - INFO - Successfully pulled changes for 'orascope'.
+2026-03-03 02:55:44,198 - INFO - Running 'git status --porcelain' in 'orascope' to check for local changes...
+2026-03-03 02:55:44,226 - INFO - No local changes in 'orascope'. Done.
+2026-03-03 02:55:44,226 - INFO - 
+>>>>>> SUCCESS: 'orascope'.
+2026-03-03 02:55:44,226 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:44,226 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/dd-arxiv ...........
+2026-03-03 02:55:44,227 - INFO - Local repository 'dd-arxiv' found at 'C:/Users/p2p2l/projects/digital-duck/dd-arxiv'.
+2026-03-03 02:55:44,248 - INFO - Running 'git pull' in 'dd-arxiv'...
+2026-03-03 02:55:44,963 - INFO - Successfully pulled changes for 'dd-arxiv'.
+2026-03-03 02:55:44,963 - INFO - Running 'git status --porcelain' in 'dd-arxiv' to check for local changes...
+2026-03-03 02:55:44,986 - INFO - No local changes in 'dd-arxiv'. Done.
+2026-03-03 02:55:44,986 - INFO - 
+>>>>>> SUCCESS: 'dd-arxiv'.
+2026-03-03 02:55:44,986 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:44,986 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/dd-logging ...........
+2026-03-03 02:55:44,986 - INFO - Local repository 'dd-logging' found at 'C:/Users/p2p2l/projects/digital-duck/dd-logging'.
+2026-03-03 02:55:45,009 - INFO - Running 'git pull' in 'dd-logging'...
+2026-03-03 02:55:45,539 - INFO - Successfully pulled changes for 'dd-logging'.
+2026-03-03 02:55:45,539 - INFO - Running 'git status --porcelain' in 'dd-logging' to check for local changes...
+2026-03-03 02:55:45,565 - INFO - No local changes in 'dd-logging'. Done.
+2026-03-03 02:55:45,565 - INFO - 
+>>>>>> SUCCESS: 'dd-logging'.
+2026-03-03 02:55:45,565 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:45,565 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/dd-config ...........
+2026-03-03 02:55:45,565 - INFO - Local repository 'dd-config' found at 'C:/Users/p2p2l/projects/digital-duck/dd-config'.
+2026-03-03 02:55:45,588 - INFO - Running 'git pull' in 'dd-config'...
+2026-03-03 02:55:46,099 - INFO - Successfully pulled changes for 'dd-config'.
+2026-03-03 02:55:46,100 - INFO - Running 'git status --porcelain' in 'dd-config' to check for local changes...
+2026-03-03 02:55:46,116 - INFO - No local changes in 'dd-config'. Done.
+2026-03-03 02:55:46,116 - INFO - 
+>>>>>> SUCCESS: 'dd-config'.
+2026-03-03 02:55:46,116 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:46,116 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/dd-db ...........
+2026-03-03 02:55:46,116 - INFO - Local repository 'dd-db' found at 'C:/Users/p2p2l/projects/digital-duck/dd-db'.
+2026-03-03 02:55:46,149 - INFO - Running 'git pull' in 'dd-db'...
+2026-03-03 02:55:46,689 - INFO - Successfully pulled changes for 'dd-db'.
+2026-03-03 02:55:46,689 - INFO - Running 'git status --porcelain' in 'dd-db' to check for local changes...
+2026-03-03 02:55:46,717 - INFO - No local changes in 'dd-db'. Done.
+2026-03-03 02:55:46,717 - INFO - 
+>>>>>> SUCCESS: 'dd-db'.
+2026-03-03 02:55:46,717 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:46,717 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/dd-vectordb ...........
+2026-03-03 02:55:46,718 - INFO - Local repository 'dd-vectordb' found at 'C:/Users/p2p2l/projects/digital-duck/dd-vectordb'.
+2026-03-03 02:55:46,738 - INFO - Running 'git pull' in 'dd-vectordb'...
+2026-03-03 02:55:47,281 - INFO - Successfully pulled changes for 'dd-vectordb'.
+2026-03-03 02:55:47,281 - INFO - Running 'git status --porcelain' in 'dd-vectordb' to check for local changes...
+2026-03-03 02:55:47,308 - INFO - No local changes in 'dd-vectordb'. Done.
+2026-03-03 02:55:47,308 - INFO - 
+>>>>>> SUCCESS: 'dd-vectordb'.
+2026-03-03 02:55:47,308 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:47,310 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/dd-embed ...........
+2026-03-03 02:55:47,310 - INFO - Local repository 'dd-embed' found at 'C:/Users/p2p2l/projects/digital-duck/dd-embed'.
+2026-03-03 02:55:47,333 - INFO - Running 'git pull' in 'dd-embed'...
+2026-03-03 02:55:47,852 - INFO - Successfully pulled changes for 'dd-embed'.
+2026-03-03 02:55:47,852 - INFO - Running 'git status --porcelain' in 'dd-embed' to check for local changes...
+2026-03-03 02:55:47,876 - INFO - No local changes in 'dd-embed'. Done.
+2026-03-03 02:55:47,876 - INFO - 
+>>>>>> SUCCESS: 'dd-embed'.
+2026-03-03 02:55:47,876 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:47,876 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/dd-llm ...........
+2026-03-03 02:55:47,876 - INFO - Local repository 'dd-llm' found at 'C:/Users/p2p2l/projects/digital-duck/dd-llm'.
+2026-03-03 02:55:47,902 - INFO - Running 'git pull' in 'dd-llm'...
+2026-03-03 02:55:48,419 - INFO - Successfully pulled changes for 'dd-llm'.
+2026-03-03 02:55:48,419 - INFO - Running 'git status --porcelain' in 'dd-llm' to check for local changes...
+2026-03-03 02:55:48,446 - INFO - No local changes in 'dd-llm'. Done.
+2026-03-03 02:55:48,446 - INFO - 
+>>>>>> SUCCESS: 'dd-llm'.
+2026-03-03 02:55:48,446 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:48,447 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/anadata ...........
+2026-03-03 02:55:48,447 - INFO - Local repository 'anadata' found at 'C:/Users/p2p2l/projects/digital-duck/anadata'.
+2026-03-03 02:55:48,469 - INFO - Running 'git pull' in 'anadata'...
+2026-03-03 02:55:49,580 - INFO - Successfully pulled changes for 'anadata'.
+2026-03-03 02:55:49,580 - INFO - Running 'git status --porcelain' in 'anadata' to check for local changes...
+2026-03-03 02:55:49,608 - INFO - No local changes in 'anadata'. Done.
+2026-03-03 02:55:49,608 - INFO - 
+>>>>>> SUCCESS: 'anadata'.
+2026-03-03 02:55:49,608 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:49,608 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/SPL ...........
+2026-03-03 02:55:49,608 - INFO - Local repository 'SPL' found at 'C:/Users/p2p2l/projects/digital-duck/SPL'.
+2026-03-03 02:55:49,631 - INFO - Running 'git pull' in 'SPL'...
+2026-03-03 02:55:50,359 - INFO - Successfully pulled changes for 'SPL'.
+2026-03-03 02:55:50,359 - INFO - Running 'git status --porcelain' in 'SPL' to check for local changes...
+2026-03-03 02:55:50,384 - INFO - Local changes detected in 'SPL'. Performing commit and push...
+2026-03-03 02:55:50,384 - INFO - Git status output:
+M spl/adapters/__init__.py
+ M spl/ast_nodes.py
+ M spl/executor.py
+ M spl/parser.py
+ M spl/tokens.py
+2026-03-03 02:55:50,384 - INFO - Running 'git add .' in 'SPL'...
+2026-03-03 02:55:50,434 - INFO - Running 'git commit -m "refine"' in 'SPL'...
+2026-03-03 02:55:50,515 - INFO - Running 'git push' in 'SPL'...
+2026-03-03 02:55:51,327 - INFO - Successfully committed and pushed changes for 'SPL'.
+2026-03-03 02:55:51,327 - INFO - 
+>>>>>> SUCCESS: 'SPL'.
+2026-03-03 02:55:51,327 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:51,327 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/SPL-LLM ...........
+2026-03-03 02:55:51,327 - INFO - Local repository 'SPL-LLM' found at 'C:/Users/p2p2l/projects/digital-duck/SPL-LLM'.
+2026-03-03 02:55:51,344 - INFO - Running 'git pull' in 'SPL-LLM'...
+2026-03-03 02:55:51,892 - INFO - Successfully pulled changes for 'SPL-LLM'.
+2026-03-03 02:55:51,892 - INFO - Running 'git status --porcelain' in 'SPL-LLM' to check for local changes...
+2026-03-03 02:55:51,914 - INFO - No local changes in 'SPL-LLM'. Done.
+2026-03-03 02:55:51,914 - INFO - 
+>>>>>> SUCCESS: 'SPL-LLM'.
+2026-03-03 02:55:51,914 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:51,914 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/SPL-flow ...........
+2026-03-03 02:55:51,914 - INFO - Local repository 'SPL-flow' found at 'C:/Users/p2p2l/projects/digital-duck/SPL-flow'.
+2026-03-03 02:55:51,942 - INFO - Running 'git pull' in 'SPL-flow'...
+2026-03-03 02:55:52,653 - INFO - Successfully pulled changes for 'SPL-flow'.
+2026-03-03 02:55:52,653 - INFO - Running 'git status --porcelain' in 'SPL-flow' to check for local changes...
+2026-03-03 02:55:52,665 - INFO - No local changes in 'SPL-flow'. Done.
+2026-03-03 02:55:52,665 - INFO - 
+>>>>>> SUCCESS: 'SPL-flow'.
+2026-03-03 02:55:52,665 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:52,665 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/momahub ...........
+2026-03-03 02:55:52,665 - INFO - Local repository 'momahub' found at 'C:/Users/p2p2l/projects/digital-duck/momahub'.
+2026-03-03 02:55:52,704 - INFO - Running 'git pull' in 'momahub'...
+2026-03-03 02:55:53,402 - INFO - Successfully pulled changes for 'momahub'.
+2026-03-03 02:55:53,402 - INFO - Running 'git status --porcelain' in 'momahub' to check for local changes...
+2026-03-03 02:55:53,430 - INFO - No local changes in 'momahub'. Done.
+2026-03-03 02:55:53,430 - INFO - 
+>>>>>> SUCCESS: 'momahub'.
+2026-03-03 02:55:53,430 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:53,430 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/momahub-opus ...........
+2026-03-03 02:55:53,431 - INFO - Local repository 'momahub-opus' found at 'C:/Users/p2p2l/projects/digital-duck/momahub-opus'.
+2026-03-03 02:55:53,448 - INFO - Running 'git pull' in 'momahub-opus'...
+2026-03-03 02:55:54,186 - INFO - Successfully pulled changes for 'momahub-opus'.
+2026-03-03 02:55:54,186 - INFO - Running 'git status --porcelain' in 'momahub-opus' to check for local changes...
+2026-03-03 02:55:54,212 - INFO - No local changes in 'momahub-opus'. Done.
+2026-03-03 02:55:54,212 - INFO - 
+>>>>>> SUCCESS: 'momahub-opus'.
+2026-03-03 02:55:54,212 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:54,212 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/momahub-sonnet ...........
+2026-03-03 02:55:54,212 - INFO - Local repository 'momahub-sonnet' found at 'C:/Users/p2p2l/projects/digital-duck/momahub-sonnet'.
+2026-03-03 02:55:54,232 - INFO - Running 'git pull' in 'momahub-sonnet'...
+2026-03-03 02:55:54,970 - INFO - Successfully pulled changes for 'momahub-sonnet'.
+2026-03-03 02:55:54,970 - INFO - Running 'git status --porcelain' in 'momahub-sonnet' to check for local changes...
+2026-03-03 02:55:54,998 - INFO - No local changes in 'momahub-sonnet'. Done.
+2026-03-03 02:55:55,000 - INFO - 
+>>>>>> SUCCESS: 'momahub-sonnet'.
+2026-03-03 02:55:55,000 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:55,000 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/momahub-gemini ...........
+2026-03-03 02:55:55,000 - INFO - Local repository 'momahub-gemini' found at 'C:/Users/p2p2l/projects/digital-duck/momahub-gemini'.
+2026-03-03 02:55:55,033 - INFO - Running 'git pull' in 'momahub-gemini'...
+2026-03-03 02:55:55,767 - INFO - Successfully pulled changes for 'momahub-gemini'.
+2026-03-03 02:55:55,767 - INFO - Running 'git status --porcelain' in 'momahub-gemini' to check for local changes...
+2026-03-03 02:55:55,793 - INFO - Local changes detected in 'momahub-gemini'. Performing commit and push...
+2026-03-03 02:55:55,793 - INFO - Git status output:
+?? .claude/
+?? CLAUDE.md
+2026-03-03 02:55:55,793 - INFO - Running 'git add .' in 'momahub-gemini'...
+2026-03-03 02:55:55,829 - INFO - Running 'git commit -m "refine"' in 'momahub-gemini'...
+2026-03-03 02:55:55,900 - INFO - Running 'git push' in 'momahub-gemini'...
+2026-03-03 02:55:56,661 - INFO - Successfully committed and pushed changes for 'momahub-gemini'.
+2026-03-03 02:55:56,661 - INFO - 
+>>>>>> SUCCESS: 'momahub-gemini'.
+2026-03-03 02:55:56,661 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:56,664 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/pocoflow ...........
+2026-03-03 02:55:56,664 - INFO - Local repository 'pocoflow' found at 'C:/Users/p2p2l/projects/digital-duck/pocoflow'.
+2026-03-03 02:55:56,686 - INFO - Running 'git pull' in 'pocoflow'...
+2026-03-03 02:55:57,215 - INFO - Successfully pulled changes for 'pocoflow'.
+2026-03-03 02:55:57,215 - INFO - Running 'git status --porcelain' in 'pocoflow' to check for local changes...
+2026-03-03 02:55:57,245 - INFO - No local changes in 'pocoflow'. Done.
+2026-03-03 02:55:57,245 - INFO - 
+>>>>>> SUCCESS: 'pocoflow'.
+2026-03-03 02:55:57,245 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:57,245 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/markoflow ...........
+2026-03-03 02:55:57,246 - INFO - Local repository 'markoflow' found at 'C:/Users/p2p2l/projects/digital-duck/markoflow'.
+2026-03-03 02:55:57,269 - INFO - Running 'git pull' in 'markoflow'...
+2026-03-03 02:55:58,378 - INFO - Successfully pulled changes for 'markoflow'.
+2026-03-03 02:55:58,378 - INFO - Running 'git status --porcelain' in 'markoflow' to check for local changes...
+2026-03-03 02:55:58,403 - INFO - No local changes in 'markoflow'. Done.
+2026-03-03 02:55:58,403 - INFO - 
+>>>>>> SUCCESS: 'markoflow'.
+2026-03-03 02:55:58,403 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:58,403 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/monteflow ...........
+2026-03-03 02:55:58,403 - INFO - Local repository 'monteflow' found at 'C:/Users/p2p2l/projects/digital-duck/monteflow'.
+2026-03-03 02:55:58,431 - INFO - Running 'git pull' in 'monteflow'...
+2026-03-03 02:55:59,531 - INFO - Successfully pulled changes for 'monteflow'.
+2026-03-03 02:55:59,531 - INFO - Running 'git status --porcelain' in 'monteflow' to check for local changes...
+2026-03-03 02:55:59,560 - INFO - No local changes in 'monteflow'. Done.
+2026-03-03 02:55:59,560 - INFO - 
+>>>>>> SUCCESS: 'monteflow'.
+2026-03-03 02:55:59,560 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:55:59,560 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/research-copilot ...........
+2026-03-03 02:55:59,560 - INFO - Local repository 'research-copilot' found at 'C:/Users/p2p2l/projects/digital-duck/research-copilot'.
+2026-03-03 02:55:59,578 - INFO - Running 'git pull' in 'research-copilot'...
+2026-03-03 02:56:00,326 - INFO - Successfully pulled changes for 'research-copilot'.
+2026-03-03 02:56:00,326 - INFO - Running 'git status --porcelain' in 'research-copilot' to check for local changes...
+2026-03-03 02:56:00,358 - INFO - No local changes in 'research-copilot'. Done.
+2026-03-03 02:56:00,358 - INFO - 
+>>>>>> SUCCESS: 'research-copilot'.
+2026-03-03 02:56:00,358 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:56:00,358 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/elegant-elefant ...........
+2026-03-03 02:56:00,358 - INFO - Local repository 'elegant-elefant' found at 'C:/Users/p2p2l/projects/digital-duck/elegant-elefant'.
+2026-03-03 02:56:00,372 - INFO - Running 'git pull' in 'elegant-elefant'...
+2026-03-03 02:56:01,106 - INFO - Successfully pulled changes for 'elegant-elefant'.
+2026-03-03 02:56:01,106 - INFO - Running 'git status --porcelain' in 'elegant-elefant' to check for local changes...
+2026-03-03 02:56:01,138 - INFO - No local changes in 'elegant-elefant'. Done.
+2026-03-03 02:56:01,138 - INFO - 
+>>>>>> SUCCESS: 'elegant-elefant'.
+2026-03-03 02:56:01,138 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-03 02:56:01,138 - INFO - <<<<< Processing: C:/Users/p2p2l/projects/digital-duck/vibe-coding ...........
+2026-03-03 02:56:01,138 - INFO - Local repository 'vibe-coding' found at 'C:/Users/p2p2l/projects/digital-duck/vibe-coding'.
+2026-03-03 02:56:01,159 - INFO - Running 'git pull' in 'vibe-coding'...
+2026-03-03 02:56:01,697 - INFO - Successfully pulled changes for 'vibe-coding'.
+2026-03-03 02:56:01,697 - INFO - Running 'git status --porcelain' in 'vibe-coding' to check for local changes...
+2026-03-03 02:56:01,721 - INFO - No local changes in 'vibe-coding'. Done.
+2026-03-03 02:56:01,721 - INFO - 
+>>>>>> SUCCESS: 'vibe-coding'.
+2026-03-03 02:56:01,721 - INFO - 
+
+
+============================================================
+2026-03-03 02:56:01,721 - INFO - === OPERATION SUMMARY ===
+2026-03-03 02:56:01,721 - INFO - ============================================================
+2026-03-03 02:56:01,721 - INFO - Total repositories processed: 31
+2026-03-03 02:56:01,721 - INFO - Repositories cloned: 0
+2026-03-03 02:56:01,721 - INFO - Repositories pulled: 29
+2026-03-03 02:56:01,726 - INFO - Repositories committed: 4
+2026-03-03 02:56:01,726 - INFO - Repositories pushed: 4
+2026-03-03 02:56:01,726 - INFO - Failed operations: 2
+2026-03-03 02:56:01,726 - INFO - 
+Failed repositories:
+2026-03-03 02:56:01,726 - INFO -   • DeepCode: Remote repository not found: https://github.com/digital-duck/DeepCode.git
+2026-03-03 02:56:01,726 - INFO -   • st_semantics: Command '['git', 'pull']' returned non-zero exit status 128.
+2026-03-03 02:56:01,726 - INFO - 
+============================================================
+2026-03-03 02:56:01,726 - INFO - --- go_git.py finished at 2026-03-03 02:56:01.726633 ---
+2026-03-03 02:56:01,726 - INFO - All specified repositories have been processed.
