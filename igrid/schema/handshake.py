@@ -28,6 +28,7 @@ class JoinAck(BaseModel):
     agent_id: str
     tier: ComputeTier
     message: str = ""
+    status: str = "ONLINE"
 
 class LeaveRequest(BaseModel):
     operator_id: str

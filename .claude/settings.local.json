@@ -5,7 +5,9 @@
       "Bash(python:*)",
       "Bash(SPARK_HOME=\"\" python:*)",
       "Bash(pip install:*)",
-      "WebFetch(domain:www.citriniresearch.com)"
+      "WebFetch(domain:www.citriniresearch.com)",
+      "Bash(git:*)",
+      "Bash(pytest:*)"
     ]
   }
 }

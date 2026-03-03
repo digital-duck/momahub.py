@@ -30,17 +30,24 @@ app.add_typer(peer_app, name="peer")
 @hub_app.command("up")
 def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
            hub_url: str = typer.Option(""), db: str = typer.Option(""),
-           operator_id: str = typer.Option(""), api_key: str = typer.Option("")):
+           operator_id: str = typer.Option(""), api_key: str = typer.Option(""),
+           admin: bool = typer.Option(False, "--admin", help="Enable admin mode: agents require verification before receiving tasks"),
+           max_concurrent: int = typer.Option(3, "--max-concurrent", help="Max concurrent tasks per agent")):
     """Start the hub server."""
     cfg = load_config()
     from igrid.hub.app import create_app
     fastapi_app = create_app(operator_id=operator_id or cfg["operator_id"],
                               db_path=db or cfg["db_path"],
                               hub_url=hub_url or f"http://{host}:{port}",
-                              api_key=api_key or cfg["api_key"])
+                              api_key=api_key or cfg["api_key"],
+                              admin_mode=admin,
+                              max_concurrent_tasks=max_concurrent)
     lan_ip = _detect_lan_ip()
     actual_url = hub_url or f"http://{lan_ip}:{port}"
+    mode_label = "ADMIN (agents require verification)" if admin else "OPEN (any agent can join)"
     typer.echo(f"Starting hub on {host}:{port}")
+    typer.echo(f"  Mode: {mode_label}")
+    typer.echo(f"  Max concurrent tasks per agent: {max_concurrent}")
     typer.echo(f"")
     typer.echo(f"  Other machines can join with:")
     typer.echo(f"    moma join {actual_url}")
@@ -49,6 +56,45 @@ def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
 
 @hub_app.command("down")
 def hub_down(): typer.echo("Use Ctrl+C or your process manager to stop the hub.")
+
+@hub_app.command("pending")
+def hub_pending(hub_url: str = typer.Option("")):
+    """List agents awaiting approval."""
+    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    try:
+        agents = httpx.get(f"{url}/agents/pending", timeout=5.0).json().get("agents", [])
+        if not agents: typer.echo("No agents pending approval."); return
+        typer.echo(f"{'AGENT_ID':<38} {'OPERATOR':<15} {'JOINED_AT':<25}")
+        typer.echo("-"*78)
+        for a in agents:
+            typer.echo(f"{a['agent_id']:<38} {a.get('operator_id',''):<15} {a.get('joined_at',''):<25}")
+    except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
+
+@hub_app.command("approve")
+def hub_approve(agent_id: str = typer.Argument(..., help="Agent ID to approve"),
+                hub_url: str = typer.Option("")):
+    """Approve a pending agent."""
+    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    try:
+        resp = httpx.post(f"{url}/agents/{agent_id}/approve", timeout=5.0)
+        resp.raise_for_status()
+        typer.echo(f"Agent {agent_id} approved.")
+    except httpx.HTTPStatusError as exc:
+        typer.echo(f"Error: {exc.response.json().get('detail', exc)}", err=True); raise typer.Exit(1)
+    except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
+
+@hub_app.command("reject")
+def hub_reject(agent_id: str = typer.Argument(..., help="Agent ID to reject"),
+               hub_url: str = typer.Option("")):
+    """Reject/ban a pending agent."""
+    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    try:
+        resp = httpx.post(f"{url}/agents/{agent_id}/reject", timeout=5.0)
+        resp.raise_for_status()
+        typer.echo(f"Agent {agent_id} rejected.")
+    except httpx.HTTPStatusError as exc:
+        typer.echo(f"Error: {exc.response.json().get('detail', exc)}", err=True); raise typer.Exit(1)
+    except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @agent_app.command("up")
 def agent_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100),

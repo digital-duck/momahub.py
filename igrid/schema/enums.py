@@ -16,9 +16,10 @@ class TaskState(str, Enum):
     FAILED     = "FAILED"
 
 class AgentStatus(str, Enum):
-    ONLINE  = "ONLINE"
-    BUSY    = "BUSY"
-    OFFLINE = "OFFLINE"
+    ONLINE           = "ONLINE"
+    BUSY             = "BUSY"
+    OFFLINE          = "OFFLINE"
+    PENDING_APPROVAL = "PENDING_APPROVAL"
 
 def tier_from_tps(tps: float) -> ComputeTier:
     if tps >= 60: return ComputeTier.PLATINUM

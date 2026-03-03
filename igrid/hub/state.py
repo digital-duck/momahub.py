@@ -21,23 +21,46 @@ class GridState:
         self.hub_id = hub_id
         self.operator_id = operator_id
 
-    async def register_agent(self, req: JoinRequest, tier: ComputeTier) -> None:
+    async def register_agent(self, req: JoinRequest, tier: ComputeTier,
+                             admin_mode: bool = False) -> str:
+        """Register an agent. Returns the initial status string."""
         await self.db.execute("INSERT OR IGNORE INTO operators(operator_id) VALUES (?)", (req.operator_id,))
         gpus_json = json.dumps([g.model_dump() for g in req.gpus])
         models_json = json.dumps(req.supported_models)
-        await self.db.execute("""
+
+        # Determine initial status
+        if admin_mode:
+            # Check if agent was previously approved (re-join keeps ONLINE)
+            async with self.db.execute(
+                "SELECT status FROM agents WHERE agent_id=?", (req.agent_id,)
+            ) as cur:
+                existing = await cur.fetchone()
+            if existing and existing[0] == AgentStatus.ONLINE.value:
+                initial_status = AgentStatus.ONLINE.value
+            else:
+                initial_status = AgentStatus.PENDING_APPROVAL.value
+        else:
+            initial_status = AgentStatus.ONLINE.value
+
+        # For re-joining agents in admin mode, preserve approved status
+        on_conflict_status = (
+            "CASE WHEN agents.status = 'ONLINE' THEN 'ONLINE' ELSE excluded.status END"
+            if admin_mode else "'ONLINE'"
+        )
+        await self.db.execute(f"""
             INSERT INTO agents
                 (agent_id, operator_id, host, port, status, tier, gpus, cpu_cores, ram_gb, supported_models, pull_mode, joined_at, last_pulse)
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
             ON CONFLICT(agent_id) DO UPDATE SET
-                host=excluded.host, port=excluded.port, status='ONLINE', tier=excluded.tier,
+                host=excluded.host, port=excluded.port, status={on_conflict_status}, tier=excluded.tier,
                 gpus=excluded.gpus, cpu_cores=excluded.cpu_cores, ram_gb=excluded.ram_gb,
                 supported_models=excluded.supported_models, pull_mode=excluded.pull_mode, last_pulse=excluded.last_pulse
             """,
             (req.agent_id, req.operator_id, req.host, req.port,
-             AgentStatus.ONLINE.value, tier.value, gpus_json, req.cpu_cores, req.ram_gb, models_json,
+             initial_status, tier.value, gpus_json, req.cpu_cores, req.ram_gb, models_json,
              int(req.pull_mode), _now(), _now()))
         await self.db.commit()
+        return initial_status
 
     async def remove_agent(self, agent_id: str) -> None:
         await self.db.execute("UPDATE agents SET status=? WHERE agent_id=?", (AgentStatus.OFFLINE.value, agent_id))
@@ -46,6 +69,34 @@ class GridState:
             WHERE agent_id=? AND state IN (?,?)
             """, (TaskState.PENDING.value, _now(), agent_id, TaskState.DISPATCHED.value, TaskState.IN_FLIGHT.value))
         await self.db.commit()
+
+    async def approve_agent(self, agent_id: str) -> bool:
+        """Approve a pending agent → ONLINE. Returns True if agent existed."""
+        async with self.db.execute(
+            "UPDATE agents SET status=? WHERE agent_id=? RETURNING agent_id",
+            (AgentStatus.ONLINE.value, agent_id),
+        ) as cur:
+            row = await cur.fetchone()
+        await self.db.commit()
+        return row is not None
+
+    async def reject_agent(self, agent_id: str) -> bool:
+        """Reject/ban an agent → OFFLINE. Returns True if agent existed."""
+        async with self.db.execute(
+            "UPDATE agents SET status=? WHERE agent_id=? RETURNING agent_id",
+            (AgentStatus.OFFLINE.value, agent_id),
+        ) as cur:
+            row = await cur.fetchone()
+        await self.db.commit()
+        return row is not None
+
+    async def list_pending_agents(self) -> list[dict]:
+        """List agents awaiting approval."""
+        async with self.db.execute(
+            "SELECT * FROM agents WHERE status=? ORDER BY joined_at",
+            (AgentStatus.PENDING_APPROVAL.value,),
+        ) as cur:
+            return [dict(row) for row in await cur.fetchall()]
 
     async def record_pulse(self, agent_id: str, status: AgentStatus, gpu_util: float, vram_used: float, tps: float, tasks_done: int) -> None:
         now = _now()

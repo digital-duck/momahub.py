@@ -15,22 +15,35 @@ def _tier_index(tier_str: str) -> int:
     try: return _TIER_ORDER.index(ComputeTier(tier_str))
     except ValueError: return len(_TIER_ORDER)
 
-async def pick_agent(state: GridState, req: TaskRequest) -> dict | None:
+async def pick_agent(state: GridState, req: TaskRequest,
+                     max_concurrent: int = 0) -> dict | None:
     agents = await state.list_agents()
     min_idx = _tier_index(req.min_tier.value)
     candidates = []
     for a in agents:
-        if a["status"] == "OFFLINE": continue
+        if a["status"] in ("OFFLINE", "PENDING_APPROVAL"): continue
         if _tier_index(a["tier"]) > min_idx: continue
         gpus = json.loads(a.get("gpus") or "[]")
         primary_vram = gpus[0]["vram_gb"] if gpus else 0.0
         if req.min_vram_gb > 0 and primary_vram < req.min_vram_gb: continue
         supported = json.loads(a.get("supported_models") or "[]")
         if supported and req.model and req.model not in supported: continue
-        candidates.append(a)
+        # Rate limiting: skip agent if at max concurrent tasks
+        active_count = 0
+        if max_concurrent > 0:
+            async with state.db.execute(
+                "SELECT COUNT(*) FROM tasks WHERE agent_id=? AND state IN (?,?)",
+                (a["agent_id"], TaskState.DISPATCHED.value, TaskState.IN_FLIGHT.value),
+            ) as cur:
+                active_count = (await cur.fetchone())[0]
+            if active_count >= max_concurrent:
+                continue
+        candidates.append((a, active_count))
     if not candidates: return None
-    candidates.sort(key=lambda a: (0 if a["status"] == "ONLINE" else 1, _tier_index(a["tier"])))
-    return candidates[0]
+    # Sort: prefer ONLINE, then best tier, then least loaded
+    candidates.sort(key=lambda x: (0 if x[0]["status"] == "ONLINE" else 1,
+                                   _tier_index(x[0]["tier"]), x[1]))
+    return candidates[0][0]
 
 async def deliver_task(agent: dict, req: TaskRequest) -> TaskResult:
     url = f"http://{agent['host']}:{agent['port']}/run"
@@ -39,7 +52,8 @@ async def deliver_task(agent: dict, req: TaskRequest) -> TaskResult:
         resp.raise_for_status()
     return TaskResult(**resp.json())
 
-async def dispatch_pending(state: GridState, sse_queues: dict | None = None) -> int:
+async def dispatch_pending(state: GridState, sse_queues: dict | None = None,
+                           max_concurrent: int = 0) -> int:
     async with state.db.execute("SELECT * FROM tasks WHERE state=? ORDER BY priority DESC, created_at LIMIT 50", (TaskState.PENDING.value,)) as cur:
         rows = [dict(r) for r in await cur.fetchall()]
     dispatched = 0
@@ -49,7 +63,7 @@ async def dispatch_pending(state: GridState, sse_queues: dict | None = None) -> 
                           temperature=row["temperature"], min_tier=ComputeTier(row["min_tier"]),
                           min_vram_gb=row["min_vram_gb"], timeout_s=row["timeout_s"],
                           priority=row["priority"])
-        agent = await pick_agent(state, req)
+        agent = await pick_agent(state, req, max_concurrent=max_concurrent)
         if agent is None: continue
         claimed = await state.claim_task(req.task_id, agent["agent_id"])
         if not claimed: continue

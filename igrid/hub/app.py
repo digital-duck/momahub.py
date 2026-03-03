@@ -1,20 +1,27 @@
 """i-grid Hub FastAPI application."""
 from __future__ import annotations
 import asyncio
+import json
 import logging
 import os
+import time
 import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import Annotated
 
+import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from igrid.hub.db import init_db
 from igrid.hub.state import GridState
-from igrid.hub.dispatcher import dispatch_pending
+from igrid.hub.dispatcher import dispatch_pending, deliver_task
 from igrid.hub.cluster import ClusterManager
 from igrid.hub.monitor import agent_monitor, cluster_monitor
+from igrid.hub.verification import (
+    pick_verification_task, check_verification_result,
+    should_sample_for_review, VERIFY_TASK_PREFIX,
+)
 from igrid.schema.enums import AgentStatus, ComputeTier, TaskState, tier_from_tps
 from igrid.schema.handshake import JoinRequest, JoinAck, LeaveRequest, LeaveAck
 from igrid.schema.pulse import PulseReport, PulseAck
@@ -25,7 +32,8 @@ _log = logging.getLogger("igrid.hub")
 
 def create_app(hub_id: str | None = None, operator_id: str = "duck",
                db_path: str = ".igrid/hub.db", hub_url: str = "http://localhost:8000",
-               api_key: str = "") -> FastAPI:
+               api_key: str = "", admin_mode: bool = False,
+               max_concurrent_tasks: int = 3) -> FastAPI:
     _hub_id = hub_id or f"hub-{uuid.uuid4().hex[:8]}"
     _state: GridState | None = None
     _cluster_mgr: ClusterManager | None = None
@@ -43,6 +51,9 @@ def create_app(hub_id: str | None = None, operator_id: str = "duck",
         app.state.grid = _state
         app.state.cluster = _cluster_mgr
         app.state.api_key = api_key
+        app.state.admin_mode = admin_mode
+        app.state.max_concurrent_tasks = max_concurrent_tasks
+        app.state.allowed_countries = []  # empty = all allowed
         app.state.sse_queues = {}
         tasks = [
             asyncio.create_task(agent_monitor(_state), name="agent-monitor"),
@@ -74,11 +85,24 @@ def create_app(hub_id: str | None = None, operator_id: str = "duck",
                 "time": datetime.now(timezone.utc).isoformat()}
 
     @app.post("/join", response_model=JoinAck, dependencies=[Depends(check_api_key)])
-    async def join(req: JoinRequest, state: GridDep):
-        await state.register_agent(req, ComputeTier.BRONZE)
-        _log.info("agent %s joined", req.agent_id)
+    async def join(req: JoinRequest, request: Request, state: GridDep):
+        is_admin = request.app.state.admin_mode
+        initial_status = await state.register_agent(req, ComputeTier.BRONZE, admin_mode=is_admin)
+        _log.info("agent %s joined  status=%s  admin_mode=%s", req.agent_id, initial_status, is_admin)
+        if initial_status == AgentStatus.PENDING_APPROVAL.value:
+            # Spawn background verification task
+            asyncio.create_task(
+                _verify_agent(state, request.app, req),
+                name=f"verify-{req.agent_id[:8]}",
+            )
+            return JoinAck(accepted=True, hub_id=state.hub_id, operator_id=req.operator_id,
+                           agent_id=req.agent_id, tier=ComputeTier.BRONZE,
+                           status=AgentStatus.PENDING_APPROVAL.value,
+                           message="Pending verification. A benchmark task has been sent.")
         return JoinAck(accepted=True, hub_id=state.hub_id, operator_id=req.operator_id,
-                       agent_id=req.agent_id, tier=ComputeTier.BRONZE, message="Welcome to the grid.")
+                       agent_id=req.agent_id, tier=ComputeTier.BRONZE,
+                       status=AgentStatus.ONLINE.value,
+                       message="Welcome to the grid.")
 
     @app.post("/leave", response_model=LeaveAck)
     async def leave(req: LeaveRequest, state: GridDep):
@@ -117,6 +141,29 @@ def create_app(hub_id: str | None = None, operator_id: str = "duck",
     @app.get("/agents")
     async def list_agents(state: GridDep):
         return {"agents": await state.list_agents()}
+
+    @app.get("/agents/pending")
+    async def list_pending_agents(state: GridDep):
+        """List agents awaiting approval (admin mode)."""
+        return {"agents": await state.list_pending_agents()}
+
+    @app.post("/agents/{agent_id}/approve")
+    async def approve_agent(agent_id: str, state: GridDep):
+        """Manually approve a pending agent."""
+        ok = await state.approve_agent(agent_id)
+        if not ok:
+            raise HTTPException(status_code=404, detail="Agent not found")
+        _log.info("agent %s manually approved", agent_id)
+        return {"ok": True, "agent_id": agent_id, "status": "ONLINE"}
+
+    @app.post("/agents/{agent_id}/reject")
+    async def reject_agent(agent_id: str, state: GridDep):
+        """Reject/ban a pending agent."""
+        ok = await state.reject_agent(agent_id)
+        if not ok:
+            raise HTTPException(status_code=404, detail="Agent not found")
+        _log.info("agent %s rejected", agent_id)
+        return {"ok": True, "agent_id": agent_id, "status": "OFFLINE"}
 
     @app.get("/rewards")
     async def reward_summary(state: GridDep):
@@ -203,8 +250,71 @@ def create_app(hub_id: str | None = None, operator_id: str = "duck",
 async def _dispatch_loop(state: GridState, app: FastAPI, interval_s: float = 2.0) -> None:
     while True:
         try:
-            n = await dispatch_pending(state, sse_queues=app.state.sse_queues)
+            n = await dispatch_pending(
+                state,
+                sse_queues=app.state.sse_queues,
+                max_concurrent=app.state.max_concurrent_tasks,
+            )
             if n: _log.debug("dispatched %d tasks", n)
         except Exception as exc:
             _log.error("dispatch loop error: %s", exc)
         await asyncio.sleep(interval_s)
+
+
+async def _verify_agent(state: GridState, app: FastAPI, req: JoinRequest) -> None:
+    """Background task: send verification benchmark to a newly joined agent."""
+    agent_id = req.agent_id
+    model = req.cached_models[0] if req.cached_models else (req.supported_models[0] if req.supported_models else "llama3")
+    vtask = pick_verification_task(agent_id, model)
+
+    # Look up agent record for HTTP delivery
+    async with state.db.execute(
+        "SELECT host, port, pull_mode FROM agents WHERE agent_id=?", (agent_id,)
+    ) as cur:
+        row = await cur.fetchone()
+    if row is None:
+        _log.warning("verify: agent %s not found in DB", agent_id)
+        return
+
+    agent_host, agent_port, pull_mode = row[0], row[1], row[2]
+    _log.info("verify: sending benchmark to agent %s  model=%s  task=%s", agent_id, model, vtask.task_id)
+
+    try:
+        t0 = time.monotonic()
+        url = f"http://{agent_host}:{agent_port}/run"
+        async with httpx.AsyncClient(timeout=httpx.Timeout(vtask.timeout_s + 10.0)) as client:
+            resp = await client.post(url, json=vtask.model_dump())
+            resp.raise_for_status()
+        elapsed_ms = (time.monotonic() - t0) * 1000
+        result = TaskResult(**resp.json())
+    except Exception as exc:
+        _log.warning("verify: benchmark failed for agent %s: %s", agent_id, exc)
+        return  # stays PENDING_APPROVAL for manual review
+
+    # Check benchmark result
+    if not check_verification_result(result, elapsed_ms):
+        _log.warning("verify: agent %s failed benchmark (tokens=%d, elapsed=%.0fms)",
+                     agent_id, result.output_tokens, elapsed_ms)
+        return  # stays PENDING_APPROVAL
+
+    # Geo-IP check
+    allowed_countries = app.state.allowed_countries
+    if allowed_countries:
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                geo = await client.get(f"http://ip-api.com/json/{agent_host}")
+                country = geo.json().get("countryCode", "")
+            if country not in allowed_countries:
+                _log.warning("verify: agent %s geo-IP %s not in allowed list", agent_id, country)
+                return  # stays PENDING_APPROVAL
+        except Exception as exc:
+            _log.warning("verify: geo-IP check failed for agent %s: %s (proceeding)", agent_id, exc)
+
+    # Random sampling for manual review
+    if should_sample_for_review():
+        _log.info("verify: agent %s passed but sampled for manual review", agent_id)
+        return  # stays PENDING_APPROVAL, flagged for review
+
+    # Auto-approve
+    await state.approve_agent(agent_id)
+    _log.info("verify: agent %s auto-approved", agent_id)
