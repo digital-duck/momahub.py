@@ -39,32 +39,42 @@ async def deliver_task(agent: dict, req: TaskRequest) -> TaskResult:
         resp.raise_for_status()
     return TaskResult(**resp.json())
 
-async def dispatch_pending(state: GridState) -> int:
-    async with state.db.execute("SELECT * FROM tasks WHERE state=? ORDER BY created_at LIMIT 50", (TaskState.PENDING.value,)) as cur:
+async def dispatch_pending(state: GridState, sse_queues: dict | None = None) -> int:
+    async with state.db.execute("SELECT * FROM tasks WHERE state=? ORDER BY priority DESC, created_at LIMIT 50", (TaskState.PENDING.value,)) as cur:
         rows = [dict(r) for r in await cur.fetchall()]
     dispatched = 0
     for row in rows:
         req = TaskRequest(task_id=row["task_id"], model=row["model"], prompt=row["prompt"],
                           system=row["system"] or "", max_tokens=row["max_tokens"],
                           temperature=row["temperature"], min_tier=ComputeTier(row["min_tier"]),
-                          min_vram_gb=row["min_vram_gb"], timeout_s=row["timeout_s"])
+                          min_vram_gb=row["min_vram_gb"], timeout_s=row["timeout_s"],
+                          priority=row["priority"])
         agent = await pick_agent(state, req)
         if agent is None: continue
         claimed = await state.claim_task(req.task_id, agent["agent_id"])
         if not claimed: continue
         _log.info("dispatching task %s → agent %s", req.task_id, agent["agent_id"])
-        asyncio.create_task(_deliver_and_update(state, agent, req), name=f"deliver-{req.task_id[:8]}")
+        asyncio.create_task(_deliver_and_update(state, agent, req, sse_queues), name=f"deliver-{req.task_id[:8]}")
         dispatched += 1
     return dispatched
 
-async def _deliver_and_update(state: GridState, agent: dict, req: TaskRequest) -> None:
+async def _deliver_and_update(state: GridState, agent: dict, req: TaskRequest,
+                              sse_queues: dict | None = None) -> None:
+    aid = agent["agent_id"]
+    # Pull mode: put task on SSE queue, agent will POST results back
+    if sse_queues and aid in sse_queues:
+        await state.mark_in_flight(req.task_id)
+        await sse_queues[aid].put(req)
+        _log.info("task %s queued via SSE for agent %s", req.task_id, aid)
+        return
+    # Push mode: HTTP POST to agent /run endpoint
     await state.mark_in_flight(req.task_id)
     try:
         result = await deliver_task(agent, req)
         await state.complete_task(req.task_id, result)
         tokens = result.output_tokens
-        await state.record_reward(agent.get("operator_id", "unknown"), agent["agent_id"], req.task_id, tokens, tokens / 1000.0)
+        await state.record_reward(agent.get("operator_id", "unknown"), aid, req.task_id, tokens, tokens / 1000.0)
         _log.info("task %s complete  tokens=%d", req.task_id, tokens)
     except Exception as exc:
-        _log.warning("task %s failed on agent %s: %s", req.task_id, agent["agent_id"], exc)
+        _log.warning("task %s failed on agent %s: %s", req.task_id, aid, exc)
         await state.fail_task(req.task_id, str(exc))

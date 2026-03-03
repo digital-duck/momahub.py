@@ -17,6 +17,8 @@ class JoinRequest(BaseModel):
     cpu_cores: int = 0
     ram_gb: float = 0.0
     supported_models: list[str] = Field(default_factory=list)
+    cached_models: list[str] = Field(default_factory=list, description="Models already pulled locally in Ollama")
+    pull_mode: bool = Field(default=False, description="True = agent uses SSE pull instead of HTTP push")
     api_key: str = ""
 
 class JoinAck(BaseModel):

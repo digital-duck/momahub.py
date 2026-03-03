@@ -13,6 +13,7 @@ class TaskRequest(BaseModel):
     min_tier: ComputeTier = ComputeTier.BRONZE
     min_vram_gb: float = 0.0
     timeout_s: int = 300
+    priority: int = Field(default=1, ge=0, description="Higher value = dispatched first")
 
 class TaskResult(BaseModel):
     task_id: str

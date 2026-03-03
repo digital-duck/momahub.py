@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from igrid.hub.db import init_db
 from igrid.hub.state import GridState
 from igrid.hub.dispatcher import dispatch_pending
@@ -42,10 +43,11 @@ def create_app(hub_id: str | None = None, operator_id: str = "duck",
         app.state.grid = _state
         app.state.cluster = _cluster_mgr
         app.state.api_key = api_key
+        app.state.sse_queues = {}
         tasks = [
             asyncio.create_task(agent_monitor(_state), name="agent-monitor"),
             asyncio.create_task(cluster_monitor(_state, _cluster_mgr), name="cluster-monitor"),
-            asyncio.create_task(_dispatch_loop(_state), name="dispatch-loop"),
+            asyncio.create_task(_dispatch_loop(_state, app), name="dispatch-loop"),
         ]
         _log.info("hub %s started  url=%s  db=%s", _hub_id, hub_url, db_path)
         yield
@@ -147,12 +149,61 @@ def create_app(hub_id: str | None = None, operator_id: str = "duck",
     async def cluster_status(state: GridDep):
         return ClusterStatus(this_hub_id=state.hub_id, peers=await state.list_peers())
 
+    # ── SSE pull-mode endpoints ──────────────────────────────────
+
+    @app.get("/task-stream/{agent_id}")
+    async def task_stream(agent_id: str, request: Request):
+        """SSE endpoint for pull-mode agents. Yields task JSON as events."""
+        queue: asyncio.Queue = asyncio.Queue()
+        request.app.state.sse_queues[agent_id] = queue
+        _log.info("SSE stream opened for agent %s", agent_id)
+
+        async def event_generator():
+            try:
+                while True:
+                    try:
+                        task = await asyncio.wait_for(queue.get(), timeout=15.0)
+                        yield f"data: {task.model_dump_json()}\n\n"
+                    except asyncio.TimeoutError:
+                        yield ": keepalive\n\n"
+                    if await request.is_disconnected():
+                        break
+            finally:
+                request.app.state.sse_queues.pop(agent_id, None)
+                _log.info("SSE stream closed for agent %s", agent_id)
+
+        return StreamingResponse(event_generator(), media_type="text/event-stream",
+                                 headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+    @app.post("/results")
+    async def receive_results(result: TaskResult, state: GridDep):
+        """Receive task results from pull-mode agents."""
+        row = await state.get_task(result.task_id)
+        if row is None:
+            raise HTTPException(status_code=404, detail="Task not found")
+        # Idempotent: skip if already completed
+        if row["state"] in (TaskState.COMPLETE.value, TaskState.FAILED.value):
+            return {"ok": True, "detail": "already completed"}
+        await state.complete_task(result.task_id, result)
+        if result.state == TaskState.COMPLETE and result.output_tokens > 0:
+            agent_id = result.agent_id or row.get("agent_id") or ""
+            operator_id = "unknown"
+            if agent_id:
+                async with state.db.execute("SELECT operator_id FROM agents WHERE agent_id=?", (agent_id,)) as cur:
+                    agent_row = await cur.fetchone()
+                if agent_row:
+                    operator_id = agent_row[0]
+            await state.record_reward(operator_id, agent_id, result.task_id,
+                                      result.output_tokens, result.output_tokens / 1000.0)
+        _log.info("results received for task %s from agent %s", result.task_id, result.agent_id)
+        return {"ok": True}
+
     return app
 
-async def _dispatch_loop(state: GridState, interval_s: float = 2.0) -> None:
+async def _dispatch_loop(state: GridState, app: FastAPI, interval_s: float = 2.0) -> None:
     while True:
         try:
-            n = await dispatch_pending(state)
+            n = await dispatch_pending(state, sse_queues=app.state.sse_queues)
             if n: _log.debug("dispatched %d tasks", n)
         except Exception as exc:
             _log.error("dispatch loop error: %s", exc)

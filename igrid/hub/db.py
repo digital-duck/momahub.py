@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS agents (
     supported_models TEXT NOT NULL DEFAULT '[]',
     current_tps      REAL    NOT NULL DEFAULT 0.0,
     tasks_completed  INTEGER NOT NULL DEFAULT 0,
+    pull_mode        INTEGER NOT NULL DEFAULT 0,
     joined_at        TEXT NOT NULL DEFAULT (datetime('now')),
     last_pulse       TEXT
 );
@@ -55,6 +56,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     min_tier      TEXT    NOT NULL DEFAULT 'BRONZE',
     min_vram_gb   REAL    NOT NULL DEFAULT 0.0,
     timeout_s     INTEGER NOT NULL DEFAULT 300,
+    priority      INTEGER NOT NULL DEFAULT 1,
     agent_id      TEXT,
     peer_hub_id   TEXT,
     content       TEXT,
@@ -103,5 +105,10 @@ async def init_db(path: str) -> aiosqlite.Connection:
     db = await aiosqlite.connect(path)
     db.row_factory = aiosqlite.Row
     await db.executescript(DDL)
+    # migrate existing databases: add pull_mode column if missing
+    async with db.execute("PRAGMA table_info(agents)") as cur:
+        cols = {row[1] for row in await cur.fetchall()}
+    if "pull_mode" not in cols:
+        await db.execute("ALTER TABLE agents ADD COLUMN pull_mode INTEGER NOT NULL DEFAULT 0")
     await db.commit()
     return db

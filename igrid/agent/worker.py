@@ -21,7 +21,7 @@ class AgentStats:
 
 def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
                      hub_urls: list[str] | None = None, ollama_url: str = "http://localhost:11434",
-                     api_key: str = "") -> FastAPI:
+                     api_key: str = "", pull_mode: bool = False) -> FastAPI:
     _agent_id = agent_id or str(uuid.uuid4())
     _hub_urls = hub_urls or ["http://localhost:8000"]
     _stats = AgentStats()
@@ -40,7 +40,8 @@ def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
         host = app.state.host; port = app.state.port
         join_req = JoinRequest(operator_id=operator_id, agent_id=_agent_id, host=host, port=port,
                                gpus=schema_gpus, cpu_cores=cpu_cores, ram_gb=ram_gb,
-                               supported_models=models, api_key=api_key)
+                               supported_models=models, cached_models=models,
+                               pull_mode=pull_mode, api_key=api_key)
         async with httpx.AsyncClient(timeout=10.0) as client:
             for hub_url in _hub_urls:
                 try:
@@ -52,7 +53,18 @@ def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
         app.state.agent_id = _agent_id; app.state.stats = _stats; app.state.backend = _backend
         tele = TelemetrySender(_agent_id, operator_id, _hub_urls, _stats.get)
         tele_task = asyncio.create_task(tele.run(), name="telemetry")
+        sse_tasks: list[asyncio.Task] = []
+        if pull_mode:
+            from igrid.agent.sse_consumer import run_sse_consumer
+            for hub_url in _hub_urls:
+                t = asyncio.create_task(
+                    run_sse_consumer(_agent_id, hub_url, _backend, _stats),
+                    name=f"sse-{hub_url}",
+                )
+                sse_tasks.append(t)
+            _log.info("pull mode: %d SSE consumer(s) started", len(sse_tasks))
         yield
+        for t in sse_tasks: t.cancel()
         async with httpx.AsyncClient(timeout=5.0) as client:
             for hub_url in _hub_urls:
                 try: await client.post(f"{hub_url}/leave", json={"operator_id": operator_id, "agent_id": _agent_id})

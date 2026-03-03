@@ -689,3 +689,180 @@ Test scenarios:
 ---
 
 *Awaiting your approval to begin Phase 1 implementation.*
+
+---
+
+## 14. WAN Solutions: NAT Traversal for Distributed Inference
+
+### The Problem
+
+On a LAN, the hub can push tasks directly to agents via HTTP POST because all machines
+have routable IPs. Over the internet (WAN), agents sit behind ISP firewalls/NAT and
+**cannot accept inbound connections**. This section documents 4 solutions, from simplest
+to most complex.
+
+---
+
+### Solution 1: SSE Pull Mode (Implemented)
+
+**Complexity:** Low | **Dependencies:** None | **Latency:** ~2s
+
+```
+Agent ──GET /task-stream/{agent_id}──► Hub    (SSE, stays open)
+       ◄── data: {task JSON} ──────────
+Agent runs Ollama locally
+Agent ──POST /results──────────────► Hub
+```
+
+**How it works:**
+- Agent opens a long-lived HTTP GET to the hub's `/task-stream/{agent_id}` endpoint
+- Hub holds the connection open as a Server-Sent Events stream
+- When the dispatcher assigns a task to a pull-mode agent, it puts the task on an
+  asyncio.Queue; the SSE handler yields it as `data: {json}\n\n`
+- Agent deserializes the task, runs Ollama, POSTs the result back to `/results`
+- Keepalive comments (`: keepalive\n\n`) sent every 15s prevent proxy timeouts
+
+**Pros:**
+- Outbound-only connections — works through any NAT/firewall
+- No extra infrastructure — just FastAPI + asyncio.Queue
+- Backward-compatible — push-mode agents work unchanged
+
+**Cons:**
+- Hub must hold one open connection per pull-mode agent (fine for <1000 agents)
+- ~2s dispatch latency (dispatch loop interval)
+
+**CLI usage:**
+```bash
+# Agent behind NAT joins hub on the public internet:
+moma join http://hub.example.com:8000 --pull
+
+# Hub operator needs no changes — both modes work simultaneously
+moma hub up --host 0.0.0.0 --port 8000
+```
+
+---
+
+### Solution 2: WebSocket Bidirectional Channel
+
+**Complexity:** Medium | **Dependencies:** `websockets` | **Latency:** <100ms
+
+```
+Agent ──WS /ws/{agent_id}──► Hub    (persistent WebSocket)
+       ◄── task JSON ──────────      (hub pushes instantly)
+       ── result JSON ──────►        (agent sends back on same socket)
+```
+
+**How it works:**
+- Agent opens a WebSocket connection to the hub
+- Hub can push tasks instantly (no polling delay)
+- Agent sends results back over the same WebSocket (no separate POST)
+- Bidirectional — hub can also send control messages (cancel, reconfigure)
+
+**Pros:**
+- Lowest latency of all NAT-traversal solutions
+- Single connection for both directions
+- Built-in binary frame support for future features
+
+**Cons:**
+- More complex protocol (message framing, error recovery)
+- Some corporate proxies block WebSocket upgrades
+- Requires `websockets` or Starlette WebSocket support
+
+**When to use:** When sub-second dispatch latency matters and you control the
+network path (no hostile proxies).
+
+---
+
+### Solution 3: Reverse SSH Tunnel
+
+**Complexity:** Medium | **Dependencies:** SSH access to hub machine | **Latency:** ~0ms (direct TCP)
+
+```
+Agent ──ssh -R 8100:localhost:8100──► Hub machine
+Hub ──POST http://localhost:8100/run──► (tunneled to agent)
+```
+
+**How it works:**
+- Agent opens a reverse SSH tunnel: remote port 8100 on the hub machine forwards
+  to the agent's local port 8100
+- Hub dispatches tasks via HTTP POST to `localhost:8100` — the SSH tunnel carries
+  the traffic to the agent transparently
+- The hub thinks the agent is local — zero code changes needed
+
+**Pros:**
+- Zero application code changes — hub uses normal push mode
+- Strong encryption (SSH)
+- Works through any firewall that allows outbound SSH
+
+**Cons:**
+- Requires SSH access to the hub machine (not always possible)
+- One SSH tunnel per agent — operational overhead
+- If the tunnel drops, tasks fail until reconnected
+- Port management becomes complex with many agents
+
+**Setup:**
+```bash
+# On the agent machine (behind NAT):
+ssh -R 8100:localhost:8100 user@hub.example.com -N
+
+# Then join normally (hub sees you as localhost):
+moma join http://hub.example.com:8000 --host localhost --port 8100
+```
+
+---
+
+### Solution 4: Tailscale / WireGuard VPN Mesh
+
+**Complexity:** Low (setup) / High (infra) | **Dependencies:** Tailscale account or WireGuard config | **Latency:** ~0ms
+
+```
+Agent (100.x.x.x) ◄──Tailscale mesh──► Hub (100.y.y.y)
+                    (encrypted WireGuard tunnel)
+Hub ──POST http://100.x.x.x:8100/run──► Agent    (direct, as if LAN)
+```
+
+**How it works:**
+- All machines install Tailscale (or configure WireGuard manually)
+- Each machine gets a stable `100.x.x.x` IP on the Tailscale network
+- Hub and agents communicate as if on a LAN — zero NAT issues
+- No application code changes needed
+
+**Pros:**
+- Zero application code changes — everything works like a LAN
+- Encrypted by default (WireGuard)
+- Tailscale handles NAT traversal, key management, ACLs
+- Works even when both sides are behind NAT (DERP relay fallback)
+
+**Cons:**
+- Requires installing Tailscale/WireGuard on every machine
+- Tailscale free tier: up to 100 devices (plenty for a grid)
+- Adds a dependency on external infrastructure
+- WireGuard manual setup is complex for non-technical users
+
+**Setup:**
+```bash
+# On every machine (hub + all agents):
+curl -fsSL https://tailscale.com/install.sh | sh
+tailscale up
+
+# Hub starts normally:
+moma hub up --host 0.0.0.0 --port 8000
+
+# Agent joins using Tailscale IP of the hub:
+moma join http://100.64.0.1:8000
+```
+
+---
+
+### Comparison Matrix
+
+| Solution | Code Changes | Latency | Firewall-Safe | Extra Infra | Best For |
+|----------|-------------|---------|---------------|-------------|----------|
+| SSE Pull | Hub + Agent | ~2s | Yes | None | WAN with friends, PoC |
+| WebSocket | Hub + Agent | <100ms | Mostly | None | Low-latency production |
+| SSH Tunnel | None | ~0ms | Yes (SSH out) | SSH access | Quick hack, 1-2 agents |
+| VPN Mesh | None | ~0ms | Yes | Tailscale/WG | Permanent grid, many agents |
+
+**Recommendation for the weekend WAN test:** Start with **SSE Pull Mode** (Solution 1).
+It requires no extra infrastructure, works through any NAT, and is already implemented.
+If latency becomes an issue, upgrade to WebSocket (Solution 2) later.

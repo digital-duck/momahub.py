@@ -27,15 +27,16 @@ class GridState:
         models_json = json.dumps(req.supported_models)
         await self.db.execute("""
             INSERT INTO agents
-                (agent_id, operator_id, host, port, status, tier, gpus, cpu_cores, ram_gb, supported_models, joined_at, last_pulse)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+                (agent_id, operator_id, host, port, status, tier, gpus, cpu_cores, ram_gb, supported_models, pull_mode, joined_at, last_pulse)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
             ON CONFLICT(agent_id) DO UPDATE SET
                 host=excluded.host, port=excluded.port, status='ONLINE', tier=excluded.tier,
                 gpus=excluded.gpus, cpu_cores=excluded.cpu_cores, ram_gb=excluded.ram_gb,
-                supported_models=excluded.supported_models, last_pulse=excluded.last_pulse
+                supported_models=excluded.supported_models, pull_mode=excluded.pull_mode, last_pulse=excluded.last_pulse
             """,
             (req.agent_id, req.operator_id, req.host, req.port,
-             AgentStatus.ONLINE.value, tier.value, gpus_json, req.cpu_cores, req.ram_gb, models_json, _now(), _now()))
+             AgentStatus.ONLINE.value, tier.value, gpus_json, req.cpu_cores, req.ram_gb, models_json,
+             int(req.pull_mode), _now(), _now()))
         await self.db.commit()
 
     async def remove_agent(self, agent_id: str) -> None:
@@ -73,10 +74,10 @@ class GridState:
 
     async def submit_task(self, req: TaskRequest) -> str:
         await self.db.execute("""
-            INSERT INTO tasks (task_id, state, model, prompt, system, max_tokens, temperature, min_tier, min_vram_gb, timeout_s, created_at, updated_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+            INSERT INTO tasks (task_id, state, model, prompt, system, max_tokens, temperature, min_tier, min_vram_gb, timeout_s, priority, created_at, updated_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
             """, (req.task_id, TaskState.PENDING.value, req.model, req.prompt, req.system, req.max_tokens,
-                  req.temperature, req.min_tier.value, req.min_vram_gb, req.timeout_s, _now(), _now()))
+                  req.temperature, req.min_tier.value, req.min_vram_gb, req.timeout_s, req.priority, _now(), _now()))
         await self.db.commit()
         return req.task_id
 

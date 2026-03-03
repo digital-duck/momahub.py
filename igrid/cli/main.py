@@ -2,10 +2,22 @@
 Note: Typer is used (built on Click under the hood).
 """
 from __future__ import annotations
-import asyncio, json, time, uuid
+import asyncio, json, socket, time, uuid
 from typing import Optional
 import httpx, typer, uvicorn
 from igrid.cli.config import load_config, save_config, show_config
+
+
+def _detect_lan_ip() -> str:
+    """Auto-detect LAN IP via UDP socket trick (no packets sent)."""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
 
 app = typer.Typer(name="moma", help="MoMaHub i-grid: distributed AI inference network.", no_args_is_help=True)
 hub_app = typer.Typer(help="Hub management commands.")
@@ -26,7 +38,13 @@ def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
                               db_path=db or cfg["db_path"],
                               hub_url=hub_url or f"http://{host}:{port}",
                               api_key=api_key or cfg["api_key"])
+    lan_ip = _detect_lan_ip()
+    actual_url = hub_url or f"http://{lan_ip}:{port}"
     typer.echo(f"Starting hub on {host}:{port}")
+    typer.echo(f"")
+    typer.echo(f"  Other machines can join with:")
+    typer.echo(f"    moma join {actual_url}")
+    typer.echo(f"")
     uvicorn.run(fastapi_app, host=host, port=port, log_level="info")
 
 @hub_app.command("down")
@@ -35,31 +53,36 @@ def hub_down(): typer.echo("Use Ctrl+C or your process manager to stop the hub."
 @agent_app.command("up")
 def agent_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100),
              join: str = typer.Option(""), operator_id: str = typer.Option(""),
-             ollama_url: str = typer.Option(""), api_key: str = typer.Option("")):
+             ollama_url: str = typer.Option(""), api_key: str = typer.Option(""),
+             pull: bool = typer.Option(False, "--pull", help="Use SSE pull mode (WAN-safe, no inbound ports needed)")):
     """Start the agent node."""
     cfg = load_config()
     hub_urls = [u.strip() for u in join.split(",") if u.strip()] if join else cfg["hub_urls"]
     from igrid.agent.worker import create_agent_app
     agent_app_instance = create_agent_app(operator_id=operator_id or cfg["operator_id"],
                                           hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"],
-                                          api_key=api_key or cfg["api_key"])
+                                          api_key=api_key or cfg["api_key"], pull_mode=pull)
     agent_app_instance.state.host = host if host != "0.0.0.0" else "127.0.0.1"
     agent_app_instance.state.port = port
-    typer.echo(f"Starting agent on {host}:{port}  hubs={hub_urls}")
+    mode = "PULL (SSE)" if pull else "PUSH (HTTP)"
+    typer.echo(f"Starting agent on {host}:{port}  mode={mode}  hubs={hub_urls}")
     uvicorn.run(agent_app_instance, host=host, port=port, log_level="info")
 
 @app.command("join")
 def join_grid(hub_urls: list[str] = typer.Argument(...),
               host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100),
-              operator_id: str = typer.Option(""), ollama_url: str = typer.Option("")):
+              operator_id: str = typer.Option(""), ollama_url: str = typer.Option(""),
+              pull: bool = typer.Option(False, "--pull", help="Use SSE pull mode (WAN-safe, no inbound ports needed)")):
     """Start an agent and join hub(s)."""
     cfg = load_config()
     from igrid.agent.worker import create_agent_app
     agent_app_instance = create_agent_app(operator_id=operator_id or cfg["operator_id"],
-                                          hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"])
+                                          hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"],
+                                          pull_mode=pull)
     agent_app_instance.state.host = host if host != "0.0.0.0" else "127.0.0.1"
     agent_app_instance.state.port = port
-    typer.echo(f"Joining grid: hubs={hub_urls}")
+    mode = "PULL (SSE)" if pull else "PUSH (HTTP)"
+    typer.echo(f"Joining grid: mode={mode}  hubs={hub_urls}")
     uvicorn.run(agent_app_instance, host=host, port=port, log_level="info")
 
 @app.command("status")
