@@ -54,7 +54,7 @@ Key settings:
 | `operator_id` | `duck` | Your operator name (appears in reward ledger) |
 | `hub_urls` | `["http://localhost:8000"]` | Hub(s) to connect to |
 | `ollama_url` | `http://localhost:11434` | Local Ollama endpoint |
-| `db_path` | `.igrid/hub.db` | SQLite database path |
+| `db_path` | `.igrid/hub.sqlite` | SQLite database path |
 | `api_key` | (empty) | Optional API key for hub authentication |
 
 ## CLI reference
@@ -226,7 +226,7 @@ Fetches arxiv papers by URL or ID, extracts PDF text, sends analysis tasks to th
 
 ```bash
 # Single paper
-python cookbook/06_arxiv_paper_digest/digest.py https://arxiv.org/abs/2312.00752
+python cookbook/06_arxiv_paper_digest/digest.py https://arxiv.org/abs/2602.15860
 
 # From a URL list file
 python cookbook/06_arxiv_paper_digest/digest.py --file cookbook/06_arxiv_paper_digest/urls_example.txt
@@ -238,6 +238,14 @@ python cookbook/06_arxiv_paper_digest/digest.py --model mistral --hub http://192
 Each paper receives a structured 7-part digest: title, problem, methodology, results, limitations, relevance, and a one-liner summary.
 
 ---
+
+```TODO
+- refactor by using click CLI
+- write pdfreader to wrap pypdf, docling
+
+- should name agent for easy identification (optional, will random-generate if not provided)
+
+```
 
 ## Weekend LAN test — 3 GPU setup
 

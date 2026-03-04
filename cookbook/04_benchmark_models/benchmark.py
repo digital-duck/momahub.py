@@ -17,9 +17,13 @@ async def submit_and_wait(client, model, task_id):
         r = await client.get(f"{HUB_URL}/tasks/{task_id}"); data = r.json(); state = data.get("state","")
         if state == "COMPLETE":
             result = data.get("result", {}); elapsed = time.monotonic() - start
-            return {"model": model, "state": "COMPLETE",
-                    "output_tokens": result.get("output_tokens",0), "latency_s": round(elapsed,2),
-                    "tps": round(result.get("output_tokens",0)/max(elapsed,0.001),1)}
+            return {
+                "model": model, 
+                "state": "COMPLETE",
+                "output_tokens": result.get("output_tokens",0), 
+                "latency_s": round(elapsed,2),
+                "tps": round(result.get("output_tokens",0)/max(elapsed,0.001),1)
+            }
         if state == "FAILED": return {"model": model, "state": "FAILED"}
         await asyncio.sleep(interval); interval = min(interval*1.3, 8.0)
     return {"model": model, "state": "TIMEOUT"}

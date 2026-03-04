@@ -9,13 +9,13 @@
 ## Network Layout
 
 ```
-Machine A (hub + agent)          Machine B (agent)          Machine C (agent)
+Machine A (hub + agent)      Machine B (agent)        Machine C (agent)
 ┌─────────────────────┐     ┌──────────────────┐     ┌──────────────────┐
 │  moma hub up        │     │                  │     │                  │
-│    :8000            │◄────│  moma join A:8000 │     │  moma join A:8000│
-│  moma agent up      │     │    :8100          │     │    :8100         │
-│    :8100            │     │                   │     │                  │
-│  GTX 1080 Ti 11GB   │     │  GTX 1080 Ti 11GB │     │  GTX 1080 Ti 11GB│
+│    :8000            │◄────│ moma join A:8000 │     │  moma join A:8000│
+│  moma agent up      │     │   :8100          │     │    :8100         │
+│    :8100            │     │                  │     │                  │
+│  GTX 1080 Ti 11GB   │     │ GTX 1080 Ti 11GB │     │  GTX 1080 Ti 11GB│
 └─────────────────────┘     └──────────────────┘     └──────────────────┘
 ```
 
