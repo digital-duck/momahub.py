@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
 """
-Recipe 06: Arxiv Paper Digest — CLI version.
+Recipe 06: Paper Digest — CLI version (Click).
 
-Submit a list of arxiv papers before bed. The i-grid analyses them in
-parallel overnight. Wake up to a self-contained HTML digest file.
+Submit a list of papers (arxiv or any PDF URL) before bed. The i-grid
+analyses them in parallel overnight. Wake up to a self-contained digest.
 
 Usage:
     python digest.py 2312.12345 2401.99999 https://arxiv.org/abs/2409.11111
-    python digest.py --urls urls.txt --model llama3 --hub http://localhost:8000
-    python digest.py --urls urls.txt --out ~/Desktop/my_digest.html
+    python digest.py https://example.com/paper.pdf
+    python digest.py --urls-file urls.txt --model llama3 --hub http://localhost:8000
+    python digest.py --urls-file urls.txt --out ~/Desktop/my_digest.html
+    python digest.py 2312.12345 --format docx --out digest.docx
 
-Output: digest_YYYYMMDD_HHMM.html  (dark-mode, self-contained HTML)
+Output: digest_YYYYMMDD_HHMM.html  (dark-mode, self-contained HTML) by default.
+        --format docx/pdf for alternative outputs (requires: pip install moma-hub[format])
 """
 
 from __future__ import annotations
-import argparse
-import asyncio
-import io
+
 import re
 import sys
 import time
@@ -24,14 +25,10 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
+import click
 import httpx
 
-try:
-    import pypdf  # type: ignore
-    _PYPDF_OK = True
-except ImportError:
-    print("ERROR: pypdf not installed. Run: pip install pypdf", file=sys.stderr)
-    sys.exit(1)
+from igrid.extract.pdf import PDFExtractor
 
 # ---------------------------------------------------------------------------
 # Config defaults
@@ -98,24 +95,28 @@ def parse_arxiv_id(raw: str) -> str | None:
     return m.group(1) if m else None
 
 
-def fetch_pdf_text(arxiv_id: str, max_chars: int) -> tuple[str, str]:
-    """Returns (text, error). Fetches PDF and extracts text with pypdf."""
-    url = f"{ARXIV_PDF_BASE}/{arxiv_id}"
-    try:
-        resp = httpx.get(url, timeout=30.0, follow_redirects=True)
-        resp.raise_for_status()
-        reader = pypdf.PdfReader(io.BytesIO(resp.content))
-        parts = []
-        total = 0
-        for page in reader.pages:
-            t = page.extract_text() or ""
-            parts.append(t)
-            total += len(t)
-            if total >= max_chars:
-                break
-        return "\n".join(parts)[:max_chars], ""
-    except Exception as exc:
-        return "", str(exc)
+def classify_url(raw: str) -> tuple[str, str | None]:
+    """Return (kind, arxiv_id_or_none).
+
+    kind is one of: 'arxiv', 'pdf', 'unsupported'.
+    """
+    raw = raw.strip()
+    arxiv_id = parse_arxiv_id(raw)
+    if arxiv_id:
+        return "arxiv", arxiv_id
+    if raw.startswith("http://") or raw.startswith("https://"):
+        if raw.lower().endswith(".pdf"):
+            return "pdf", None
+        # Try HEAD to check content-type
+        try:
+            resp = httpx.head(raw, timeout=10.0, follow_redirects=True)
+            ct = resp.headers.get("content-type", "")
+            if "application/pdf" in ct:
+                return "pdf", None
+        except Exception:
+            pass
+        return "unsupported", None
+    return "unsupported", None
 
 
 def fetch_meta(arxiv_id: str) -> dict:
@@ -134,8 +135,8 @@ def fetch_meta(arxiv_id: str) -> dict:
     return meta
 
 
-def submit_task(hub: str, arxiv_id: str, text: str, model: str, max_tokens: int) -> str:
-    task_id = f"digest-{arxiv_id.replace('.', '-')}-{uuid.uuid4().hex[:6]}"
+def submit_task(hub: str, paper_id: str, text: str, model: str, max_tokens: int) -> str:
+    task_id = f"digest-{paper_id[:20].replace('.', '-').replace('/', '-')}-{uuid.uuid4().hex[:6]}"
     payload = {
         "task_id": task_id,
         "model": model,
@@ -175,7 +176,7 @@ _HTML = """\
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arxiv Digest — {date}</title>
+<title>Paper Digest — {date}</title>
 <style>
 :root{{--bg:#0f1117;--card:#1a1d27;--accent:#4f8ef7;--text:#e0e0e0;
       --sub:#9ca3af;--border:#2d3148;--ok:#22c55e;--warn:#f59e0b}}
@@ -189,9 +190,9 @@ h1{{font-size:1.8rem;color:var(--accent);margin-bottom:.25rem}}
 .card-header{{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}}
 .paper-title{{font-size:1.1rem;font-weight:600;color:var(--accent)}}
 .paper-authors{{font-size:.8rem;color:var(--sub);margin-top:.2rem}}
-.arxiv-link{{font-size:.78rem;color:var(--sub);text-decoration:none;
+.source-link{{font-size:.78rem;color:var(--sub);text-decoration:none;
              border:1px solid var(--border);border-radius:6px;padding:.2rem .5rem;white-space:nowrap}}
-.arxiv-link:hover{{color:var(--accent);border-color:var(--accent)}}
+.source-link:hover{{color:var(--accent);border-color:var(--accent)}}
 .digest{{font-size:.92rem;line-height:1.65;white-space:pre-wrap}}
 .digest h3{{color:var(--accent);font-size:.9rem;margin:1rem 0 .3rem}}
 .badge{{display:inline-block;font-size:.72rem;border-radius:20px;padding:.15rem .5rem;margin-left:.5rem}}
@@ -204,7 +205,7 @@ footer{{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border);
 </style>
 </head>
 <body>
-<h1>📚 Arxiv Paper Digest</h1>
+<h1>Paper Digest</h1>
 <p class="meta">Generated {datetime} &nbsp;·&nbsp; {n} paper(s) &nbsp;·&nbsp;
 Model: {model} &nbsp;·&nbsp; Hub: {hub}</p>
 {cards}
@@ -219,7 +220,7 @@ _CARD = """\
     <div class="paper-title">{title}<span class="badge {cls}">{state}</span></div>
     <div class="paper-authors">{authors}</div>
   </div>
-  <a class="arxiv-link" href="https://arxiv.org/abs/{aid}" target="_blank">arxiv:{aid} ↗</a>
+  <a class="source-link" href="{source_url}" target="_blank">{source_label} ↗</a>
 </div>
 <div class="digest">{digest}</div>
 <div class="stats"><span>Tokens: {tokens:,}</span><span>Latency: {lat:.1f}s</span></div>
@@ -246,10 +247,11 @@ def build_html(papers: list[dict], model: str, hub: str) -> str:
         tokens = (r.get("input_tokens") or 0) + (r.get("output_tokens") or 0)
         lat_ms = r.get("latency_ms") or 0
         cards.append(_CARD.format(
-            title=p.get("title", p["arxiv_id"]),
+            title=p.get("title", p["paper_id"]),
             cls=cls, state=state,
             authors=p.get("authors", ""),
-            aid=p["arxiv_id"],
+            source_url=p.get("source_url", ""),
+            source_label=p.get("source_label", p["paper_id"]),
             digest=fmt_digest(content),
             tokens=tokens, lat=lat_ms / 1000,
         ))
@@ -261,73 +263,144 @@ def build_html(papers: list[dict], model: str, hub: str) -> str:
     )
 
 # ---------------------------------------------------------------------------
-# Main
+# Build markdown digest (for docx/pdf output)
 # ---------------------------------------------------------------------------
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("ids", nargs="*", help="arxiv IDs or URLs")
-    ap.add_argument("--urls", help="Text file with one arxiv URL/ID per line")
-    ap.add_argument("--hub", default=DEFAULT_HUB, help=f"Hub URL (default: {DEFAULT_HUB})")
-    ap.add_argument("--model", default=DEFAULT_MODEL, help=f"Ollama model (default: {DEFAULT_MODEL})")
-    ap.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
-    ap.add_argument("--max-chars", type=int, default=DEFAULT_MAX_CHARS, help="PDF text chars per paper")
-    ap.add_argument("--out", default="", help="Output HTML file (default: digest_YYYYMMDD_HHMM.html)")
-    args = ap.parse_args()
+def build_markdown(papers: list[dict], model: str, hub: str) -> str:
+    parts = [f"# Paper Digest\n\nGenerated {datetime.now().strftime('%Y-%m-%d %H:%M UTC')} "
+             f"| {len(papers)} paper(s) | Model: {model}\n"]
+    for p in papers:
+        parts.append(f"\n## {p.get('title', p['paper_id'])}\n")
+        if p.get("authors"):
+            parts.append(f"*{p['authors']}*\n")
+        content = p.get("content") or p.get("error") or "No result"
+        parts.append(content)
+        parts.append("")
+    return "\n".join(parts)
 
-    # Collect raw IDs/URLs
-    raw = list(args.ids)
-    if args.urls:
-        raw += Path(args.urls).read_text().splitlines()
+# ---------------------------------------------------------------------------
+# Click CLI
+# ---------------------------------------------------------------------------
+
+@click.command()
+@click.argument("urls", nargs=-1)
+@click.option("--urls-file", type=click.Path(exists=True), help="File with one URL/ID per line")
+@click.option("--hub", default=DEFAULT_HUB, show_default=True, help="Hub URL")
+@click.option("--model", default=DEFAULT_MODEL, show_default=True, help="Ollama model")
+@click.option("--max-tokens", default=DEFAULT_MAX_TOKENS, type=int, show_default=True)
+@click.option("--max-chars", default=DEFAULT_MAX_CHARS, type=int, show_default=True,
+              help="PDF text chars per paper")
+@click.option("--engine", type=click.Choice(["pypdf", "docling"]), default="pypdf",
+              show_default=True, help="PDF extraction engine")
+@click.option("--out", default="", help="Output file path (default: auto-generated)")
+@click.option("--format", "out_fmt", type=click.Choice(["html", "docx", "pdf"]),
+              default="html", show_default=True, help="Output format")
+def digest(urls, urls_file, hub, model, max_tokens, max_chars, engine, out, out_fmt):
+    """Digest papers from arxiv IDs, arxiv URLs, or any PDF URL.
+
+    Examples:\n
+      python digest.py 2312.12345 2401.99999\n
+      python digest.py https://arxiv.org/abs/2409.11111\n
+      python digest.py https://example.com/paper.pdf\n
+      python digest.py --urls-file urls.txt --format docx
+    """
+    # Collect raw inputs
+    raw = list(urls)
+    if urls_file:
+        raw += Path(urls_file).read_text().splitlines()
     raw = [r.strip() for r in raw if r.strip()]
     if not raw:
-        ap.error("Provide at least one arxiv ID or URL.")
+        raise click.UsageError("Provide at least one URL or arxiv ID.")
 
-    arxiv_ids = [parse_arxiv_id(r) for r in raw]
-    arxiv_ids = [a for a in arxiv_ids if a]
-    if not arxiv_ids:
-        print("ERROR: No valid arxiv IDs found.", file=sys.stderr)
+    extractor = PDFExtractor(engine=engine, max_chars=max_chars)
+
+    click.echo(f"\nPaper Digest")
+    click.echo(f"   Hub:    {hub}")
+    click.echo(f"   Model:  {model}")
+    click.echo(f"   Engine: {engine}")
+    click.echo(f"   Papers: {len(raw)}")
+    click.echo()
+
+    # Phase 1: classify, fetch, extract, submit
+    papers: list[dict] = []
+    for entry in raw:
+        kind, arxiv_id = classify_url(entry)
+
+        if kind == "arxiv":
+            click.echo(f"  [{arxiv_id}] fetching metadata...", nl=False)
+            meta = fetch_meta(arxiv_id)
+            click.echo(f" {meta['title'][:60]}")
+
+            click.echo(f"  [{arxiv_id}] fetching PDF...", nl=False)
+            try:
+                pdf_url = f"{ARXIV_PDF_BASE}/{arxiv_id}"
+                text = extractor.from_url(pdf_url)
+                click.echo(f" {len(text):,} chars")
+            except Exception as exc:
+                click.echo(f" FAILED: {exc}")
+                papers.append({"paper_id": arxiv_id, **meta, "task_id": None,
+                               "state": "FAILED", "error": str(exc),
+                               "source_url": f"https://arxiv.org/abs/{arxiv_id}",
+                               "source_label": f"arxiv:{arxiv_id}"})
+                continue
+
+            click.echo(f"  [{arxiv_id}] submitting to grid...", nl=False)
+            try:
+                task_id = submit_task(hub, arxiv_id, text, model, max_tokens)
+                click.echo(f" task_id={task_id}")
+                papers.append({"paper_id": arxiv_id, **meta, "task_id": task_id,
+                               "state": "PENDING",
+                               "source_url": f"https://arxiv.org/abs/{arxiv_id}",
+                               "source_label": f"arxiv:{arxiv_id}"})
+            except Exception as exc:
+                click.echo(f" FAILED: {exc}")
+                papers.append({"paper_id": arxiv_id, **meta, "task_id": None,
+                               "state": "FAILED", "error": str(exc),
+                               "source_url": f"https://arxiv.org/abs/{arxiv_id}",
+                               "source_label": f"arxiv:{arxiv_id}"})
+
+        elif kind == "pdf":
+            # Generic PDF URL
+            short = entry[:60]
+            click.echo(f"  [{short}] fetching PDF...", nl=False)
+            try:
+                text = extractor.from_url(entry)
+                click.echo(f" {len(text):,} chars")
+            except Exception as exc:
+                click.echo(f" FAILED: {exc}")
+                papers.append({"paper_id": entry, "title": entry, "authors": "",
+                               "task_id": None, "state": "FAILED", "error": str(exc),
+                               "source_url": entry, "source_label": "PDF"})
+                continue
+
+            click.echo(f"  [{short}] submitting to grid...", nl=False)
+            try:
+                task_id = submit_task(hub, entry, text, model, max_tokens)
+                click.echo(f" task_id={task_id}")
+                papers.append({"paper_id": entry, "title": entry, "authors": "",
+                               "task_id": task_id, "state": "PENDING",
+                               "source_url": entry, "source_label": "PDF"})
+            except Exception as exc:
+                click.echo(f" FAILED: {exc}")
+                papers.append({"paper_id": entry, "title": entry, "authors": "",
+                               "task_id": None, "state": "FAILED", "error": str(exc),
+                               "source_url": entry, "source_label": "PDF"})
+
+        else:
+            click.echo(f"  [{entry[:60]}] web extraction not yet supported — skipping")
+
+    if not papers:
+        click.echo("No valid papers to process.", err=True)
         sys.exit(1)
 
-    print(f"\n📚 Arxiv Paper Digest")
-    print(f"   Hub:    {args.hub}")
-    print(f"   Model:  {args.model}")
-    print(f"   Papers: {len(arxiv_ids)}")
-    print()
-
-    # Phase 1: fetch + submit
-    papers = []
-    for arxiv_id in arxiv_ids:
-        print(f"  [{arxiv_id}] fetching metadata...", end=" ", flush=True)
-        meta = fetch_meta(arxiv_id)
-        print(f"{meta['title'][:60]}")
-
-        print(f"  [{arxiv_id}] fetching PDF...", end=" ", flush=True)
-        text, err = fetch_pdf_text(arxiv_id, args.max_chars)
-        if err:
-            print(f"FAILED: {err}")
-            papers.append({"arxiv_id": arxiv_id, **meta, "task_id": None,
-                           "state": "FAILED", "error": err})
-            continue
-        print(f"{len(text):,} chars")
-
-        print(f"  [{arxiv_id}] submitting to grid...", end=" ", flush=True)
-        try:
-            task_id = submit_task(args.hub, arxiv_id, text, args.model, args.max_tokens)
-            print(f"task_id={task_id}")
-            papers.append({"arxiv_id": arxiv_id, **meta, "task_id": task_id, "state": "PENDING"})
-        except Exception as exc:
-            print(f"FAILED: {exc}")
-            papers.append({"arxiv_id": arxiv_id, **meta, "task_id": None,
-                           "state": "FAILED", "error": str(exc)})
-
     # Phase 2: poll for results
-    print(f"\n⏳ Waiting for {sum(1 for p in papers if p['task_id'])} analyses...\n")
+    pending = sum(1 for p in papers if p.get("task_id"))
+    click.echo(f"\nWaiting for {pending} analyses...\n")
     for p in papers:
         if not p.get("task_id"):
             continue
-        print(f"  [{p['arxiv_id']}] polling...", end=" ", flush=True)
-        result = poll_task(args.hub, p["task_id"])
+        click.echo(f"  [{p['paper_id'][:40]}] polling...", nl=False)
+        result = poll_task(hub, p["task_id"])
         state = result.get("state", "TIMEOUT")
         p["state"] = state
         r = result.get("result") or {}
@@ -335,22 +408,42 @@ def main():
             p["content"] = r.get("content", "")
             p["result_data"] = r
             tokens = (r.get("input_tokens") or 0) + (r.get("output_tokens") or 0)
-            print(f"done ({tokens:,} tokens)")
+            click.echo(f" done ({tokens:,} tokens)")
         else:
             p["content"] = ""
             p["error"] = r.get("error", f"State: {state}")
             p["result_data"] = {}
-            print(f"FAILED: {p['error']}")
+            click.echo(f" FAILED: {p['error']}")
 
-    # Phase 3: write HTML
-    html = build_html(papers, args.model, args.hub)
-    out_path = args.out or f"digest_{datetime.now().strftime('%Y%m%d_%H%M')}.html"
-    Path(out_path).write_text(html, encoding="utf-8")
+    # Phase 3: write output
+    if out_fmt == "html":
+        output_text = build_html(papers, model, hub)
+        ext = ".html"
+    elif out_fmt == "docx":
+        ext = ".docx"
+    elif out_fmt == "pdf":
+        ext = ".pdf"
+    else:
+        ext = ".html"
+
+    out_path = out or f"digest_{datetime.now().strftime('%Y%m%d_%H%M')}{ext}"
+
+    if out_fmt == "html":
+        Path(out_path).write_text(output_text, encoding="utf-8")
+    elif out_fmt == "docx":
+        from igrid.format.docx_writer import markdown_to_docx
+        md = build_markdown(papers, model, hub)
+        markdown_to_docx(md, out_path, title="Paper Digest")
+    elif out_fmt == "pdf":
+        from igrid.format.pdf_writer import markdown_to_pdf
+        md = build_markdown(papers, model, hub)
+        markdown_to_pdf(md, out_path, title="Paper Digest")
 
     ok = sum(1 for p in papers if p.get("state") == "COMPLETE")
-    print(f"\n✅ Digest written to: {out_path}  ({ok}/{len(papers)} papers analysed)")
-    print("   Open in your browser — dark mode, self-contained HTML.\n")
+    click.echo(f"\nDigest written to: {out_path}  ({ok}/{len(papers)} papers analysed)")
+    if out_fmt == "html":
+        click.echo("   Open in your browser — dark mode, self-contained HTML.\n")
 
 
 if __name__ == "__main__":
-    main()
+    digest()

@@ -49,14 +49,14 @@ class GridState:
         )
         await self.db.execute(f"""
             INSERT INTO agents
-                (agent_id, operator_id, host, port, status, tier, gpus, cpu_cores, ram_gb, supported_models, pull_mode, joined_at, last_pulse)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+                (agent_id, operator_id, name, host, port, status, tier, gpus, cpu_cores, ram_gb, supported_models, pull_mode, joined_at, last_pulse)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ON CONFLICT(agent_id) DO UPDATE SET
-                host=excluded.host, port=excluded.port, status={on_conflict_status}, tier=excluded.tier,
+                name=excluded.name, host=excluded.host, port=excluded.port, status={on_conflict_status}, tier=excluded.tier,
                 gpus=excluded.gpus, cpu_cores=excluded.cpu_cores, ram_gb=excluded.ram_gb,
                 supported_models=excluded.supported_models, pull_mode=excluded.pull_mode, last_pulse=excluded.last_pulse
             """,
-            (req.agent_id, req.operator_id, req.host, req.port,
+            (req.agent_id, req.operator_id, req.name, req.host, req.port,
              initial_status, tier.value, gpus_json, req.cpu_cores, req.ram_gb, models_json,
              int(req.pull_mode), _now(), _now()))
         await self.db.commit()

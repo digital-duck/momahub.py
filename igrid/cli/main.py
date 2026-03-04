@@ -64,10 +64,10 @@ def hub_pending(hub_url: str = typer.Option("")):
     try:
         agents = httpx.get(f"{url}/agents/pending", timeout=5.0).json().get("agents", [])
         if not agents: typer.echo("No agents pending approval."); return
-        typer.echo(f"{'AGENT_ID':<38} {'OPERATOR':<15} {'JOINED_AT':<25}")
-        typer.echo("-"*78)
+        typer.echo(f"{'NAME':<16} {'AGENT_ID':<38} {'OPERATOR':<15} {'JOINED_AT':<25}")
+        typer.echo("-"*94)
         for a in agents:
-            typer.echo(f"{a['agent_id']:<38} {a.get('operator_id',''):<15} {a.get('joined_at',''):<25}")
+            typer.echo(f"{a.get('name',''):<16} {a['agent_id']:<38} {a.get('operator_id',''):<15} {a.get('joined_at',''):<25}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @hub_app.command("approve")
@@ -100,6 +100,7 @@ def hub_reject(agent_id: str = typer.Argument(..., help="Agent ID to reject"),
 def agent_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100),
              join: str = typer.Option(""), operator_id: str = typer.Option(""),
              ollama_url: str = typer.Option(""), api_key: str = typer.Option(""),
+             name: str = typer.Option("", "--name", help="Human-friendly agent name (default: hostname)"),
              pull: bool = typer.Option(False, "--pull", help="Use SSE pull mode (WAN-safe, no inbound ports needed)")):
     """Start the agent node."""
     cfg = load_config()
@@ -107,7 +108,8 @@ def agent_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100)
     from igrid.agent.worker import create_agent_app
     agent_app_instance = create_agent_app(operator_id=operator_id or cfg["operator_id"],
                                           hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"],
-                                          api_key=api_key or cfg["api_key"], pull_mode=pull)
+                                          api_key=api_key or cfg["api_key"], pull_mode=pull,
+                                          agent_name=name or cfg.get("agent_name", ""))
     agent_app_instance.state.host = host if host != "0.0.0.0" else "127.0.0.1"
     agent_app_instance.state.port = port
     mode = "PULL (SSE)" if pull else "PUSH (HTTP)"
@@ -118,13 +120,15 @@ def agent_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100)
 def join_grid(hub_urls: list[str] = typer.Argument(...),
               host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100),
               operator_id: str = typer.Option(""), ollama_url: str = typer.Option(""),
+              name: str = typer.Option("", "--name", help="Human-friendly agent name (default: hostname)"),
               pull: bool = typer.Option(False, "--pull", help="Use SSE pull mode (WAN-safe, no inbound ports needed)")):
     """Start an agent and join hub(s)."""
     cfg = load_config()
     from igrid.agent.worker import create_agent_app
     agent_app_instance = create_agent_app(operator_id=operator_id or cfg["operator_id"],
                                           hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"],
-                                          pull_mode=pull)
+                                          pull_mode=pull,
+                                          agent_name=name or cfg.get("agent_name", ""))
     agent_app_instance.state.host = host if host != "0.0.0.0" else "127.0.0.1"
     agent_app_instance.state.port = port
     mode = "PULL (SSE)" if pull else "PUSH (HTTP)"
@@ -147,10 +151,10 @@ def list_agents(hub_url: str = typer.Option("")):
     try:
         agents = httpx.get(f"{url}/agents", timeout=5.0).json().get("agents", [])
         if not agents: typer.echo("No agents online."); return
-        typer.echo(f"{'AGENT_ID':<38} {'TIER':<10} {'STATUS':<10} {'TPS':>6}")
-        typer.echo("-"*70)
+        typer.echo(f"{'NAME':<16} {'AGENT_ID':<38} {'TIER':<10} {'STATUS':<10} {'TPS':>6}")
+        typer.echo("-"*86)
         for a in agents:
-            typer.echo(f"{a['agent_id']:<38} {a['tier']:<10} {a['status']:<10} {a['current_tps']:>6.1f}")
+            typer.echo(f"{a.get('name',''):<16} {a['agent_id']:<38} {a['tier']:<10} {a['status']:<10} {a['current_tps']:>6.1f}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("tasks")

@@ -30,6 +30,8 @@ import streamlit as st
 # Optional engine imports
 # ---------------------------------------------------------------------------
 
+from igrid.extract.pdf import PDFExtractor
+
 try:
     import pypdf  # type: ignore
     _PYPDF_OK = True
@@ -139,65 +141,16 @@ def _fetch_pdf_bytes(arxiv_id: str, timeout: float = 30.0) -> bytes | None:
 
 
 # ---------------------------------------------------------------------------
-# Extraction — pypdf
+# Extraction — via PDFExtractor
 # ---------------------------------------------------------------------------
-
-def _extract_text_pypdf(pdf_bytes: bytes, max_chars: int) -> str:
-    """Fast text extraction with pypdf. No layout awareness."""
-    if not _PYPDF_OK:
-        return "[pypdf not installed]"
-    try:
-        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
-        parts, total = [], 0
-        for page in reader.pages:
-            text = page.extract_text() or ""
-            parts.append(text)
-            total += len(text)
-            if total >= max_chars:
-                break
-        return "\n".join(parts)[:max_chars]
-    except Exception as exc:
-        return f"[pypdf extraction error: {exc}]"
-
-
-# ---------------------------------------------------------------------------
-# Extraction — docling
-# ---------------------------------------------------------------------------
-
-def _extract_text_docling(pdf_bytes: bytes, max_chars: int) -> str:
-    """
-    Layout-aware extraction via docling.
-
-    Returns clean Markdown that preserves:
-    - Correct reading order for multi-column papers
-    - Tables as Markdown tables
-    - Figure captions labelled [Figure N]
-    - Section headings as # / ## / ###
-    """
-    if not _DOCLING_OK:
-        return "[docling not installed]"
-    tmp_path = None
-    try:
-        # docling requires a file path; write bytes to a temp file
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as fh:
-            fh.write(pdf_bytes)
-            tmp_path = fh.name
-
-        converter = DocumentConverter()
-        result = converter.convert(tmp_path)
-        md = result.document.export_to_markdown()
-        return md[:max_chars]
-    except Exception as exc:
-        return f"[docling extraction error: {exc}]"
-    finally:
-        if tmp_path and os.path.exists(tmp_path):
-            os.unlink(tmp_path)
-
 
 def _extract_text(pdf_bytes: bytes, max_chars: int, use_docling: bool) -> str:
-    if use_docling:
-        return _extract_text_docling(pdf_bytes, max_chars)
-    return _extract_text_pypdf(pdf_bytes, max_chars)
+    engine = "docling" if use_docling else "pypdf"
+    try:
+        extractor = PDFExtractor(engine=engine, max_chars=max_chars)
+        return extractor.from_bytes(pdf_bytes)
+    except Exception as exc:
+        return f"[{engine} extraction error: {exc}]"
 
 
 # ---------------------------------------------------------------------------

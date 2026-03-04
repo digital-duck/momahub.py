@@ -10,7 +10,10 @@
       "Bash(pytest:*)",
       "WebSearch",
       "Bash(echo exit: $?:*)",
-      "Bash(go version:*)"
+      "Bash(go version:*)",
+      "Bash(go build:*)",
+      "Bash(dd-extract:*)",
+      "Bash(dd-format:*)"
     ]
   }
 }

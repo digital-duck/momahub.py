@@ -13,6 +13,7 @@ class JoinRequest(BaseModel):
     agent_id: str
     host: str
     port: int
+    name: str = ""
     gpus: list[GPUInfo] = Field(default_factory=list)
     cpu_cores: int = 0
     ram_gb: float = 0.0
@@ -27,6 +28,7 @@ class JoinAck(BaseModel):
     operator_id: str
     agent_id: str
     tier: ComputeTier
+    name: str = ""
     message: str = ""
     status: str = "ONLINE"
 

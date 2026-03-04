@@ -2,6 +2,7 @@
 from __future__ import annotations
 import asyncio
 import logging
+import socket
 import uuid
 from contextlib import asynccontextmanager
 import httpx
@@ -21,8 +22,10 @@ class AgentStats:
 
 def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
                      hub_urls: list[str] | None = None, ollama_url: str = "http://localhost:11434",
-                     api_key: str = "", pull_mode: bool = False) -> FastAPI:
+                     api_key: str = "", pull_mode: bool = False,
+                     agent_name: str = "") -> FastAPI:
     _agent_id = agent_id or str(uuid.uuid4())
+    _agent_name = agent_name or socket.gethostname()
     _hub_urls = hub_urls or ["http://localhost:8000"]
     _stats = AgentStats()
     _backend = OllamaBackend(ollama_url)
@@ -39,7 +42,7 @@ def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
             _stats.current_tps = initial_tps
         host = app.state.host; port = app.state.port
         join_req = JoinRequest(operator_id=operator_id, agent_id=_agent_id, host=host, port=port,
-                               gpus=schema_gpus, cpu_cores=cpu_cores, ram_gb=ram_gb,
+                               name=_agent_name, gpus=schema_gpus, cpu_cores=cpu_cores, ram_gb=ram_gb,
                                supported_models=models, cached_models=models,
                                pull_mode=pull_mode, api_key=api_key)
         async with httpx.AsyncClient(timeout=10.0) as client:

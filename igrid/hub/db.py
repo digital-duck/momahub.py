@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS operators (
 CREATE TABLE IF NOT EXISTS agents (
     agent_id         TEXT PRIMARY KEY,
     operator_id      TEXT NOT NULL REFERENCES operators(operator_id),
+    name             TEXT NOT NULL DEFAULT '',
     host             TEXT NOT NULL,
     port             INTEGER NOT NULL,
     status           TEXT NOT NULL DEFAULT 'ONLINE',
@@ -110,5 +111,7 @@ async def init_db(path: str) -> aiosqlite.Connection:
         cols = {row[1] for row in await cur.fetchall()}
     if "pull_mode" not in cols:
         await db.execute("ALTER TABLE agents ADD COLUMN pull_mode INTEGER NOT NULL DEFAULT 0")
+    if "name" not in cols:
+        await db.execute("ALTER TABLE agents ADD COLUMN name TEXT NOT NULL DEFAULT ''")
     await db.commit()
     return db
