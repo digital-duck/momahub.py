@@ -13,7 +13,10 @@
       "Bash(go version:*)",
       "Bash(go build:*)",
       "Bash(dd-extract:*)",
-      "Bash(dd-format:*)"
+      "Bash(dd-format:*)",
+      "Bash(pip show:*)",
+      "Bash(pandoc:*)",
+      "Bash(dd-dogic:*)"
     ]
   }
 }
