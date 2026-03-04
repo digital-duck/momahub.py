@@ -30,7 +30,7 @@ import streamlit as st
 # Optional engine imports
 # ---------------------------------------------------------------------------
 
-from igrid.extract.pdf import PDFExtractor
+from dd_extract import PDFExtractor
 
 try:
     import pypdf  # type: ignore

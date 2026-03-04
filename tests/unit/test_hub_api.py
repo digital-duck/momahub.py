@@ -7,7 +7,7 @@ from igrid.hub.app import create_app
 @pytest_asyncio.fixture
 async def client(tmp_path):
     app = create_app(hub_id="hub-test", operator_id="duck",
-                     db_path=str(tmp_path / "hub.db"), hub_url="http://localhost:8000")
+                     db_path=str(tmp_path / "hub.sqlite"), hub_url="http://localhost:8000")
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
 

@@ -28,7 +28,7 @@ from pathlib import Path
 import click
 import httpx
 
-from igrid.extract.pdf import PDFExtractor
+from dd_extract import PDFExtractor
 
 # ---------------------------------------------------------------------------
 # Config defaults
@@ -431,11 +431,11 @@ def digest(urls, urls_file, hub, model, max_tokens, max_chars, engine, out, out_
     if out_fmt == "html":
         Path(out_path).write_text(output_text, encoding="utf-8")
     elif out_fmt == "docx":
-        from igrid.format.docx_writer import markdown_to_docx
+        from dd_format import markdown_to_docx
         md = build_markdown(papers, model, hub)
         markdown_to_docx(md, out_path, title="Paper Digest")
     elif out_fmt == "pdf":
-        from igrid.format.pdf_writer import markdown_to_pdf
+        from dd_format import markdown_to_pdf
         md = build_markdown(papers, model, hub)
         markdown_to_pdf(md, out_path, title="Paper Digest")
 

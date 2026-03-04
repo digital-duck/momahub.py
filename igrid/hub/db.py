@@ -1,112 +1,17 @@
 """SQLite schema creation for the i-grid hub."""
+from pathlib import Path
+
 import aiosqlite
 
-DDL = """
-PRAGMA journal_mode=WAL;
-PRAGMA foreign_keys=ON;
+_DDL_PATH = Path(__file__).parent / "hub_ddl.sql"
 
-CREATE TABLE IF NOT EXISTS hub_config (
-    key   TEXT PRIMARY KEY,
-    value TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS peer_hubs (
-    hub_id      TEXT PRIMARY KEY,
-    hub_url     TEXT NOT NULL,
-    operator_id TEXT NOT NULL DEFAULT '',
-    status      TEXT NOT NULL DEFAULT 'ACTIVE',
-    added_at    TEXT NOT NULL DEFAULT (datetime('now')),
-    last_seen   TEXT
-);
-
-CREATE TABLE IF NOT EXISTS operators (
-    operator_id   TEXT PRIMARY KEY,
-    joined_at     TEXT NOT NULL DEFAULT (datetime('now')),
-    total_tasks   INTEGER NOT NULL DEFAULT 0,
-    total_tokens  INTEGER NOT NULL DEFAULT 0,
-    total_credits REAL    NOT NULL DEFAULT 0.0
-);
-
-CREATE TABLE IF NOT EXISTS agents (
-    agent_id         TEXT PRIMARY KEY,
-    operator_id      TEXT NOT NULL REFERENCES operators(operator_id),
-    name             TEXT NOT NULL DEFAULT '',
-    host             TEXT NOT NULL,
-    port             INTEGER NOT NULL,
-    status           TEXT NOT NULL DEFAULT 'ONLINE',
-    tier             TEXT NOT NULL DEFAULT 'BRONZE',
-    gpus             TEXT NOT NULL DEFAULT '[]',
-    cpu_cores        INTEGER NOT NULL DEFAULT 0,
-    ram_gb           REAL    NOT NULL DEFAULT 0.0,
-    supported_models TEXT NOT NULL DEFAULT '[]',
-    current_tps      REAL    NOT NULL DEFAULT 0.0,
-    tasks_completed  INTEGER NOT NULL DEFAULT 0,
-    pull_mode        INTEGER NOT NULL DEFAULT 0,
-    joined_at        TEXT NOT NULL DEFAULT (datetime('now')),
-    last_pulse       TEXT
-);
-
-CREATE TABLE IF NOT EXISTS tasks (
-    task_id       TEXT PRIMARY KEY,
-    state         TEXT NOT NULL DEFAULT 'PENDING',
-    model         TEXT NOT NULL,
-    prompt        TEXT NOT NULL,
-    system        TEXT NOT NULL DEFAULT '',
-    max_tokens    INTEGER NOT NULL DEFAULT 1024,
-    temperature   REAL    NOT NULL DEFAULT 0.7,
-    min_tier      TEXT    NOT NULL DEFAULT 'BRONZE',
-    min_vram_gb   REAL    NOT NULL DEFAULT 0.0,
-    timeout_s     INTEGER NOT NULL DEFAULT 300,
-    priority      INTEGER NOT NULL DEFAULT 1,
-    agent_id      TEXT,
-    peer_hub_id   TEXT,
-    content       TEXT,
-    input_tokens  INTEGER NOT NULL DEFAULT 0,
-    output_tokens INTEGER NOT NULL DEFAULT 0,
-    latency_ms    REAL    NOT NULL DEFAULT 0.0,
-    retries       INTEGER NOT NULL DEFAULT 0,
-    error         TEXT,
-    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_tasks_state ON tasks(state);
-
-CREATE TABLE IF NOT EXISTS pulse_log (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    agent_id        TEXT NOT NULL,
-    status          TEXT NOT NULL,
-    gpu_util_pct    REAL NOT NULL DEFAULT 0.0,
-    vram_used_gb    REAL NOT NULL DEFAULT 0.0,
-    current_tps     REAL NOT NULL DEFAULT 0.0,
-    tasks_completed INTEGER NOT NULL DEFAULT 0,
-    logged_at       TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE TABLE IF NOT EXISTS reward_ledger (
-    id               INTEGER PRIMARY KEY AUTOINCREMENT,
-    operator_id      TEXT NOT NULL,
-    agent_id         TEXT NOT NULL,
-    task_id          TEXT NOT NULL,
-    tokens_generated INTEGER NOT NULL DEFAULT 0,
-    credits_earned   REAL    NOT NULL DEFAULT 0.0,
-    recorded_at      TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE VIEW IF NOT EXISTS reward_summary AS
-SELECT operator_id,
-       COUNT(*)              AS total_tasks,
-       SUM(tokens_generated) AS total_tokens,
-       SUM(credits_earned)   AS total_credits
-FROM reward_ledger
-GROUP BY operator_id;
-"""
 
 async def init_db(path: str) -> aiosqlite.Connection:
     db = await aiosqlite.connect(path)
     db.row_factory = aiosqlite.Row
-    await db.executescript(DDL)
-    # migrate existing databases: add pull_mode column if missing
+    ddl = _DDL_PATH.read_text(encoding="utf-8")
+    await db.executescript(ddl)
+    # migrate existing databases: add columns if missing
     async with db.execute("PRAGMA table_info(agents)") as cur:
         cols = {row[1] for row in await cur.fetchall()}
     if "pull_mode" not in cols:

@@ -54,8 +54,10 @@ Key settings:
 | `operator_id` | `duck` | Your operator name (appears in reward ledger) |
 | `hub_urls` | `["http://localhost:8000"]` | Hub(s) to connect to |
 | `ollama_url` | `http://localhost:11434` | Local Ollama endpoint |
-| `db_path` | `.igrid/hub.db` | SQLite database path |
+| `db_path` | `.igrid/hub.sqlite` | SQLite database path |
 | `api_key` | (empty) | Optional API key for hub authentication |
+| `agent_name` | (empty) | Human-friendly agent name (default: hostname) |
+| `agent_id` | (empty) | Agent UUID (auto-saved on join) |
 
 ## CLI reference
 
@@ -75,6 +77,10 @@ moma hub up --api-key mysecret             # require API key for joins
 moma join http://localhost:8000             # start agent, join one hub
 moma join http://hub1:8000 http://hub2:8000 # join multiple hubs
 moma join http://hub:8000 --port 8100       # custom agent port
+moma join http://hub:8000 --name alice      # human-friendly name
+moma join http://hub:8000 --pull            # SSE pull mode (WAN-safe)
+moma down                                   # deregister from all hubs
+moma down --agent-id <uuid>                 # deregister a specific agent
 ```
 
 ### Task operations
@@ -168,24 +174,19 @@ Requires both `llama3` and `mistral` models available on agents in the grid.
 
 ### 03 — Two-hub cluster
 
-**File:** `cookbook/03_two_hub_cluster/setup.sh`
+**Files:** `cookbook/03_two_hub_cluster/setup.py` (Click CLI), `setup.sh` (reference)
 
-Step-by-step shell commands to set up a two-machine cluster. Hub A peers with Hub B; tasks submitted to Hub A can be forwarded to Hub B if no local agent can handle them.
+Set up and test a two-machine cluster. Hub A peers with Hub B; tasks submitted to Hub A can be forwarded to Hub B if no local agent can handle them.
 
 ```bash
-# On Machine A (192.168.1.10):
-moma hub up --hub-url http://192.168.1.10:8000
+# Interactive Python CLI (recommended):
+python cookbook/03_two_hub_cluster/setup.py status
+python cookbook/03_two_hub_cluster/setup.py peer
+python cookbook/03_two_hub_cluster/setup.py test
+python cookbook/03_two_hub_cluster/setup.py full             # all steps
 
-# On Machine B (192.168.1.20):
-moma hub up --hub-url http://192.168.1.20:8000
-moma join http://192.168.1.20:8000 --host 192.168.1.20 --port 8100
-
-# Back on Machine A — link the hubs:
-moma peer add http://192.168.1.20:8000
-
-# Submit from A; may forward to B:
-moma submit "Hello from hub A" --model llama3
-moma peer list
+# Custom hub URLs:
+python cookbook/03_two_hub_cluster/setup.py --hub-a http://192.168.1.10:8000 --hub-b http://192.168.1.20:8000 full
 ```
 
 ### 04 — Benchmark models
@@ -236,6 +237,74 @@ python cookbook/06_arxiv_paper_digest/digest.py --model mistral --hub http://192
 ```
 
 Each paper receives a structured 7-part digest: title, problem, methodology, results, limitations, relevance, and a one-liner summary.
+
+### 07 — Stress test
+
+**File:** `cookbook/07_stress_test/stress.py`
+
+Fire N tasks at the grid simultaneously and measure throughput, agent distribution, and grid-level tokens/second.
+
+```bash
+python cookbook/07_stress_test/stress.py                          # 20 tasks, default
+python cookbook/07_stress_test/stress.py -n 50 --model mistral    # 50 tasks
+python cookbook/07_stress_test/stress.py --hub http://192.168.1.10:8000
+```
+
+Great for watching all GPUs light up and measuring grid throughput.
+
+### 08 — Model arena
+
+**File:** `cookbook/08_model_arena/arena.py`
+
+Submit the same prompt to multiple models and generate a dark-mode HTML report comparing quality, speed, and token efficiency.
+
+```bash
+python cookbook/08_model_arena/arena.py                                  # default 3 models
+python cookbook/08_model_arena/arena.py --models llama3,mistral,phi3,qwen2.5
+python cookbook/08_model_arena/arena.py --prompt "Explain quantum computing"
+```
+
+Opens as a side-by-side comparison in the browser. Fastest model gets a trophy.
+
+### 09 — Document pipeline
+
+**File:** `cookbook/09_doc_pipeline/pipeline.py`
+
+End-to-end document processing: extract PDF text (via `dd-extract`), summarize on the grid, and format the output (via `dd-format`).
+
+```bash
+python cookbook/09_doc_pipeline/pipeline.py paper.pdf                          # local PDF
+python cookbook/09_doc_pipeline/pipeline.py https://arxiv.org/pdf/2312.12345   # from URL
+python cookbook/09_doc_pipeline/pipeline.py paper.pdf --format docx --out summary.docx
+```
+
+Requires `pip install dd-extract dd-format`.
+
+### 10 — Chain relay
+
+**File:** `cookbook/10_chain_relay/chain.py`
+
+Multi-step reasoning chain where each step's output feeds into the next: Research -> Analyze -> Summarize. Tasks may land on different agents.
+
+```bash
+python cookbook/10_chain_relay/chain.py "quantum computing"
+python cookbook/10_chain_relay/chain.py "distributed AI inference" --model mistral
+```
+
+Watch `moma logs -f` to see tasks hop between nodes.
+
+### 11 — Batch translate
+
+**File:** `cookbook/11_batch_translate/translate.py`
+
+Translate one text into multiple languages in parallel across all grid agents.
+
+```bash
+python cookbook/11_batch_translate/translate.py "Hello, world! AI is changing everything."
+python cookbook/11_batch_translate/translate.py --file input.txt --languages fr,de,ja,zh,es,ko
+```
+
+All agents work simultaneously on different languages. Generates an HTML report.
 
 ---
 
@@ -382,10 +451,10 @@ nvidia-smi          # verify driver is working
 
 ### Database
 
-The hub uses SQLite at `.igrid/hub.db` (configurable). To reset:
+The hub uses SQLite at `.igrid/hub.sqlite` (configurable). To reset:
 
 ```bash
-rm .igrid/hub.db
+rm .igrid/hub.sqlite
 moma hub up          # recreates the database
 ```
 

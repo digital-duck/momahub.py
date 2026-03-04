@@ -27,13 +27,13 @@ dependencies = [
     "pyyaml",
     "pynvml",
     "streamlit",
-    "pypdf",
+    "dd-extract",
+    "dd-format",
 ]
 
 [project.optional-dependencies]
 dev     = ["pytest", "pytest-asyncio", "httpx"]
-docling = ["docling"]          # layout-aware PDF: tables, figures, multi-column
-format  = ["python-docx", "fpdf2"]  # markdown → docx/pdf export
+docling = ["dd-extract[docling]"]  # layout-aware PDF: tables, figures, multi-column
 
 [project.urls]
 "Homepage" = "https://github.com/digital-duck/momahub-claude"

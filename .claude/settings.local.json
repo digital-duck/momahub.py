@@ -16,7 +16,9 @@
       "Bash(dd-format:*)",
       "Bash(pip show:*)",
       "Bash(pandoc:*)",
-      "Bash(dd-dogic:*)"
+      "Bash(dd-dogic:*)",
+      "Bash(ls:*)",
+      "Bash(do:*)"
     ]
   }
 }

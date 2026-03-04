@@ -6,13 +6,13 @@ from igrid.hub.app import create_app
 
 @pytest_asyncio.fixture
 async def hub_a(tmp_path):
-    app = create_app(hub_id="hub-A", operator_id="duck", db_path=str(tmp_path / "hub_a.db"), hub_url="http://hub-a")
+    app = create_app(hub_id="hub-A", operator_id="duck", db_path=str(tmp_path / "hub_a.sqlite"), hub_url="http://hub-a")
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://hub-a") as client:
         yield client
 
 @pytest_asyncio.fixture
 async def hub_b(tmp_path):
-    app = create_app(hub_id="hub-B", operator_id="duck", db_path=str(tmp_path / "hub_b.db"), hub_url="http://hub-b")
+    app = create_app(hub_id="hub-B", operator_id="duck", db_path=str(tmp_path / "hub_b.sqlite"), hub_url="http://hub-b")
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://hub-b") as client:
         yield client
 

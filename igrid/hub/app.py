@@ -31,7 +31,7 @@ from igrid.schema.cluster import PeerHandshake, PeerHandshakeAck, PeerCapability
 _log = logging.getLogger("igrid.hub")
 
 def create_app(hub_id: str | None = None, operator_id: str = "duck",
-               db_path: str = ".igrid/hub.db", hub_url: str = "http://localhost:8000",
+               db_path: str = ".igrid/hub.sqlite", hub_url: str = "http://localhost:8000",
                api_key: str = "", admin_mode: bool = False,
                max_concurrent_tasks: int = 3) -> FastAPI:
     _hub_id = hub_id or f"hub-{uuid.uuid4().hex[:8]}"

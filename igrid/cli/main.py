@@ -105,13 +105,15 @@ def agent_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100)
     """Start the agent node."""
     cfg = load_config()
     hub_urls = [u.strip() for u in join.split(",") if u.strip()] if join else cfg["hub_urls"]
+    agent_id = cfg.get("agent_id") or str(uuid.uuid4())
     from igrid.agent.worker import create_agent_app
-    agent_app_instance = create_agent_app(operator_id=operator_id or cfg["operator_id"],
+    agent_app_instance = create_agent_app(agent_id=agent_id, operator_id=operator_id or cfg["operator_id"],
                                           hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"],
                                           api_key=api_key or cfg["api_key"], pull_mode=pull,
                                           agent_name=name or cfg.get("agent_name", ""))
     agent_app_instance.state.host = host if host != "0.0.0.0" else "127.0.0.1"
     agent_app_instance.state.port = port
+    cfg["agent_id"] = agent_id; cfg["hub_urls"] = hub_urls; save_config(cfg)
     mode = "PULL (SSE)" if pull else "PUSH (HTTP)"
     typer.echo(f"Starting agent on {host}:{port}  mode={mode}  hubs={hub_urls}")
     uvicorn.run(agent_app_instance, host=host, port=port, log_level="info")
@@ -124,16 +126,43 @@ def join_grid(hub_urls: list[str] = typer.Argument(...),
               pull: bool = typer.Option(False, "--pull", help="Use SSE pull mode (WAN-safe, no inbound ports needed)")):
     """Start an agent and join hub(s)."""
     cfg = load_config()
+    agent_id = cfg.get("agent_id") or str(uuid.uuid4())
     from igrid.agent.worker import create_agent_app
-    agent_app_instance = create_agent_app(operator_id=operator_id or cfg["operator_id"],
+    agent_app_instance = create_agent_app(agent_id=agent_id, operator_id=operator_id or cfg["operator_id"],
                                           hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"],
                                           pull_mode=pull,
                                           agent_name=name or cfg.get("agent_name", ""))
     agent_app_instance.state.host = host if host != "0.0.0.0" else "127.0.0.1"
     agent_app_instance.state.port = port
+    cfg["agent_id"] = agent_id; cfg["hub_urls"] = hub_urls; save_config(cfg)
     mode = "PULL (SSE)" if pull else "PUSH (HTTP)"
     typer.echo(f"Joining grid: mode={mode}  hubs={hub_urls}")
     uvicorn.run(agent_app_instance, host=host, port=port, log_level="info")
+
+@app.command("down")
+def down(hub_url: str = typer.Option(""), agent_id: str = typer.Option("", help="Agent ID (default: from config)")):
+    """Deregister this agent from all hubs and shut down gracefully."""
+    cfg = load_config()
+    aid = agent_id or cfg.get("agent_id", "")
+    if not aid:
+        typer.echo("No agent_id found. Use --agent-id or run 'moma join' first.", err=True)
+        raise typer.Exit(1)
+    oid = cfg["operator_id"]
+    hub_urls = [hub_url.rstrip("/")] if hub_url else [u.rstrip("/") for u in cfg["hub_urls"]]
+    ok_count = 0
+    for url in hub_urls:
+        try:
+            resp = httpx.post(f"{url}/leave", json={"operator_id": oid, "agent_id": aid}, timeout=5.0)
+            resp.raise_for_status()
+            typer.echo(f"  Deregistered from {url}")
+            ok_count += 1
+        except Exception as exc:
+            typer.echo(f"  Failed to deregister from {url}: {exc}", err=True)
+    if ok_count:
+        cfg["agent_id"] = ""; save_config(cfg)
+        typer.echo(f"Agent {aid} is down. ({ok_count}/{len(hub_urls)} hubs)")
+    else:
+        typer.echo("Could not reach any hub.", err=True); raise typer.Exit(1)
 
 @app.command("status")
 def status(hub_url: str = typer.Option("")):

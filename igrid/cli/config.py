@@ -7,9 +7,9 @@ _CONFIG_DIR = Path.home() / ".igrid"
 _CONFIG_FILE = _CONFIG_DIR / "config.yaml"
 _DEFAULTS = {"operator_id": "duck", "hub_host": "0.0.0.0", "hub_port": 8000,
              "agent_host": "0.0.0.0", "agent_port": 8100,
-             "hub_urls": ["https://hub.momahub.org"], "db_path": ".igrid/hub.db",
+             "hub_urls": ["https://hub.momahub.org"], "db_path": ".igrid/hub.sqlite",
              "ollama_url": "http://localhost:11434", "api_key": "",
-             "agent_name": ""}
+             "agent_name": "", "agent_id": ""}
 
 def load_config() -> dict:
     if _CONFIG_FILE.exists():
