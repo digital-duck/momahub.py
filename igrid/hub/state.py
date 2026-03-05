@@ -217,3 +217,58 @@ class GridState:
     async def recent_pulse_logs(self, limit: int = 50) -> list[dict]:
         async with self.db.execute("SELECT * FROM pulse_log ORDER BY logged_at DESC LIMIT ?", (limit,)) as cur:
             return [dict(row) for row in await cur.fetchall()]
+
+    # ── Watchlist ────────────────────────────────────────────────
+
+    async def add_to_watchlist(self, entity_type: str, entity_id: str,
+                               reason: str, action: str = "SUSPENDED",
+                               expires_hours: int | None = 24) -> None:
+        expires_at = None
+        if expires_hours is not None:
+            expires_at = f"datetime('now', '+{expires_hours} hours')"
+        if expires_at:
+            await self.db.execute(f"""
+                INSERT INTO watchlist (entity_type, entity_id, reason, action, created_at, expires_at)
+                VALUES (?, ?, ?, ?, datetime('now'), {expires_at})
+                ON CONFLICT(entity_type, entity_id) DO UPDATE SET
+                    reason=excluded.reason, action=excluded.action,
+                    created_at=excluded.created_at, expires_at=excluded.expires_at
+            """, (entity_type, entity_id, reason, action))
+        else:
+            await self.db.execute("""
+                INSERT INTO watchlist (entity_type, entity_id, reason, action, created_at, expires_at)
+                VALUES (?, ?, ?, ?, datetime('now'), NULL)
+                ON CONFLICT(entity_type, entity_id) DO UPDATE SET
+                    reason=excluded.reason, action=excluded.action,
+                    created_at=excluded.created_at, expires_at=NULL
+            """, (entity_type, entity_id, reason, action))
+        await self.db.commit()
+
+    async def is_watchlisted(self, entity_type: str, entity_id: str) -> dict | None:
+        async with self.db.execute("""
+            SELECT * FROM watchlist
+            WHERE entity_type=? AND entity_id=?
+              AND (expires_at IS NULL OR expires_at > datetime('now'))
+        """, (entity_type, entity_id)) as cur:
+            row = await cur.fetchone()
+        return dict(row) if row else None
+
+    async def remove_from_watchlist(self, entity_type: str, entity_id: str) -> bool:
+        async with self.db.execute(
+            "DELETE FROM watchlist WHERE entity_type=? AND entity_id=? RETURNING id",
+            (entity_type, entity_id),
+        ) as cur:
+            row = await cur.fetchone()
+        await self.db.commit()
+        return row is not None
+
+    async def list_watchlist(self) -> list[dict]:
+        async with self.db.execute(
+            "SELECT * FROM watchlist WHERE expires_at IS NULL OR expires_at > datetime('now') ORDER BY created_at DESC"
+        ) as cur:
+            return [dict(row) for row in await cur.fetchall()]
+
+    async def pending_task_count(self) -> int:
+        async with self.db.execute("SELECT COUNT(*) FROM tasks WHERE state='PENDING'") as cur:
+            row = await cur.fetchone()
+        return row[0] if row else 0

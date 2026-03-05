@@ -8,8 +8,9 @@ from igrid.hub.app import create_app
 async def client(tmp_path):
     app = create_app(hub_id="hub-test", operator_id="duck",
                      db_path=str(tmp_path / "hub.sqlite"), hub_url="http://localhost:8000")
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        yield ac
+    async with app.router.lifespan_context(app):
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            yield ac
 
 async def test_health(client):
     resp = await client.get("/health")

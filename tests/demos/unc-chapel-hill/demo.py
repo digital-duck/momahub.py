@@ -242,7 +242,7 @@ def main(hub, model, step, run_all):
     _banner("Demo Complete")
     click.echo("  Thank you, Prof. Lu!")
     click.echo("  Collaboration topic: eta_AI = bits/joule")
-    click.echo("  Repo: github.com/digital-duck/momahub-claude\n")
+    click.echo("  Repo: github.com/digital-duck/momahub.py\n")
 
 
 if __name__ == "__main__":

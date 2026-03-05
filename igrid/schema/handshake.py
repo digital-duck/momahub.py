@@ -9,18 +9,18 @@ class GPUInfo(BaseModel):
     vram_gb: float
 
 class JoinRequest(BaseModel):
-    operator_id: str
-    agent_id: str
-    host: str
-    port: int
-    name: str = ""
-    gpus: list[GPUInfo] = Field(default_factory=list)
-    cpu_cores: int = 0
-    ram_gb: float = 0.0
-    supported_models: list[str] = Field(default_factory=list)
-    cached_models: list[str] = Field(default_factory=list, description="Models already pulled locally in Ollama")
-    pull_mode: bool = Field(default=False, description="True = agent uses SSE pull instead of HTTP push")
-    api_key: str = ""
+    operator_id: str = Field(max_length=256)
+    agent_id: str = Field(max_length=256)
+    host: str = Field(max_length=256)
+    port: int = Field(ge=1, le=65535)
+    name: str = Field(default="", max_length=256)
+    gpus: list[GPUInfo] = Field(default_factory=list, max_length=32)
+    cpu_cores: int = Field(default=0, ge=0, le=4096)
+    ram_gb: float = Field(default=0.0, ge=0.0, le=65536.0)
+    supported_models: list[str] = Field(default_factory=list, max_length=200)
+    cached_models: list[str] = Field(default_factory=list, max_length=200)
+    pull_mode: bool = Field(default=False)
+    api_key: str = Field(default="", max_length=512)
 
 class JoinAck(BaseModel):
     accepted: bool

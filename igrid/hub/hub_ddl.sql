@@ -90,6 +90,17 @@ CREATE TABLE IF NOT EXISTS reward_ledger (
     recorded_at      TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS watchlist (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    entity_type TEXT NOT NULL,  -- 'operator' or 'agent' or 'ip'
+    entity_id   TEXT NOT NULL,
+    reason      TEXT NOT NULL DEFAULT '',
+    action      TEXT NOT NULL DEFAULT 'SUSPENDED',  -- SUSPENDED or BLOCKED
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    expires_at  TEXT,  -- NULL = permanent until manual unblock
+    UNIQUE(entity_type, entity_id)
+);
+
 CREATE VIEW IF NOT EXISTS reward_summary AS
 SELECT operator_id,
        COUNT(*)              AS total_tasks,

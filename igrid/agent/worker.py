@@ -23,12 +23,16 @@ class AgentStats:
 def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
                      hub_urls: list[str] | None = None, ollama_url: str = "http://localhost:11434",
                      api_key: str = "", pull_mode: bool = False,
-                     agent_name: str = "") -> FastAPI:
+                     agent_name: str = "",
+                     max_concurrent: int = 3,
+                     max_prompt_chars: int = 200_000) -> FastAPI:
     _agent_id = agent_id or str(uuid.uuid4())
     _agent_name = agent_name or socket.gethostname()
     _hub_urls = hub_urls or ["http://localhost:8000"]
     _stats = AgentStats()
     _backend = OllamaBackend(ollama_url)
+    _semaphore = asyncio.Semaphore(max_concurrent)
+    _max_prompt_chars = max_prompt_chars
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -85,17 +89,27 @@ def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
 
     @app.post("/run", response_model=TaskResult)
     async def run_task(req: TaskRequest, request: Request):
-        backend: OllamaBackend = request.app.state.backend
-        stats: AgentStats = request.app.state.stats
-        try:
-            data = await backend.generate(req.model, req.prompt, req.system, req.max_tokens, req.temperature)
-            stats.tasks_completed += 1; stats.current_tps = data["tps"]
-            return TaskResult(task_id=req.task_id, state=TaskState.COMPLETE, content=data["content"],
-                              model=req.model, input_tokens=data["input_tokens"],
-                              output_tokens=data["output_tokens"], latency_ms=data["latency_ms"],
-                              agent_id=request.app.state.agent_id)
-        except Exception as exc:
-            return TaskResult(task_id=req.task_id, state=TaskState.FAILED, error=str(exc),
-                              agent_id=request.app.state.agent_id)
+        aid = request.app.state.agent_id
+        # Prompt size check
+        if len(req.prompt) > _max_prompt_chars:
+            return TaskResult(task_id=req.task_id, state=TaskState.FAILED,
+                              error=f"Prompt exceeds {_max_prompt_chars} chars", agent_id=aid)
+        # Concurrency check
+        if _semaphore.locked():
+            return TaskResult(task_id=req.task_id, state=TaskState.FAILED,
+                              error="Agent at capacity", agent_id=aid)
+        async with _semaphore:
+            backend: OllamaBackend = request.app.state.backend
+            stats: AgentStats = request.app.state.stats
+            try:
+                data = await backend.generate(req.model, req.prompt, req.system, req.max_tokens, req.temperature)
+                stats.tasks_completed += 1; stats.current_tps = data["tps"]
+                return TaskResult(task_id=req.task_id, state=TaskState.COMPLETE, content=data["content"],
+                                  model=req.model, input_tokens=data["input_tokens"],
+                                  output_tokens=data["output_tokens"], latency_ms=data["latency_ms"],
+                                  agent_id=aid)
+            except Exception as exc:
+                return TaskResult(task_id=req.task_id, state=TaskState.FAILED, error=str(exc),
+                                  agent_id=aid)
 
     return app

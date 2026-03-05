@@ -15,35 +15,22 @@ Tip: run 'moma agents' in another terminal to watch agent status live.
 from __future__ import annotations
 
 import asyncio
+import os
 import time
 import uuid
 from datetime import datetime
+from pathlib import Path
 
 import click
 import httpx
 
-PROMPTS = [
-    "Explain Newton's first law in two sentences.",
-    "What is the difference between TCP and UDP?",
-    "Write a haiku about distributed computing.",
-    "Summarize the concept of entropy in physics.",
-    "What is a hash table and why is it fast?",
-    "Explain the double-slit experiment simply.",
-    "What is gradient descent in machine learning?",
-    "Describe the CAP theorem in distributed systems.",
-    "What is the Turing test?",
-    "Explain the concept of recursion with an example.",
-    "What is quantum entanglement?",
-    "How does public-key cryptography work?",
-    "What is the Big Bang theory?",
-    "Explain MapReduce in three sentences.",
-    "What is natural selection?",
-    "How does a neural network learn?",
-    "What is the halting problem?",
-    "Explain the second law of thermodynamics.",
-    "What is a blockchain?",
-    "Describe the observer effect in quantum mechanics.",
-]
+SCRIPT_DIR = Path(__file__).resolve().parent
+
+
+def load_prompts(path: Path) -> list[str]:
+    """Load prompts from a text file (one per line, blanks/comments skipped)."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return [l.strip() for l in lines if l.strip() and not l.strip().startswith("#")]
 
 
 async def submit_and_wait(client: httpx.AsyncClient, hub: str, task_id: str,
@@ -63,25 +50,118 @@ async def submit_and_wait(client: httpx.AsyncClient, hub: str, task_id: str,
             if state == "COMPLETE":
                 result = data.get("result", {})
                 elapsed = time.monotonic() - t0
-                return {"task_id": task_id, "state": "COMPLETE",
+                return {"task_id": task_id, "state": "COMPLETE", "prompt": prompt,
                         "agent_id": result.get("agent_id", ""),
                         "output_tokens": result.get("output_tokens", 0),
                         "latency_s": round(elapsed, 2),
                         "tps": round(result.get("output_tokens", 0) / max(elapsed, 0.001), 1)}
             if state == "FAILED":
-                return {"task_id": task_id, "state": "FAILED", "agent_id": "",
-                        "output_tokens": 0, "latency_s": 0, "tps": 0}
+                return {"task_id": task_id, "state": "FAILED", "prompt": prompt,
+                        "agent_id": "", "output_tokens": 0, "latency_s": 0, "tps": 0}
         except Exception:
             pass
         await asyncio.sleep(interval)
         interval = min(interval * 1.2, 8.0)
-    return {"task_id": task_id, "state": "TIMEOUT", "agent_id": "",
-            "output_tokens": 0, "latency_s": 0, "tps": 0}
+    return {"task_id": task_id, "state": "TIMEOUT", "prompt": prompt,
+            "agent_id": "", "output_tokens": 0, "latency_s": 0, "tps": 0}
+
+
+def write_report(results: list[dict], hub: str, n: int, model: str,
+                 max_tokens: int, concurrency: int, wall_time: float) -> str:
+    """Write results to a markdown report file. Returns the file path."""
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    path = SCRIPT_DIR / f"results-{ts}.md"
+
+    completed = [r for r in results if r["state"] == "COMPLETE"]
+    failed = [r for r in results if r["state"] == "FAILED"]
+    timed_out = [r for r in results if r["state"] == "TIMEOUT"]
+    total_tokens = sum(r["output_tokens"] for r in completed)
+
+    agent_counts: dict[str, int] = {}
+    for r in completed:
+        aid = r.get("agent_id", "unknown")
+        agent_counts[aid] = agent_counts.get(aid, 0) + 1
+
+    lines = [
+        f"# Stress Test Results",
+        f"",
+        f"**Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        f"",
+        f"## Configuration",
+        f"",
+        f"| Parameter | Value |",
+        f"|-----------|-------|",
+        f"| Hub | {hub} |",
+        f"| Tasks | {n} |",
+        f"| Model | {model} |",
+        f"| Max tokens | {max_tokens} |",
+        f"| Concurrency | {concurrency} |",
+        f"",
+        f"## Summary",
+        f"",
+        f"| Metric | Value |",
+        f"|--------|-------|",
+        f"| Completed | {len(completed)}/{n} |",
+        f"| Failed | {len(failed)} |",
+        f"| Timeout | {len(timed_out)} |",
+        f"| Wall time | {wall_time:.1f}s |",
+        f"| Total tokens | {total_tokens:,} |",
+    ]
+
+    if completed:
+        avg_lat = sum(r["latency_s"] for r in completed) / len(completed)
+        avg_tps = sum(r["tps"] for r in completed) / len(completed)
+        throughput = total_tokens / wall_time
+        lines += [
+            f"| Avg latency | {avg_lat:.1f}s |",
+            f"| Avg TPS | {avg_tps:.1f} |",
+            f"| Grid throughput | {throughput:.1f} tokens/s |",
+        ]
+
+    if agent_counts:
+        lines += [
+            f"",
+            f"## Agent Distribution",
+            f"",
+            f"| Agent | Tasks |",
+            f"|-------|-------|",
+        ]
+        for aid, cnt in sorted(agent_counts.items(), key=lambda x: -x[1]):
+            lines.append(f"| `{aid}` | {cnt} |")
+
+    lines += [
+        f"",
+        f"## Task Details",
+        f"",
+        f"| # | State | Latency | Tokens | TPS | Agent | Prompt |",
+        f"|---|-------|---------|--------|-----|-------|--------|",
+    ]
+    for i, r in enumerate(results, 1):
+        prompt_preview = r.get("prompt", "")[:60]
+        agent_short = r.get("agent_id", "")[-16:] or "-"
+        lines.append(
+            f"| {i} | {r['state']} | {r['latency_s']}s | {r['output_tokens']} "
+            f"| {r['tps']} | `..{agent_short}` | {prompt_preview} |"
+        )
+
+    lines.append("")
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return str(path)
 
 
 async def run_stress(hub: str, n: int, model: str, max_tokens: int,
-                     concurrency: int, timeout_s: int):
-    prompts = [PROMPTS[i % len(PROMPTS)] for i in range(n)]
+                     concurrency: int, timeout_s: int, prompts_file: str):
+    prompt_path = Path(prompts_file) if prompts_file else SCRIPT_DIR / "prompts.txt"
+    if not prompt_path.exists():
+        click.echo(f"Prompts file not found: {prompt_path}", err=True)
+        raise SystemExit(1)
+
+    all_prompts = load_prompts(prompt_path)
+    if not all_prompts:
+        click.echo(f"No prompts found in {prompt_path}", err=True)
+        raise SystemExit(1)
+
+    prompts = [all_prompts[i % len(all_prompts)] for i in range(n)]
     task_ids = [f"stress-{uuid.uuid4().hex[:8]}" for _ in range(n)]
 
     click.echo(f"\n  Stress Test")
@@ -90,6 +170,7 @@ async def run_stress(hub: str, n: int, model: str, max_tokens: int,
     click.echo(f"    Model:       {model}")
     click.echo(f"    Concurrency: {concurrency}")
     click.echo(f"    Max tokens:  {max_tokens}")
+    click.echo(f"    Prompts:     {prompt_path} ({len(all_prompts)} unique)")
     click.echo()
 
     wall_start = time.monotonic()
@@ -140,6 +221,10 @@ async def run_stress(hub: str, n: int, model: str, max_tokens: int,
         for aid, cnt in sorted(agent_counts.items(), key=lambda x: -x[1]):
             bar = "#" * cnt
             click.echo(f"    {aid[-16:]:<18} {cnt:>3} tasks  {bar}")
+
+    # Persist results
+    report_path = write_report(results, hub, n, model, max_tokens, concurrency, wall_time)
+    click.echo(f"\n  Report saved to {report_path}")
     click.echo()
 
 
@@ -151,9 +236,10 @@ async def run_stress(hub: str, n: int, model: str, max_tokens: int,
 @click.option("--concurrency", default=10, show_default=True, type=int,
               help="Max parallel submissions")
 @click.option("--timeout", default=300, show_default=True, type=int, help="Per-task timeout (s)")
-def main(hub, num_tasks, model, max_tokens, concurrency, timeout):
+@click.option("--prompts", default="", help="Path to prompts file (default: prompts.txt alongside script)")
+def main(hub, num_tasks, model, max_tokens, concurrency, timeout, prompts):
     """Fire N tasks at the grid and measure throughput."""
-    asyncio.run(run_stress(hub, num_tasks, model, max_tokens, concurrency, timeout))
+    asyncio.run(run_stress(hub, num_tasks, model, max_tokens, concurrency, timeout, prompts))
 
 
 if __name__ == "__main__":

@@ -32,7 +32,11 @@ def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
            hub_url: str = typer.Option(""), db: str = typer.Option(""),
            operator_id: str = typer.Option(""), api_key: str = typer.Option(""),
            admin: bool = typer.Option(False, "--admin", help="Enable admin mode: agents require verification before receiving tasks"),
-           max_concurrent: int = typer.Option(3, "--max-concurrent", help="Max concurrent tasks per agent")):
+           max_concurrent: int = typer.Option(3, "--max-concurrent", help="Max concurrent tasks per agent"),
+           max_prompt_chars: int = typer.Option(50_000, "--max-prompt-chars", help="Max prompt size in chars (hard ceiling: 200K)"),
+           max_queue_depth: int = typer.Option(1000, "--max-queue-depth", help="Max pending tasks in queue"),
+           rate_limit: int = typer.Option(60, "--rate-limit", help="Max requests per minute per IP"),
+           burst_threshold: int = typer.Option(200, "--burst-threshold", help="Flood detection: requests in 10s")):
     """Start the hub server."""
     cfg = load_config()
     from igrid.hub.app import create_app
@@ -41,13 +45,19 @@ def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
                               hub_url=hub_url or f"http://{host}:{port}",
                               api_key=api_key or cfg["api_key"],
                               admin_mode=admin,
-                              max_concurrent_tasks=max_concurrent)
+                              max_concurrent_tasks=max_concurrent,
+                              max_prompt_chars=max_prompt_chars,
+                              max_queue_depth=max_queue_depth,
+                              rate_limit=rate_limit,
+                              burst_threshold=burst_threshold)
     lan_ip = _detect_lan_ip()
     actual_url = hub_url or f"http://{lan_ip}:{port}"
     mode_label = "ADMIN (agents require verification)" if admin else "OPEN (any agent can join)"
     typer.echo(f"Starting hub on {host}:{port}")
     typer.echo(f"  Mode: {mode_label}")
     typer.echo(f"  Max concurrent tasks per agent: {max_concurrent}")
+    typer.echo(f"  Rate limit: {rate_limit} req/min  |  Burst threshold: {burst_threshold}/10s")
+    typer.echo(f"  Max prompt: {max_prompt_chars} chars  |  Max queue: {max_queue_depth}")
     typer.echo(f"")
     typer.echo(f"  Other machines can join with:")
     typer.echo(f"    moma join {actual_url}")
@@ -298,6 +308,34 @@ def rewards(hub_url: str = typer.Option("")):
         if not rows: typer.echo("No rewards yet."); return
         typer.echo(f"{'OPERATOR':<20} {'TASKS':>8} {'TOKENS':>12} {'CREDITS':>10}")
         for r in rows: typer.echo(f"{r.get('operator_id',''):<20} {r.get('total_tasks',0):>8} {r.get('total_tokens',0):>12} {r.get('total_credits',0.0):>10.2f}")
+    except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
+
+@app.command("watchlist")
+def watchlist(hub_url: str = typer.Option("")):
+    """Show watchlist entries (suspended/blocked IPs, operators, agents)."""
+    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    try:
+        entries = httpx.get(f"{url}/watchlist", timeout=5.0).json().get("entries", [])
+        if not entries: typer.echo("Watchlist is empty."); return
+        typer.echo(f"{'TYPE':<10} {'ENTITY_ID':<40} {'ACTION':<12} {'REASON':<30} {'EXPIRES_AT':<25}")
+        typer.echo("-" * 117)
+        for e in entries:
+            typer.echo(f"{e.get('entity_type',''):<10} {e.get('entity_id',''):<40} {e.get('action',''):<12} {e.get('reason',''):<30} {e.get('expires_at','permanent'):<25}")
+    except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
+
+@app.command("unblock")
+def unblock(entity_id: str = typer.Argument(..., help="IP, operator_id, or agent_id to unblock"),
+            hub_url: str = typer.Option("")):
+    """Remove an entity from the watchlist."""
+    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    try:
+        resp = httpx.delete(f"{url}/watchlist/{entity_id}", timeout=5.0)
+        resp.raise_for_status()
+        data = resp.json()
+        if data.get("ok"):
+            typer.echo(f"Unblocked: {entity_id}")
+        else:
+            typer.echo(f"Not found on watchlist: {entity_id}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("export")

@@ -6,10 +6,10 @@ Visually impressive: all GPUs working on the same content in parallel.
 
 Usage:
     python translate.py "Hello, world! AI is changing everything."
-    python translate.py --file input.txt --languages fr,de,ja,zh,es,ko
+    python translate.py --file input.txt --languages fr,de,zh,es
     python translate.py "The quick brown fox" --hub http://192.168.1.10:8000
 
-Default languages: French, German, Japanese, Chinese, Spanish.
+Default languages: French, German,  Chinese, Spanish.
 """
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ from pathlib import Path
 import click
 import httpx
 
-DEFAULT_LANGUAGES = "French,German,Japanese,Chinese,Spanish"
+DEFAULT_LANGUAGES = "French,German,Chinese,Spanish"
 
 SYSTEM = (
     "You are a professional translator. Translate accurately while preserving "

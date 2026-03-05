@@ -16,11 +16,13 @@ async def run_sse_consumer(
     hub_url: str,
     backend: OllamaBackend,
     stats,
+    max_concurrent: int = 3,
 ) -> None:
     """Connect to hub SSE stream and process tasks. Auto-reconnects on failure."""
     url = f"{hub_url}/task-stream/{agent_id}"
     backoff = 2.0
     max_backoff = 30.0
+    _semaphore = asyncio.Semaphore(max_concurrent)
 
     while True:
         try:
@@ -36,7 +38,7 @@ async def run_sse_consumer(
                             try:
                                 req = TaskRequest(**json.loads(payload))
                                 asyncio.create_task(
-                                    _handle_task(agent_id, hub_url, backend, stats, req),
+                                    _handle_task(agent_id, hub_url, backend, stats, req, _semaphore),
                                     name=f"sse-task-{req.task_id[:8]}",
                                 )
                             except Exception as exc:
@@ -58,22 +60,24 @@ async def _handle_task(
     backend: OllamaBackend,
     stats,
     req: TaskRequest,
+    semaphore: asyncio.Semaphore,
 ) -> None:
     """Run inference and POST result back to the hub."""
-    try:
-        data = await backend.generate(req.model, req.prompt, req.system, req.max_tokens, req.temperature)
-        stats.tasks_completed += 1
-        stats.current_tps = data["tps"]
-        result = TaskResult(
-            task_id=req.task_id, state=TaskState.COMPLETE, content=data["content"],
-            model=req.model, input_tokens=data["input_tokens"],
-            output_tokens=data["output_tokens"], latency_ms=data["latency_ms"],
-            agent_id=agent_id,
-        )
-    except Exception as exc:
-        _log.error("task %s failed: %s", req.task_id, exc)
-        result = TaskResult(task_id=req.task_id, state=TaskState.FAILED,
-                            error=str(exc), agent_id=agent_id)
+    async with semaphore:
+        try:
+            data = await backend.generate(req.model, req.prompt, req.system, req.max_tokens, req.temperature)
+            stats.tasks_completed += 1
+            stats.current_tps = data["tps"]
+            result = TaskResult(
+                task_id=req.task_id, state=TaskState.COMPLETE, content=data["content"],
+                model=req.model, input_tokens=data["input_tokens"],
+                output_tokens=data["output_tokens"], latency_ms=data["latency_ms"],
+                agent_id=agent_id,
+            )
+        except Exception as exc:
+            _log.error("task %s failed: %s", req.task_id, exc)
+            result = TaskResult(task_id=req.task_id, state=TaskState.FAILED,
+                                error=str(exc), agent_id=agent_id)
     # POST result back to hub
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
