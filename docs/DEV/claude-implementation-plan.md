@@ -866,3 +866,150 @@ moma join http://100.64.0.1:8000
 **Recommendation for the weekend WAN test:** Start with **SSE Pull Mode** (Solution 1).
 It requires no extra infrastructure, works through any NAT, and is already implemented.
 If latency becomes an issue, upgrade to WebSocket (Solution 2) later.
+
+---
+
+## 15. SPL as a Prompt Compiler
+
+### Idea
+
+Treat SPL not as a scripting language that *orchestrates* LLM calls, but as a **compiler** that operates on prompts. The analogy:
+
+```
+Source code   →  Compiler   →  Machine code  →  CPU executes
+Raw intent    →  SPL        →  Optimised prompt(s)  →  LLM executes
+```
+
+A traditional compiler has phases: lexing, parsing, IR, optimisation, code generation. SPL already has the first three (tokens, AST, CTE dependency graph). The missing piece is **prompt-level optimisation passes** — transformations that rewrite, split, merge, or reorder prompt fragments before they hit the grid.
+
+### What This Enables
+
+| Compiler Phase | SPL Equivalent | Example |
+|----------------|----------------|---------|
+| Lexing / Parsing | SPL parser (exists) | `PROMPT ... WITH ... SELECT ... GENERATE` |
+| IR (intermediate representation) | CTE dependency DAG (exists) | Parallel vs sequential CTE batches |
+| **Constant folding** | **Prompt deduplication** | Two CTEs with identical system prompts → share one call |
+| **Dead code elimination** | **Unreachable CTE pruning** | CTE whose output is never referenced → skip |
+| **Inlining** | **CTE collapsing** | Single-dependency chain A→B → merge into one prompt |
+| **Register allocation** | **Model/VRAM routing** | Map CTEs to GPU nodes by capacity |
+| **Instruction scheduling** | **Prompt batching** | Group independent CTEs into one batched call |
+| **Peephole optimisation** | **Prompt rewriting** | Shorten verbose system prompts to save tokens |
+
+### Impact on Text2SPL
+
+Text2SPL currently translates NL → SPL syntax. With the compiler framing, Text2SPL becomes the **front-end** of the compiler:
+
+```
+User NL intent
+    → Text2SPL (front-end: NL → SPL AST)
+    → Optimiser (mid-end: prompt-level passes)
+    → IGridAdapter (back-end: dispatch optimised prompts to grid)
+```
+
+Text2SPL can be improved by training it to emit *compiler-friendly* SPL — e.g., preferring fine-grained CTEs that the optimiser can then merge or parallelise, rather than monolithic single-CTE prompts.
+
+### Impact on MoMaHub
+
+The hub dispatcher becomes the **back-end code generator** — it receives optimised prompt units from the SPL compiler and maps them to physical GPU nodes. This is exactly what a compiler back-end does: map IR instructions to physical registers/ALUs.
+
+This framing also clarifies the boundary: SPL owns *what* to compute (prompt semantics), MoMaHub owns *where* to compute it (physical dispatch). Neither needs to know the other's internals.
+
+### Next Steps
+
+1. Define the optimisation pass interface (input: CTE DAG, output: transformed CTE DAG)
+2. Implement one pass as a proof of concept (e.g., CTE deduplication or prompt batching)
+3. Measure token savings on a real multi-CTE SPL script
+4. Extend Text2SPL training to emit optimiser-friendly SPL
+
+---
+
+## 16. Encrypted Prompt Chunking (Public-Private Key)
+
+### Problem
+
+In a distributed grid, agents see the full prompt text. This has two issues:
+
+1. **Privacy**: Sensitive prompts (legal docs, medical data, proprietary code) are exposed to every agent node that processes them.
+2. **Proof of work complexity**: The current verification system must validate that an agent actually ran inference and didn't fabricate results. This requires benchmark tasks, sampling, and trust heuristics — all fragile.
+
+### Idea
+
+Use public-private key cryptography to **encrypt logically-chunked prompts** so that each agent only sees an opaque ciphertext blob. The agent runs inference on the encrypted chunk and returns a result — but never knows what the actual work involves.
+
+### How It Works
+
+```
+Hub (holds private key)                    Agent (no key, sees ciphertext)
+─────────────────────                      ──────────────────────────────
+1. Split prompt into logical chunks
+2. Encrypt each chunk with hub's public key
+   (or per-task symmetric key, envelope-encrypted)
+3. Dispatch encrypted chunk to agent        → Agent receives opaque blob
+                                            4. Agent passes blob to Ollama
+                                               (Ollama processes raw bytes
+                                                as a "prompt" — see note)
+                                            5. Agent returns encrypted result
+6. Hub decrypts result with private key
+7. Hub assembles final output
+```
+
+**Important caveat**: LLMs can't do inference on ciphertext directly — the model needs plaintext tokens. So the encryption boundary must be between the **hub and the agent process**, not between the agent and Ollama. Two practical approaches:
+
+#### Approach A: Trusted Execution Envelope
+
+```
+Hub encrypts prompt → Agent decrypts in a sandboxed enclave (e.g., TEE/SGX)
+                      → Ollama runs inside enclave → result encrypted before leaving
+```
+
+This requires hardware TEE support. Strongest guarantee but highest complexity.
+
+#### Approach B: Chunk Obfuscation (Practical for PoC)
+
+Rather than full encryption, **split the prompt into semantic chunks and distribute them across multiple agents** so no single agent sees the full context:
+
+```
+Original prompt: "Review this contract for liability clauses: [full contract text]"
+
+Chunk 1 (Agent A): "Identify legal terms in: [paragraph 1-3]"
+Chunk 2 (Agent B): "Identify legal terms in: [paragraph 4-6]"
+Chunk 3 (Agent C): "Identify legal terms in: [paragraph 7-9]"
+Hub reassembles: merges partial results → final analysis
+```
+
+Each agent sees only a fragment — no single agent can reconstruct the full document. The SPL compiler (Section 15) naturally produces these chunks via CTEs.
+
+### Simplified Proof of Work
+
+This approach dramatically simplifies proof of work:
+
+| Current Approach | Encrypted Chunk Approach |
+|------------------|--------------------------|
+| Hub sends benchmark tasks to verify agent capability | Hub sends real (opaque) work — every task *is* a proof of work |
+| Hub must check if results are "reasonable" (heuristic) | Hub decrypts and validates against known chunk semantics |
+| Agents can game benchmarks (cache answers) | Agents can't game what they can't read |
+| Complex sampling + verification pipeline | Simple: did the decrypted output make sense? |
+
+The hub can also embed **canary tokens** — known-answer fragments injected into chunks. If the agent returns a wrong answer for the canary, it's provably cheating.
+
+### Key Management
+
+```
+Hub startup:
+  → Generate RSA-4096 key pair (or Ed25519 for signing)
+  → Public key published at GET /hub/pubkey
+  → Private key never leaves hub
+
+Per-task encryption:
+  → Generate AES-256 session key
+  → Encrypt prompt with AES-256
+  → Encrypt AES key with hub's RSA public key (envelope encryption)
+  → Send {encrypted_prompt, encrypted_session_key} to agent
+```
+
+### Next Steps
+
+1. Start with **Approach B** (chunk obfuscation) — it works today with no crypto infrastructure
+2. SPL's CTE chunking already provides the logical split points
+3. Add canary token injection to the dispatcher for lightweight proof of work
+4. Evaluate TEE/SGX feasibility for Approach A as a future hardening step
