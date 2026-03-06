@@ -133,6 +133,11 @@ moma peer list                              # show peer hubs
 
 ```bash
 moma rewards                                # operator contribution summary
+
+(momahub) papagame@papa-game:~/projects/digital-duck/momahub.py$ moma rewards
+OPERATOR                TASKS       TOKENS    CREDITS
+duck                        7          486       0.49
+
 ```
 
 ### SPL execution

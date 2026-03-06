@@ -57,6 +57,23 @@ tests/         Unit and integration tests
 
 See **[USER-GUIDE.md](USER-GUIDE.md)** for detailed usage instructions, cookbook walkthroughs, and a step-by-step guide for running a weekend LAN test on 3 GPUs.
 
+## Research
+
+MoMaHub is the reference implementation for the paper:
+
+> **MoMa: A Prompt Compiler and Accessible Inference Grid**
+> Wen Gong (2026). *arXiv preprint, target submission 2026-03-31.*
+
+The paper introduces two core ideas:
+
+1. **The Prompt Compiler** — reframing Text2SPL as a full compiler pipeline (front-end NL→SPL, mid-end CTE DAG optimisation, back-end model/VRAM mapping), with SPL as the intermediate representation between human intent and GPU execution. The compiler is self-hosting: it runs on the i-grid it compiles for.
+
+2. **The Distributed Inference Runtime** — MoMaHub as the runtime layer that abstracts distributed consumer GPUs into a programmable compute surface, analogous to the JVM or the Linux kernel for traditional computing.
+
+Related work:
+- SPL (Structured Prompt Language): [arXiv:2602.21257](https://arxiv.org/abs/2602.21257)
+- Geodesic Reranking: [arXiv:2602.15860](https://arxiv.org/abs/2602.15860)
+
 ## License
 
 Apache 2.0

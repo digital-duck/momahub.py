@@ -280,10 +280,12 @@ The rigor transfers. The intuition transfers. And the audacity to think you can 
 | 4 | Admin mode (agent verification) | Done |
 | 5 | DoS protection (rate limit, watchlist) | Done |
 | 6 | SPL integration (`moma run`, IGridAdapter) | Done |
-| 7 | MoMa Compiler (unified Text2SPL + optimiser) | Planned |
-| 8 | Encrypted prompt chunking (privacy layer) | Planned |
-| 9 | Reward economy (credits, redemption) | Planned |
-| 10 | Public grid (multi-org, federated hubs) | Planned |
+| 6.5 | Reward ledger (credits earned per token) | Done |
+| — | **Multi-GPU LAN test** (validate distributed dispatch at scale) | In Progress |
+| 7 | MoMa Compiler (unified Text2SPL + optimiser, self-hosted on grid) | Next |
+| 8 | Encrypted prompt chunking — canary tokens first, then AES envelope | Planned |
+| 9 | Reward economy — redemption, credit transfer, operator billing | Planned |
+| 10 | Public grid (multi-org, federated hubs, open participation) | Planned |
 
 ---
 
