@@ -27,7 +27,12 @@ async def pick_agent(state: GridState, req: TaskRequest,
         primary_vram = gpus[0]["vram_gb"] if gpus else 0.0
         if req.min_vram_gb > 0 and primary_vram < req.min_vram_gb: continue
         supported = json.loads(a.get("supported_models") or "[]")
-        if supported and req.model and req.model not in supported: continue
+        if supported and req.model:
+            def _norm(m: str) -> str:
+                return m[:-7] if m.endswith(":latest") else m
+            req_model_norm = _norm(req.model)
+            if not any(_norm(m) == req_model_norm for m in supported):
+                continue
         # Rate limiting: skip agent if at max concurrent tasks
         active_count = 0
         if max_concurrent > 0:

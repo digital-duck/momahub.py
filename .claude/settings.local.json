@@ -18,7 +18,10 @@
       "Bash(pandoc:*)",
       "Bash(dd-dogic:*)",
       "Bash(ls:*)",
-      "Bash(do:*)"
+      "Bash(do:*)",
+      "Bash(moma tasks 2>&1 | head -30)",
+      "Bash(curl -s http://localhost:8000/agents | python3 -m json.tool 2>&1 | head -40)",
+      "Bash(moma --help 2>&1)"
     ]
   }
 }

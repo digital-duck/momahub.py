@@ -38,6 +38,12 @@ class IGridAdapter(LLMAdapter):
                                 total_tokens=result.get("input_tokens", 0) + result.get("output_tokens", 0),
                                 latency_ms=latency_ms, cost_usd=None)
 
+    def count_tokens(self, text: str, model: str = "") -> int:
+        return len(text) // 4
+
+    def list_models(self) -> list[str]:
+        return []
+
     async def _poll(self, task_id: str, timeout_s: int = 300) -> dict:
         deadline = time.monotonic() + timeout_s
         interval = 1.0

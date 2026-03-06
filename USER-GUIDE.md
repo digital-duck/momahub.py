@@ -60,7 +60,8 @@ Config lives at `~/.igrid/config.yaml`. View or update it with:
 
 ```bash
 moma config                          # show current config
-moma config --set hub_urls=http://192.168.1.10:8000
+# use `hostname -I` or `ip a` to identify IP address
+moma config --set hub_urls=http://192.168.0.177:8000
 moma config --set operator_id=duck
 ```
 
@@ -83,6 +84,9 @@ The `moma` CLI is organized into commands and subcommand groups.
 ### Hub management
 
 ```bash
+# Find the hub process
+pkill -f "moma hub up" 
+
 moma hub up                                # start hub on 0.0.0.0:8000
 moma hub up --host 0.0.0.0 --port 9000     # custom bind address
 moma hub up --api-key mysecret             # require API key for joins
@@ -103,7 +107,7 @@ moma down --agent-id <uuid>                 # deregister a specific agent
 ### Task operations
 
 ```bash
-moma submit "Your prompt here" --model llama3
+moma submit 'what is 10!' --model mistral
 moma submit "Summarize this" --model mistral --max-tokens 512
 moma tasks                                  # list recent tasks
 moma tasks --limit 50                       # show more
@@ -135,8 +139,64 @@ moma rewards                                # operator contribution summary
 
 ```bash
 moma run cookbook/01_single_node_hello/hello.spl
-moma run my_program.spl --params '{"key": "value"}'
 ```
+
+```response
+=== hello_grid ===
+Here is an introduction to the i-grid:
+
+The i-grid is a novel distributed inference network that enables efficient and scalable inference across multiple devices, allowing for real-time processing of complex data streams. By harnessing the power of interconnected devices on the grid, the i-grid facilitates collaborative learning and reasoning, breaking down traditional boundaries between devices and unlocking new possibilities in artificial intelligence, machine learning, and beyond.
+
+[model=llama3  tokens=41+80  latency=33446ms]
+
+```
+
+```bash
+moma submit "what is 1+2"
+```
+
+```response
+
+Task submitted: 5b286594-c47c-46ca-9498-868c6ace58fd
+
+The answer to 1+2 is... 3!
+[model=llama3 tokens=16+13 latency=387ms]
+
+```
+
+
+```bash
+(momahub) papagame@papa-game:~/projects/digital-duck/momahub.py$ moma submit "what is 10!"
+Task submitted: 986f3841-139b-449a-a720-82d77e6be7f1
+
+A simple but exciting question!
+
+10! (also written as 10 factorial) is the product of all positive integers from 1 to 10, multiplied together.
+
+So, 10! is:
+
+10! = 10 × 9 × 8 × 7 × 6 × 5 × 4 × 3 × 2 × 1
+
+Which equals:
+
+10! = 3,628,800
+[model=llama3 tokens=15+86 latency=1752ms]
+(momahub) papagame@papa-game:~/projects/digital-duck/momahub.py$ moma submit "what is 10!"
+Task submitted: 638cf6c3-e67f-4b6d-a73f-30feb19da820
+
+A factorial!
+
+The exclamation mark (!) in math notation indicates the factorial operation. So, 10! (read as "10 factorial") is the result of multiplying all positive integers from 1 to 10:
+
+10! = 10 × 9 × 8 × 7 × 6 × 5 × 4 × 3 × 2 × 1
+
+Calculating this...
+
+10! = 3,628,800
+[model=llama3 tokens=15+91 latency=1816ms]
+
+```
+
 
 ## Dashboard
 

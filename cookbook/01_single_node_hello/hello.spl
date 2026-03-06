@@ -1,7 +1,10 @@
 -- Recipe 01: Hello Grid
 PROMPT hello_grid
-SELECT
-    SYSTEM_ROLE('You are a friendly assistant on the i-grid.'),
-    GENERATE('Introduce the i-grid distributed inference network in exactly two sentences.')
 USING MODEL 'llama3'
-ON GRID;
+ON GRID
+
+SELECT
+    system_role('You are a friendly assistant on the i-grid.')
+
+GENERATE
+    llm('Introduce the i-grid distributed inference network in exactly two sentences.');
