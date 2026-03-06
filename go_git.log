@@ -907,3 +907,330 @@ M .claude/settings.local.json
 ============================================================
 2026-03-06 02:46:22,926 - INFO - --- go_git.py finished at 2026-03-06 02:46:22.926415 ---
 2026-03-06 02:46:22,926 - INFO - All specified repositories have been processed.
+2026-03-06 10:04:22,350 - INFO - --- go_git.py started at 2026-03-06 10:04:22.349980 ---
+2026-03-06 10:04:22,350 - INFO - Owner URL: https://github.com/digital-duck
+2026-03-06 10:04:22,350 - INFO - Branch: main
+2026-03-06 10:04:22,350 - INFO - Commit Message: 'refine'
+2026-03-06 10:04:22,350 - INFO - Log File: './go_git.log'
+2026-03-06 10:04:22,350 - INFO - Dry Run: False
+2026-03-06 10:04:22,350 - INFO - Skip Pull: False
+2026-03-06 10:04:22,350 - INFO - Skip Push: False
+2026-03-06 10:04:22,350 - INFO - Clone Only: False
+2026-03-06 10:04:22,350 - INFO - Parallel Processing: False
+2026-03-06 10:04:22,350 - INFO - Repositories to process: ['/home/wengong/projects/wgong/py4kids', '/home/wengong/projects/wgong/DeepCode', '/home/wengong/projects/digital-duck/zinets', '/home/wengong/projects/digital-duck/zinets_radicals', '/home/wengong/projects/digital-duck/st_semantics', '/home/wengong/projects/digital-duck/maniscope', '/home/wengong/projects/digital-duck/semanscope', '/home/wengong/projects/digital-duck/phate-manifold-metrics', '/home/wengong/projects/digital-duck/oracle', '/home/wengong/projects/digital-duck/orascope', '/home/wengong/projects/digital-duck/dd-arxiv', '/home/wengong/projects/digital-duck/dd-logging', '/home/wengong/projects/digital-duck/dd-cache', '/home/wengong/projects/digital-duck/dd-config', '/home/wengong/projects/digital-duck/dd-db', '/home/wengong/projects/digital-duck/dd-vectordb', '/home/wengong/projects/digital-duck/dd-embed', '/home/wengong/projects/digital-duck/dd-llm', '/home/wengong/projects/digital-duck/dd-extract', '/home/wengong/projects/digital-duck/dd-format', '/home/wengong/projects/digital-duck/dd-dogic', '/home/wengong/projects/digital-duck/anadata', '/home/wengong/projects/digital-duck/SPL', '/home/wengong/projects/digital-duck/SPL-LLM', '/home/wengong/projects/digital-duck/SPL-flow', '/home/wengong/projects/digital-duck/momahub.py', '/home/wengong/projects/digital-duck/momahub.go', '/home/wengong/projects/digital-duck/momahub', '/home/wengong/projects/digital-duck/momahub-opus', '/home/wengong/projects/digital-duck/momahub-sonnet', '/home/wengong/projects/digital-duck/momahub-gemini', '/home/wengong/projects/digital-duck/pocoflow', '/home/wengong/projects/digital-duck/markoflow', '/home/wengong/projects/digital-duck/monteflow', '/home/wengong/projects/digital-duck/research-copilot', '/home/wengong/projects/digital-duck/elegant-elefant', '/home/wengong/projects/digital-duck/vibe-coding']
+2026-03-06 10:04:22,350 - INFO - Processing repositories sequentially...
+2026-03-06 10:04:22,360 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:22,360 - INFO - <<<<< Processing: /home/wengong/projects/wgong/py4kids ...........
+2026-03-06 10:04:22,360 - INFO - Local repository 'py4kids' found at '/home/wengong/projects/wgong/py4kids'.
+2026-03-06 10:04:22,363 - WARNING - Branch 'main' does not exist in 'py4kids'. Staying on 'master'.
+2026-03-06 10:04:22,363 - INFO - Running 'git pull' in 'py4kids'...
+2026-03-06 10:04:22,943 - INFO - Successfully pulled changes for 'py4kids'.
+2026-03-06 10:04:22,943 - INFO - Running 'git status --porcelain' in 'py4kids' to check for local changes...
+2026-03-06 10:04:23,162 - INFO - No local changes in 'py4kids'. Done.
+2026-03-06 10:04:23,162 - INFO - 
+>>>>>> SUCCESS: 'py4kids'.
+2026-03-06 10:04:23,162 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:23,162 - INFO - <<<<< Processing: /home/wengong/projects/wgong/DeepCode ...........
+2026-03-06 10:04:23,162 - INFO - Local repository 'DeepCode' found at '/home/wengong/projects/wgong/DeepCode'.
+2026-03-06 10:04:23,164 - INFO - Running 'git pull' in 'DeepCode'...
+2026-03-06 10:04:23,691 - INFO - Successfully pulled changes for 'DeepCode'.
+2026-03-06 10:04:23,692 - INFO - Running 'git status --porcelain' in 'DeepCode' to check for local changes...
+2026-03-06 10:04:23,703 - INFO - No local changes in 'DeepCode'. Done.
+2026-03-06 10:04:23,703 - INFO - 
+>>>>>> SUCCESS: 'DeepCode'.
+2026-03-06 10:04:23,704 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:23,704 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/zinets ...........
+2026-03-06 10:04:23,704 - INFO - Local repository 'zinets' found at '/home/wengong/projects/digital-duck/zinets'.
+2026-03-06 10:04:23,710 - INFO - Running 'git pull' in 'zinets'...
+2026-03-06 10:04:24,326 - INFO - Successfully pulled changes for 'zinets'.
+2026-03-06 10:04:24,326 - INFO - Running 'git status --porcelain' in 'zinets' to check for local changes...
+2026-03-06 10:04:24,341 - INFO - No local changes in 'zinets'. Done.
+2026-03-06 10:04:24,341 - INFO - 
+>>>>>> SUCCESS: 'zinets'.
+2026-03-06 10:04:24,342 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:24,342 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/zinets_radicals ...........
+2026-03-06 10:04:24,342 - INFO - Local repository 'zinets_radicals' found at '/home/wengong/projects/digital-duck/zinets_radicals'.
+2026-03-06 10:04:24,344 - INFO - Running 'git pull' in 'zinets_radicals'...
+2026-03-06 10:04:24,888 - INFO - Successfully pulled changes for 'zinets_radicals'.
+2026-03-06 10:04:24,888 - INFO - Running 'git status --porcelain' in 'zinets_radicals' to check for local changes...
+2026-03-06 10:04:24,917 - INFO - No local changes in 'zinets_radicals'. Done.
+2026-03-06 10:04:24,917 - INFO - 
+>>>>>> SUCCESS: 'zinets_radicals'.
+2026-03-06 10:04:24,918 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:24,918 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/st_semantics ...........
+2026-03-06 10:04:24,918 - INFO - Local repository 'st_semantics' found at '/home/wengong/projects/digital-duck/st_semantics'.
+2026-03-06 10:04:24,922 - INFO - Running 'git pull' in 'st_semantics'...
+2026-03-06 10:04:25,497 - INFO - Successfully pulled changes for 'st_semantics'.
+2026-03-06 10:04:25,497 - INFO - Running 'git status --porcelain' in 'st_semantics' to check for local changes...
+2026-03-06 10:04:25,518 - INFO - No local changes in 'st_semantics'. Done.
+2026-03-06 10:04:25,518 - INFO - 
+>>>>>> SUCCESS: 'st_semantics'.
+2026-03-06 10:04:25,519 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:25,519 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/maniscope ...........
+2026-03-06 10:04:25,519 - INFO - Local repository 'maniscope' found at '/home/wengong/projects/digital-duck/maniscope'.
+2026-03-06 10:04:25,520 - INFO - Running 'git pull' in 'maniscope'...
+2026-03-06 10:04:26,069 - INFO - Successfully pulled changes for 'maniscope'.
+2026-03-06 10:04:26,069 - INFO - Running 'git status --porcelain' in 'maniscope' to check for local changes...
+2026-03-06 10:04:26,079 - INFO - No local changes in 'maniscope'. Done.
+2026-03-06 10:04:26,079 - INFO - 
+>>>>>> SUCCESS: 'maniscope'.
+2026-03-06 10:04:26,080 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:26,080 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/semanscope ...........
+2026-03-06 10:04:26,080 - INFO - Local repository 'semanscope' found at '/home/wengong/projects/digital-duck/semanscope'.
+2026-03-06 10:04:26,086 - INFO - Running 'git pull' in 'semanscope'...
+2026-03-06 10:04:26,644 - INFO - Successfully pulled changes for 'semanscope'.
+2026-03-06 10:04:26,644 - INFO - Running 'git status --porcelain' in 'semanscope' to check for local changes...
+2026-03-06 10:04:26,650 - INFO - No local changes in 'semanscope'. Done.
+2026-03-06 10:04:26,650 - INFO - 
+>>>>>> SUCCESS: 'semanscope'.
+2026-03-06 10:04:26,650 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:26,650 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/phate-manifold-metrics ...........
+2026-03-06 10:04:26,650 - INFO - Local repository 'phate-manifold-metrics' found at '/home/wengong/projects/digital-duck/phate-manifold-metrics'.
+2026-03-06 10:04:26,652 - INFO - Running 'git pull' in 'phate-manifold-metrics'...
+2026-03-06 10:04:27,224 - INFO - Successfully pulled changes for 'phate-manifold-metrics'.
+2026-03-06 10:04:27,224 - INFO - Running 'git status --porcelain' in 'phate-manifold-metrics' to check for local changes...
+2026-03-06 10:04:27,233 - INFO - No local changes in 'phate-manifold-metrics'. Done.
+2026-03-06 10:04:27,233 - INFO - 
+>>>>>> SUCCESS: 'phate-manifold-metrics'.
+2026-03-06 10:04:27,234 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:27,234 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/oracle ...........
+2026-03-06 10:04:27,234 - INFO - Local repository 'oracle' found at '/home/wengong/projects/digital-duck/oracle'.
+2026-03-06 10:04:27,240 - INFO - Running 'git pull' in 'oracle'...
+2026-03-06 10:04:27,810 - INFO - Successfully pulled changes for 'oracle'.
+2026-03-06 10:04:27,811 - INFO - Running 'git status --porcelain' in 'oracle' to check for local changes...
+2026-03-06 10:04:27,825 - INFO - No local changes in 'oracle'. Done.
+2026-03-06 10:04:27,825 - INFO - 
+>>>>>> SUCCESS: 'oracle'.
+2026-03-06 10:04:27,826 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:27,826 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/orascope ...........
+2026-03-06 10:04:27,826 - INFO - Local repository 'orascope' found at '/home/wengong/projects/digital-duck/orascope'.
+2026-03-06 10:04:27,831 - INFO - Running 'git pull' in 'orascope'...
+2026-03-06 10:04:28,435 - INFO - Successfully pulled changes for 'orascope'.
+2026-03-06 10:04:28,435 - INFO - Running 'git status --porcelain' in 'orascope' to check for local changes...
+2026-03-06 10:04:28,438 - INFO - No local changes in 'orascope'. Done.
+2026-03-06 10:04:28,438 - INFO - 
+>>>>>> SUCCESS: 'orascope'.
+2026-03-06 10:04:28,438 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:28,438 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-arxiv ...........
+2026-03-06 10:04:28,438 - INFO - Local repository 'dd-arxiv' found at '/home/wengong/projects/digital-duck/dd-arxiv'.
+2026-03-06 10:04:28,440 - INFO - Running 'git pull' in 'dd-arxiv'...
+2026-03-06 10:04:28,998 - INFO - Successfully pulled changes for 'dd-arxiv'.
+2026-03-06 10:04:28,999 - INFO - Running 'git status --porcelain' in 'dd-arxiv' to check for local changes...
+2026-03-06 10:04:29,006 - INFO - No local changes in 'dd-arxiv'. Done.
+2026-03-06 10:04:29,007 - INFO - 
+>>>>>> SUCCESS: 'dd-arxiv'.
+2026-03-06 10:04:29,008 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:29,008 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-logging ...........
+2026-03-06 10:04:29,008 - INFO - Local repository 'dd-logging' found at '/home/wengong/projects/digital-duck/dd-logging'.
+2026-03-06 10:04:29,014 - INFO - Running 'git pull' in 'dd-logging'...
+2026-03-06 10:04:29,580 - INFO - Successfully pulled changes for 'dd-logging'.
+2026-03-06 10:04:29,581 - INFO - Running 'git status --porcelain' in 'dd-logging' to check for local changes...
+2026-03-06 10:04:29,590 - INFO - No local changes in 'dd-logging'. Done.
+2026-03-06 10:04:29,591 - INFO - 
+>>>>>> SUCCESS: 'dd-logging'.
+2026-03-06 10:04:29,591 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:29,591 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-cache ...........
+2026-03-06 10:04:29,591 - INFO - Local repository 'dd-cache' found at '/home/wengong/projects/digital-duck/dd-cache'.
+2026-03-06 10:04:29,597 - INFO - Running 'git pull' in 'dd-cache'...
+2026-03-06 10:04:30,142 - INFO - Successfully pulled changes for 'dd-cache'.
+2026-03-06 10:04:30,143 - INFO - Running 'git status --porcelain' in 'dd-cache' to check for local changes...
+2026-03-06 10:04:30,151 - INFO - No local changes in 'dd-cache'. Done.
+2026-03-06 10:04:30,151 - INFO - 
+>>>>>> SUCCESS: 'dd-cache'.
+2026-03-06 10:04:30,152 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:30,152 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-config ...........
+2026-03-06 10:04:30,152 - INFO - Local repository 'dd-config' found at '/home/wengong/projects/digital-duck/dd-config'.
+2026-03-06 10:04:30,157 - INFO - Running 'git pull' in 'dd-config'...
+2026-03-06 10:04:30,392 - INFO - Successfully pulled changes for 'dd-config'.
+2026-03-06 10:04:30,393 - INFO - Running 'git status --porcelain' in 'dd-config' to check for local changes...
+2026-03-06 10:04:30,402 - INFO - No local changes in 'dd-config'. Done.
+2026-03-06 10:04:30,402 - INFO - 
+>>>>>> SUCCESS: 'dd-config'.
+2026-03-06 10:04:30,403 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:30,403 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-db ...........
+2026-03-06 10:04:30,403 - INFO - Local repository 'dd-db' found at '/home/wengong/projects/digital-duck/dd-db'.
+2026-03-06 10:04:30,408 - INFO - Running 'git pull' in 'dd-db'...
+2026-03-06 10:04:30,653 - INFO - Successfully pulled changes for 'dd-db'.
+2026-03-06 10:04:30,653 - INFO - Running 'git status --porcelain' in 'dd-db' to check for local changes...
+2026-03-06 10:04:30,663 - INFO - No local changes in 'dd-db'. Done.
+2026-03-06 10:04:30,663 - INFO - 
+>>>>>> SUCCESS: 'dd-db'.
+2026-03-06 10:04:30,663 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:30,664 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-vectordb ...........
+2026-03-06 10:04:30,664 - INFO - Local repository 'dd-vectordb' found at '/home/wengong/projects/digital-duck/dd-vectordb'.
+2026-03-06 10:04:30,669 - INFO - Running 'git pull' in 'dd-vectordb'...
+2026-03-06 10:04:31,014 - INFO - Successfully pulled changes for 'dd-vectordb'.
+2026-03-06 10:04:31,014 - INFO - Running 'git status --porcelain' in 'dd-vectordb' to check for local changes...
+2026-03-06 10:04:31,017 - INFO - No local changes in 'dd-vectordb'. Done.
+2026-03-06 10:04:31,017 - INFO - 
+>>>>>> SUCCESS: 'dd-vectordb'.
+2026-03-06 10:04:31,017 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:31,017 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-embed ...........
+2026-03-06 10:04:31,017 - INFO - Local repository 'dd-embed' found at '/home/wengong/projects/digital-duck/dd-embed'.
+2026-03-06 10:04:31,019 - INFO - Running 'git pull' in 'dd-embed'...
+2026-03-06 10:04:31,184 - INFO - Successfully pulled changes for 'dd-embed'.
+2026-03-06 10:04:31,185 - INFO - Running 'git status --porcelain' in 'dd-embed' to check for local changes...
+2026-03-06 10:04:31,187 - INFO - No local changes in 'dd-embed'. Done.
+2026-03-06 10:04:31,188 - INFO - 
+>>>>>> SUCCESS: 'dd-embed'.
+2026-03-06 10:04:31,188 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:31,188 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-llm ...........
+2026-03-06 10:04:31,188 - INFO - Local repository 'dd-llm' found at '/home/wengong/projects/digital-duck/dd-llm'.
+2026-03-06 10:04:31,190 - INFO - Running 'git pull' in 'dd-llm'...
+2026-03-06 10:04:31,385 - INFO - Successfully pulled changes for 'dd-llm'.
+2026-03-06 10:04:31,385 - INFO - Running 'git status --porcelain' in 'dd-llm' to check for local changes...
+2026-03-06 10:04:31,393 - INFO - No local changes in 'dd-llm'. Done.
+2026-03-06 10:04:31,393 - INFO - 
+>>>>>> SUCCESS: 'dd-llm'.
+2026-03-06 10:04:31,394 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:31,394 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-extract ...........
+2026-03-06 10:04:31,394 - INFO - Local repository 'dd-extract' found at '/home/wengong/projects/digital-duck/dd-extract'.
+2026-03-06 10:04:31,400 - INFO - Running 'git pull' in 'dd-extract'...
+2026-03-06 10:04:31,973 - INFO - Successfully pulled changes for 'dd-extract'.
+2026-03-06 10:04:31,973 - INFO - Running 'git status --porcelain' in 'dd-extract' to check for local changes...
+2026-03-06 10:04:31,981 - INFO - No local changes in 'dd-extract'. Done.
+2026-03-06 10:04:31,981 - INFO - 
+>>>>>> SUCCESS: 'dd-extract'.
+2026-03-06 10:04:31,982 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:31,982 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-format ...........
+2026-03-06 10:04:31,982 - INFO - Local repository 'dd-format' found at '/home/wengong/projects/digital-duck/dd-format'.
+2026-03-06 10:04:31,988 - INFO - Running 'git pull' in 'dd-format'...
+2026-03-06 10:04:32,552 - INFO - Successfully pulled changes for 'dd-format'.
+2026-03-06 10:04:32,552 - INFO - Running 'git status --porcelain' in 'dd-format' to check for local changes...
+2026-03-06 10:04:32,560 - INFO - No local changes in 'dd-format'. Done.
+2026-03-06 10:04:32,560 - INFO - 
+>>>>>> SUCCESS: 'dd-format'.
+2026-03-06 10:04:32,561 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:32,561 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/dd-dogic ...........
+2026-03-06 10:04:32,561 - INFO - Local repository 'dd-dogic' found at '/home/wengong/projects/digital-duck/dd-dogic'.
+2026-03-06 10:04:32,566 - INFO - Running 'git pull' in 'dd-dogic'...
+2026-03-06 10:04:33,133 - INFO - Successfully pulled changes for 'dd-dogic'.
+2026-03-06 10:04:33,134 - INFO - Running 'git status --porcelain' in 'dd-dogic' to check for local changes...
+2026-03-06 10:04:33,141 - INFO - No local changes in 'dd-dogic'. Done.
+2026-03-06 10:04:33,142 - INFO - 
+>>>>>> SUCCESS: 'dd-dogic'.
+2026-03-06 10:04:33,142 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:33,142 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/anadata ...........
+2026-03-06 10:04:33,143 - INFO - Local repository 'anadata' found at '/home/wengong/projects/digital-duck/anadata'.
+2026-03-06 10:04:33,148 - INFO - Running 'git pull' in 'anadata'...
+2026-03-06 10:04:33,724 - INFO - Successfully pulled changes for 'anadata'.
+2026-03-06 10:04:33,724 - INFO - Running 'git status --porcelain' in 'anadata' to check for local changes...
+2026-03-06 10:04:33,727 - INFO - No local changes in 'anadata'. Done.
+2026-03-06 10:04:33,727 - INFO - 
+>>>>>> SUCCESS: 'anadata'.
+2026-03-06 10:04:33,727 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:33,728 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/SPL ...........
+2026-03-06 10:04:33,728 - INFO - Local repository 'SPL' found at '/home/wengong/projects/digital-duck/SPL'.
+2026-03-06 10:04:33,729 - INFO - Running 'git pull' in 'SPL'...
+2026-03-06 10:04:34,268 - INFO - Successfully pulled changes for 'SPL'.
+2026-03-06 10:04:34,268 - INFO - Running 'git status --porcelain' in 'SPL' to check for local changes...
+2026-03-06 10:04:34,278 - INFO - No local changes in 'SPL'. Done.
+2026-03-06 10:04:34,279 - INFO - 
+>>>>>> SUCCESS: 'SPL'.
+2026-03-06 10:04:34,279 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:34,279 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/SPL-LLM ...........
+2026-03-06 10:04:34,279 - INFO - Local repository 'SPL-LLM' found at '/home/wengong/projects/digital-duck/SPL-LLM'.
+2026-03-06 10:04:34,285 - INFO - Running 'git pull' in 'SPL-LLM'...
+2026-03-06 10:04:34,833 - INFO - Successfully pulled changes for 'SPL-LLM'.
+2026-03-06 10:04:34,834 - INFO - Running 'git status --porcelain' in 'SPL-LLM' to check for local changes...
+2026-03-06 10:04:34,843 - INFO - No local changes in 'SPL-LLM'. Done.
+2026-03-06 10:04:34,843 - INFO - 
+>>>>>> SUCCESS: 'SPL-LLM'.
+2026-03-06 10:04:34,843 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:34,844 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/SPL-flow ...........
+2026-03-06 10:04:34,844 - INFO - Local repository 'SPL-flow' found at '/home/wengong/projects/digital-duck/SPL-flow'.
+2026-03-06 10:04:34,849 - INFO - Running 'git pull' in 'SPL-flow'...
+2026-03-06 10:04:35,480 - INFO - Successfully pulled changes for 'SPL-flow'.
+2026-03-06 10:04:35,480 - INFO - Running 'git status --porcelain' in 'SPL-flow' to check for local changes...
+2026-03-06 10:04:35,489 - INFO - No local changes in 'SPL-flow'. Done.
+2026-03-06 10:04:35,490 - INFO - 
+>>>>>> SUCCESS: 'SPL-flow'.
+2026-03-06 10:04:35,490 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:35,490 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/momahub.py ...........
+2026-03-06 10:04:35,490 - INFO - Local repository 'momahub.py' found at '/home/wengong/projects/digital-duck/momahub.py'.
+2026-03-06 10:04:35,492 - INFO - Running 'git pull' in 'momahub.py'...
+2026-03-06 10:04:36,036 - INFO - Successfully pulled changes for 'momahub.py'.
+2026-03-06 10:04:36,036 - INFO - Running 'git status --porcelain' in 'momahub.py' to check for local changes...
+2026-03-06 10:04:36,042 - INFO - Local changes detected in 'momahub.py'. Performing commit and push...
+2026-03-06 10:04:36,042 - INFO - Git status output:
+M go_git.log
+?? scripts/
+2026-03-06 10:04:36,042 - INFO - Running 'git add .' in 'momahub.py'...

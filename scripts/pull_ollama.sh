@@ -1,0 +1,14 @@
+ollama pull llama3
+ollama pull llama3.1
+ollama pull mistral
+ollama pull mathstral   
+ollama pull qwen3
+ollama pull qwen2.5
+ollama pull qwen2.5-coder
+ollama pull qwen2-math
+ollama pull deepseek-r1
+ollama pull deepseek-coder-v2
+ollama pull gemma3
+ollama pull phi4
+ollama pull phi4-mini
+ollama pull phi3
