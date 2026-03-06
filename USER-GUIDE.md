@@ -19,7 +19,11 @@ Complete guide to running MoMaHub (i-grid): installation, CLI reference, cookboo
 ## Installation
 
 ```bash
+conda create -n momahub python=3.11
+conda activate momahub
+
 # Clone the repo
+
 git clone https://github.com/digital-duck/momahub.py.git
 cd momahub.py
 
@@ -27,14 +31,27 @@ cd momahub.py
 pip install -e ".[dev]"
 
 # (Optional) Install SPL for moma run / ON GRID syntax
-pip install -e /path/to/SPL
+pip install -e $HOME/projects/digital-duck/SPL
+pip install -e $HOME/projects/digital-duck/SPL-flow
 ```
 
 Every agent node needs [Ollama](https://ollama.com) installed and running with at least one model pulled:
 
 ```bash
 ollama pull llama3
-ollama pull mistral   # optional, used by some cookbook recipes
+ollama pull llama3.1
+ollama pull mistral
+ollama pull mathstral   
+ollama pull qwen3
+ollama pull qwen2.5
+ollama pull qwen2.5-coder
+ollama pull qwen2-math
+ollama pull deepseek-r1
+ollama pull deepseek-coder-v2
+ollama pull gemma3
+ollama pull phi4
+ollama pull phi4-mini
+ollama pull phi3
 ```
 
 ## Configuration
