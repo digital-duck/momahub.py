@@ -438,3 +438,319 @@ Failed repositories:
 ============================================================
 2026-03-03 02:56:01,726 - INFO - --- go_git.py finished at 2026-03-03 02:56:01.726633 ---
 2026-03-03 02:56:01,726 - INFO - All specified repositories have been processed.
+2026-03-06 02:46:05,157 - INFO - --- go_git.py started at 2026-03-06 02:46:05.157621 ---
+2026-03-06 02:46:05,157 - INFO - Owner URL: https://github.com/digital-duck
+2026-03-06 02:46:05,157 - INFO - Branch: main
+2026-03-06 02:46:05,157 - INFO - Commit Message: 'refine'
+2026-03-06 02:46:05,157 - INFO - Log File: './go_git.log'
+2026-03-06 02:46:05,157 - INFO - Dry Run: False
+2026-03-06 02:46:05,157 - INFO - Skip Pull: False
+2026-03-06 02:46:05,157 - INFO - Skip Push: False
+2026-03-06 02:46:05,157 - INFO - Clone Only: False
+2026-03-06 02:46:05,157 - INFO - Parallel Processing: False
+2026-03-06 02:46:05,158 - INFO - Repositories to process: ['/home/papagame/projects/wgong/py4kids', '/home/papagame/projects/wgong/DeepCode', '/home/papagame/projects/Proj-ZiNets/zinets', '/home/papagame/projects/Proj-ZiNets/zinets_radicals', '/home/papagame/projects/Proj-Geometry-of-Meaning/st_semantics', '/home/papagame/projects/Proj-Geometry-of-Meaning/maniscope', '/home/papagame/projects/Proj-Geometry-of-Meaning/semanscope', '/home/papagame/projects/Proj-Geometry-of-Meaning/phate-manifold-metrics', '/home/papagame/projects/Proj-Oracle/oracle', '/home/papagame/projects/Proj-Oracle/orascope', '/home/papagame/projects/digital-duck/dd-arxiv', '/home/papagame/projects/digital-duck/dd-logging', '/home/papagame/projects/digital-duck/dd-config', '/home/papagame/projects/digital-duck/dd-db', '/home/papagame/projects/digital-duck/dd-vectordb', '/home/papagame/projects/digital-duck/dd-embed', '/home/papagame/projects/digital-duck/dd-llm', '/home/papagame/projects/digital-duck/dd-extract', '/home/papagame/projects/digital-duck/dd-format', '/home/papagame/projects/digital-duck/dd-dogic', '/home/papagame/projects/digital-duck/anadata', '/home/papagame/projects/digital-duck/SPL', '/home/papagame/projects/digital-duck/SPL-LLM', '/home/papagame/projects/digital-duck/SPL-flow', '/home/papagame/projects/digital-duck/momahub.py', '/home/papagame/projects/digital-duck/momahub.go', '/home/papagame/projects/digital-duck/momahub', '/home/papagame/projects/digital-duck/momahub-opus', '/home/papagame/projects/digital-duck/momahub-sonnet', '/home/papagame/projects/digital-duck/momahub-gemini', '/home/papagame/projects/digital-duck/pocoflow', '/home/papagame/projects/digital-duck/markoflow', '/home/papagame/projects/digital-duck/monteflow', '/home/papagame/projects/digital-duck/research-copilot', '/home/papagame/projects/digital-duck/elegant-elefant', '/home/papagame/projects/digital-duck/vibe-coding']
+2026-03-06 02:46:05,158 - INFO - Processing repositories sequentially...
+2026-03-06 02:46:05,164 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:05,165 - INFO - <<<<< Processing: /home/papagame/projects/wgong/py4kids ...........
+2026-03-06 02:46:05,165 - INFO - Local repository 'py4kids' found at '/home/papagame/projects/wgong/py4kids'.
+2026-03-06 02:46:05,167 - WARNING - Branch 'main' does not exist in 'py4kids'. Staying on 'master'.
+2026-03-06 02:46:05,167 - INFO - Running 'git pull' in 'py4kids'...
+2026-03-06 02:46:05,709 - INFO - Successfully pulled changes for 'py4kids'.
+2026-03-06 02:46:05,710 - INFO - Running 'git status --porcelain' in 'py4kids' to check for local changes...
+2026-03-06 02:46:05,843 - INFO - No local changes in 'py4kids'. Done.
+2026-03-06 02:46:05,843 - INFO - 
+>>>>>> SUCCESS: 'py4kids'.
+2026-03-06 02:46:05,843 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:05,843 - INFO - <<<<< Processing: /home/papagame/projects/wgong/DeepCode ...........
+2026-03-06 02:46:05,843 - INFO - Local repository 'DeepCode' found at '/home/papagame/projects/wgong/DeepCode'.
+2026-03-06 02:46:05,844 - INFO - Running 'git pull' in 'DeepCode'...
+2026-03-06 02:46:06,311 - INFO - Successfully pulled changes for 'DeepCode'.
+2026-03-06 02:46:06,312 - INFO - Running 'git status --porcelain' in 'DeepCode' to check for local changes...
+2026-03-06 02:46:06,321 - INFO - No local changes in 'DeepCode'. Done.
+2026-03-06 02:46:06,321 - INFO - 
+>>>>>> SUCCESS: 'DeepCode'.
+2026-03-06 02:46:06,322 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:06,322 - INFO - <<<<< Processing: /home/papagame/projects/Proj-ZiNets/zinets ...........
+2026-03-06 02:46:06,322 - INFO - Local repository 'zinets' found at '/home/papagame/projects/Proj-ZiNets/zinets'.
+2026-03-06 02:46:06,328 - INFO - Running 'git pull' in 'zinets'...
+2026-03-06 02:46:06,847 - INFO - Successfully pulled changes for 'zinets'.
+2026-03-06 02:46:06,847 - INFO - Running 'git status --porcelain' in 'zinets' to check for local changes...
+2026-03-06 02:46:06,884 - INFO - No local changes in 'zinets'. Done.
+2026-03-06 02:46:06,884 - INFO - 
+>>>>>> SUCCESS: 'zinets'.
+2026-03-06 02:46:06,884 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:06,885 - INFO - <<<<< Processing: /home/papagame/projects/Proj-ZiNets/zinets_radicals ...........
+2026-03-06 02:46:06,885 - INFO - Local repository 'zinets_radicals' found at '/home/papagame/projects/Proj-ZiNets/zinets_radicals'.
+2026-03-06 02:46:06,888 - INFO - Running 'git pull' in 'zinets_radicals'...
+2026-03-06 02:46:07,350 - INFO - Successfully pulled changes for 'zinets_radicals'.
+2026-03-06 02:46:07,351 - INFO - Running 'git status --porcelain' in 'zinets_radicals' to check for local changes...
+2026-03-06 02:46:07,367 - INFO - No local changes in 'zinets_radicals'. Done.
+2026-03-06 02:46:07,367 - INFO - 
+>>>>>> SUCCESS: 'zinets_radicals'.
+2026-03-06 02:46:07,368 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:07,368 - INFO - <<<<< Processing: /home/papagame/projects/Proj-Geometry-of-Meaning/st_semantics ...........
+2026-03-06 02:46:07,368 - INFO - Local repository 'st_semantics' found at '/home/papagame/projects/Proj-Geometry-of-Meaning/st_semantics'.
+2026-03-06 02:46:07,373 - INFO - Running 'git pull' in 'st_semantics'...
+2026-03-06 02:46:07,844 - INFO - Successfully pulled changes for 'st_semantics'.
+2026-03-06 02:46:07,844 - INFO - Running 'git status --porcelain' in 'st_semantics' to check for local changes...
+2026-03-06 02:46:07,891 - INFO - No local changes in 'st_semantics'. Done.
+2026-03-06 02:46:07,891 - INFO - 
+>>>>>> SUCCESS: 'st_semantics'.
+2026-03-06 02:46:07,892 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:07,892 - INFO - <<<<< Processing: /home/papagame/projects/Proj-Geometry-of-Meaning/maniscope ...........
+2026-03-06 02:46:07,892 - INFO - Local repository 'maniscope' found at '/home/papagame/projects/Proj-Geometry-of-Meaning/maniscope'.
+2026-03-06 02:46:07,894 - INFO - Running 'git pull' in 'maniscope'...
+2026-03-06 02:46:08,362 - INFO - Successfully pulled changes for 'maniscope'.
+2026-03-06 02:46:08,363 - INFO - Running 'git status --porcelain' in 'maniscope' to check for local changes...
+2026-03-06 02:46:08,370 - INFO - No local changes in 'maniscope'. Done.
+2026-03-06 02:46:08,371 - INFO - 
+>>>>>> SUCCESS: 'maniscope'.
+2026-03-06 02:46:08,371 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:08,372 - INFO - <<<<< Processing: /home/papagame/projects/Proj-Geometry-of-Meaning/semanscope ...........
+2026-03-06 02:46:08,372 - INFO - Local repository 'semanscope' found at '/home/papagame/projects/Proj-Geometry-of-Meaning/semanscope'.
+2026-03-06 02:46:08,377 - INFO - Running 'git pull' in 'semanscope'...
+2026-03-06 02:46:08,866 - INFO - Successfully pulled changes for 'semanscope'.
+2026-03-06 02:46:08,866 - INFO - Running 'git status --porcelain' in 'semanscope' to check for local changes...
+2026-03-06 02:46:08,877 - INFO - No local changes in 'semanscope'. Done.
+2026-03-06 02:46:08,878 - INFO - 
+>>>>>> SUCCESS: 'semanscope'.
+2026-03-06 02:46:08,879 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:08,879 - INFO - <<<<< Processing: /home/papagame/projects/Proj-Geometry-of-Meaning/phate-manifold-metrics ...........
+2026-03-06 02:46:08,879 - INFO - Local repository 'phate-manifold-metrics' found at '/home/papagame/projects/Proj-Geometry-of-Meaning/phate-manifold-metrics'.
+2026-03-06 02:46:08,884 - INFO - Running 'git pull' in 'phate-manifold-metrics'...
+2026-03-06 02:46:09,357 - INFO - Successfully pulled changes for 'phate-manifold-metrics'.
+2026-03-06 02:46:09,357 - INFO - Running 'git status --porcelain' in 'phate-manifold-metrics' to check for local changes...
+2026-03-06 02:46:09,365 - INFO - No local changes in 'phate-manifold-metrics'. Done.
+2026-03-06 02:46:09,365 - INFO - 
+>>>>>> SUCCESS: 'phate-manifold-metrics'.
+2026-03-06 02:46:09,366 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:09,366 - INFO - <<<<< Processing: /home/papagame/projects/Proj-Oracle/oracle ...........
+2026-03-06 02:46:09,366 - INFO - Local repository 'oracle' found at '/home/papagame/projects/Proj-Oracle/oracle'.
+2026-03-06 02:46:09,371 - INFO - Running 'git pull' in 'oracle'...
+2026-03-06 02:46:09,854 - INFO - Successfully pulled changes for 'oracle'.
+2026-03-06 02:46:09,855 - INFO - Running 'git status --porcelain' in 'oracle' to check for local changes...
+2026-03-06 02:46:09,867 - INFO - No local changes in 'oracle'. Done.
+2026-03-06 02:46:09,867 - INFO - 
+>>>>>> SUCCESS: 'oracle'.
+2026-03-06 02:46:09,868 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:09,868 - INFO - <<<<< Processing: /home/papagame/projects/Proj-Oracle/orascope ...........
+2026-03-06 02:46:09,868 - INFO - Local repository 'orascope' found at '/home/papagame/projects/Proj-Oracle/orascope'.
+2026-03-06 02:46:09,873 - INFO - Running 'git pull' in 'orascope'...
+2026-03-06 02:46:10,358 - INFO - Successfully pulled changes for 'orascope'.
+2026-03-06 02:46:10,359 - INFO - Running 'git status --porcelain' in 'orascope' to check for local changes...
+2026-03-06 02:46:10,366 - INFO - No local changes in 'orascope'. Done.
+2026-03-06 02:46:10,366 - INFO - 
+>>>>>> SUCCESS: 'orascope'.
+2026-03-06 02:46:10,367 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:10,367 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-arxiv ...........
+2026-03-06 02:46:10,367 - INFO - Local repository 'dd-arxiv' found at '/home/papagame/projects/digital-duck/dd-arxiv'.
+2026-03-06 02:46:10,373 - INFO - Running 'git pull' in 'dd-arxiv'...
+2026-03-06 02:46:10,867 - INFO - Successfully pulled changes for 'dd-arxiv'.
+2026-03-06 02:46:10,867 - INFO - Running 'git status --porcelain' in 'dd-arxiv' to check for local changes...
+2026-03-06 02:46:10,874 - INFO - No local changes in 'dd-arxiv'. Done.
+2026-03-06 02:46:10,874 - INFO - 
+>>>>>> SUCCESS: 'dd-arxiv'.
+2026-03-06 02:46:10,875 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:10,875 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-logging ...........
+2026-03-06 02:46:10,875 - INFO - Local repository 'dd-logging' found at '/home/papagame/projects/digital-duck/dd-logging'.
+2026-03-06 02:46:10,880 - INFO - Running 'git pull' in 'dd-logging'...
+2026-03-06 02:46:11,365 - INFO - Successfully pulled changes for 'dd-logging'.
+2026-03-06 02:46:11,365 - INFO - Running 'git status --porcelain' in 'dd-logging' to check for local changes...
+2026-03-06 02:46:11,372 - INFO - No local changes in 'dd-logging'. Done.
+2026-03-06 02:46:11,372 - INFO - 
+>>>>>> SUCCESS: 'dd-logging'.
+2026-03-06 02:46:11,373 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:11,373 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-config ...........
+2026-03-06 02:46:11,373 - INFO - Local repository 'dd-config' found at '/home/papagame/projects/digital-duck/dd-config'.
+2026-03-06 02:46:11,378 - INFO - Running 'git pull' in 'dd-config'...
+2026-03-06 02:46:11,885 - INFO - Successfully pulled changes for 'dd-config'.
+2026-03-06 02:46:11,885 - INFO - Running 'git status --porcelain' in 'dd-config' to check for local changes...
+2026-03-06 02:46:11,892 - INFO - No local changes in 'dd-config'. Done.
+2026-03-06 02:46:11,893 - INFO - 
+>>>>>> SUCCESS: 'dd-config'.
+2026-03-06 02:46:11,893 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:11,893 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-db ...........
+2026-03-06 02:46:11,894 - INFO - Local repository 'dd-db' found at '/home/papagame/projects/digital-duck/dd-db'.
+2026-03-06 02:46:11,899 - INFO - Running 'git pull' in 'dd-db'...
+2026-03-06 02:46:12,361 - INFO - Successfully pulled changes for 'dd-db'.
+2026-03-06 02:46:12,362 - INFO - Running 'git status --porcelain' in 'dd-db' to check for local changes...
+2026-03-06 02:46:12,369 - INFO - No local changes in 'dd-db'. Done.
+2026-03-06 02:46:12,369 - INFO - 
+>>>>>> SUCCESS: 'dd-db'.
+2026-03-06 02:46:12,370 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:12,370 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-vectordb ...........
+2026-03-06 02:46:12,370 - INFO - Local repository 'dd-vectordb' found at '/home/papagame/projects/digital-duck/dd-vectordb'.
+2026-03-06 02:46:12,375 - INFO - Running 'git pull' in 'dd-vectordb'...
+2026-03-06 02:46:13,020 - INFO - Successfully pulled changes for 'dd-vectordb'.
+2026-03-06 02:46:13,020 - INFO - Running 'git status --porcelain' in 'dd-vectordb' to check for local changes...
+2026-03-06 02:46:13,027 - INFO - No local changes in 'dd-vectordb'. Done.
+2026-03-06 02:46:13,027 - INFO - 
+>>>>>> SUCCESS: 'dd-vectordb'.
+2026-03-06 02:46:13,028 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:13,028 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-embed ...........
+2026-03-06 02:46:13,029 - INFO - Local repository 'dd-embed' found at '/home/papagame/projects/digital-duck/dd-embed'.
+2026-03-06 02:46:13,034 - INFO - Running 'git pull' in 'dd-embed'...
+2026-03-06 02:46:13,519 - INFO - Successfully pulled changes for 'dd-embed'.
+2026-03-06 02:46:13,519 - INFO - Running 'git status --porcelain' in 'dd-embed' to check for local changes...
+2026-03-06 02:46:13,526 - INFO - No local changes in 'dd-embed'. Done.
+2026-03-06 02:46:13,526 - INFO - 
+>>>>>> SUCCESS: 'dd-embed'.
+2026-03-06 02:46:13,527 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:13,527 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-llm ...........
+2026-03-06 02:46:13,528 - INFO - Local repository 'dd-llm' found at '/home/papagame/projects/digital-duck/dd-llm'.
+2026-03-06 02:46:13,533 - INFO - Running 'git pull' in 'dd-llm'...
+2026-03-06 02:46:14,010 - INFO - Successfully pulled changes for 'dd-llm'.
+2026-03-06 02:46:14,011 - INFO - Running 'git status --porcelain' in 'dd-llm' to check for local changes...
+2026-03-06 02:46:14,018 - INFO - No local changes in 'dd-llm'. Done.
+2026-03-06 02:46:14,018 - INFO - 
+>>>>>> SUCCESS: 'dd-llm'.
+2026-03-06 02:46:14,019 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:14,019 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-extract ...........
+2026-03-06 02:46:14,019 - INFO - Local repository 'dd-extract' found at '/home/papagame/projects/digital-duck/dd-extract'.
+2026-03-06 02:46:14,024 - INFO - Running 'git pull' in 'dd-extract'...
+2026-03-06 02:46:14,206 - INFO - Successfully pulled changes for 'dd-extract'.
+2026-03-06 02:46:14,206 - INFO - Running 'git status --porcelain' in 'dd-extract' to check for local changes...
+2026-03-06 02:46:14,209 - INFO - No local changes in 'dd-extract'. Done.
+2026-03-06 02:46:14,209 - INFO - 
+>>>>>> SUCCESS: 'dd-extract'.
+2026-03-06 02:46:14,210 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:14,210 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-format ...........
+2026-03-06 02:46:14,210 - INFO - Local repository 'dd-format' found at '/home/papagame/projects/digital-duck/dd-format'.
+2026-03-06 02:46:14,213 - INFO - Running 'git pull' in 'dd-format'...
+2026-03-06 02:46:14,426 - INFO - Successfully pulled changes for 'dd-format'.
+2026-03-06 02:46:14,426 - INFO - Running 'git status --porcelain' in 'dd-format' to check for local changes...
+2026-03-06 02:46:14,432 - INFO - No local changes in 'dd-format'. Done.
+2026-03-06 02:46:14,433 - INFO - 
+>>>>>> SUCCESS: 'dd-format'.
+2026-03-06 02:46:14,433 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:14,433 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/dd-dogic ...........
+2026-03-06 02:46:14,434 - INFO - Local repository 'dd-dogic' found at '/home/papagame/projects/digital-duck/dd-dogic'.
+2026-03-06 02:46:14,439 - INFO - Running 'git pull' in 'dd-dogic'...
+2026-03-06 02:46:14,654 - INFO - Successfully pulled changes for 'dd-dogic'.
+2026-03-06 02:46:14,654 - INFO - Running 'git status --porcelain' in 'dd-dogic' to check for local changes...
+2026-03-06 02:46:14,662 - INFO - No local changes in 'dd-dogic'. Done.
+2026-03-06 02:46:14,662 - INFO - 
+>>>>>> SUCCESS: 'dd-dogic'.
+2026-03-06 02:46:14,663 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:14,663 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/anadata ...........
+2026-03-06 02:46:14,663 - INFO - Local repository 'anadata' found at '/home/papagame/projects/digital-duck/anadata'.
+2026-03-06 02:46:14,668 - INFO - Running 'git pull' in 'anadata'...
+2026-03-06 02:46:15,165 - INFO - Successfully pulled changes for 'anadata'.
+2026-03-06 02:46:15,165 - INFO - Running 'git status --porcelain' in 'anadata' to check for local changes...
+2026-03-06 02:46:15,174 - INFO - No local changes in 'anadata'. Done.
+2026-03-06 02:46:15,174 - INFO - 
+>>>>>> SUCCESS: 'anadata'.
+2026-03-06 02:46:15,175 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:15,175 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/SPL ...........
+2026-03-06 02:46:15,175 - INFO - Local repository 'SPL' found at '/home/papagame/projects/digital-duck/SPL'.
+2026-03-06 02:46:15,180 - INFO - Running 'git pull' in 'SPL'...
+2026-03-06 02:46:15,656 - INFO - Successfully pulled changes for 'SPL'.
+2026-03-06 02:46:15,657 - INFO - Running 'git status --porcelain' in 'SPL' to check for local changes...
+2026-03-06 02:46:15,665 - INFO - No local changes in 'SPL'. Done.
+2026-03-06 02:46:15,665 - INFO - 
+>>>>>> SUCCESS: 'SPL'.
+2026-03-06 02:46:15,666 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:15,666 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/SPL-LLM ...........
+2026-03-06 02:46:15,666 - INFO - Local repository 'SPL-LLM' found at '/home/papagame/projects/digital-duck/SPL-LLM'.
+2026-03-06 02:46:15,671 - INFO - Running 'git pull' in 'SPL-LLM'...
+2026-03-06 02:46:16,160 - INFO - Successfully pulled changes for 'SPL-LLM'.
+2026-03-06 02:46:16,161 - INFO - Running 'git status --porcelain' in 'SPL-LLM' to check for local changes...
+2026-03-06 02:46:16,168 - INFO - No local changes in 'SPL-LLM'. Done.
+2026-03-06 02:46:16,168 - INFO - 
+>>>>>> SUCCESS: 'SPL-LLM'.
+2026-03-06 02:46:16,169 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:16,169 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/SPL-flow ...........
+2026-03-06 02:46:16,169 - INFO - Local repository 'SPL-flow' found at '/home/papagame/projects/digital-duck/SPL-flow'.
+2026-03-06 02:46:16,175 - INFO - Running 'git pull' in 'SPL-flow'...
+2026-03-06 02:46:16,659 - INFO - Successfully pulled changes for 'SPL-flow'.
+2026-03-06 02:46:16,659 - INFO - Running 'git status --porcelain' in 'SPL-flow' to check for local changes...
+2026-03-06 02:46:16,669 - INFO - No local changes in 'SPL-flow'. Done.
+2026-03-06 02:46:16,670 - INFO - 
+>>>>>> SUCCESS: 'SPL-flow'.
+2026-03-06 02:46:16,670 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 02:46:16,670 - INFO - <<<<< Processing: /home/papagame/projects/digital-duck/momahub.py ...........
+2026-03-06 02:46:16,671 - INFO - Local repository 'momahub.py' found at '/home/papagame/projects/digital-duck/momahub.py'.
+2026-03-06 02:46:16,676 - INFO - Running 'git pull' in 'momahub.py'...
+2026-03-06 02:46:17,159 - INFO - Successfully pulled changes for 'momahub.py'.
+2026-03-06 02:46:17,159 - INFO - Running 'git status --porcelain' in 'momahub.py' to check for local changes...
+2026-03-06 02:46:17,162 - INFO - Local changes detected in 'momahub.py'. Performing commit and push...
+2026-03-06 02:46:17,162 - INFO - Git status output:
+M .claude/settings.local.json
+ M USER-GUIDE.md
+ M go_git.log
+2026-03-06 02:46:17,162 - INFO - Running 'git add .' in 'momahub.py'...

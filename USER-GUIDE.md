@@ -151,6 +151,8 @@ The i-grid is a novel distributed inference network that enables efficient and s
 
 ```
 
+### Submit prompt directly
+
 ```bash
 moma submit "what is 1+2"
 ```
@@ -194,6 +196,18 @@ Calculating this...
 
 10! = 3,628,800
 [model=llama3 tokens=15+91 latency=1816ms]
+
+(momahub) papagame@papa-game:~/projects/digital-duck/momahub.py$ moma submit "what is 10!" --model mathstral
+Task submitted: 0009d0dd-e962-4b1a-96bf-d82a8cf13124
+
+10!, which is the factorial of 10, means multiplying all positive integers from 1 to 10 together. So, 10! = 1 × 2 × 3 × 4 × 5 × 6 × 7 × 8 × 9 × 10 = 3,628,800.
+[model=mathstral tokens=11+80 latency=28394ms]
+
+(momahub) papagame@papa-game:~/projects/digital-duck/momahub.py$ moma submit "what is 5!" --model mathstral
+Task submitted: fb3df4ab-8b7b-4ae8-9e96-561aee112a12
+
+5! (which is read as "five factorial") means the product of all positive integers up to and including 5. So, 5! = 5 × 4 × 3 × 2 × 1 = 120.
+[model=mathstral tokens=10+54 latency=945ms]
 
 ```
 
