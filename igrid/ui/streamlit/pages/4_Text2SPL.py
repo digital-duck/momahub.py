@@ -234,12 +234,15 @@ def _submit_and_poll(
 def _run_spl_on_grid(hub: str, spl_source: str) -> tuple[str, str]:
     """Parse and run SPL via IGridAdapter. Returns (content, error)."""
     try:
+        from spl.lexer import Lexer
         from spl.parser import Parser
         from spl.optimizer import Optimizer
         from spl.executor import Executor
         from igrid.spl.igrid_adapter import IGridAdapter
 
-        stmts = Parser(spl_source).parse()
+        tokens = Lexer(spl_source).tokenize()
+        program = Parser(tokens).parse()
+        stmts = program.statements
         optimizer = Optimizer()
         adapter = IGridAdapter(hub_url=hub)
         executor = Executor(adapter=adapter)

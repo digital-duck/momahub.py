@@ -43,10 +43,13 @@ with tab_spl:
     if st.button("Run SPL", key="run_spl"):
         try:
             import json, asyncio
-            from spl.parser import Parser; from spl.optimizer import Optimizer; from spl.executor import Executor
+            from spl.lexer import Lexer; from spl.parser import Parser
+            from spl.optimizer import Optimizer; from spl.executor import Executor
             from igrid.spl.igrid_adapter import IGridAdapter
             params = json.loads(params_json or "{}")
-            stmts = Parser(spl_source).parse()
+            tokens = Lexer(spl_source).tokenize()
+            program = Parser(tokens).parse()
+            stmts = program.statements
             adapter = IGridAdapter(hub_url=hub_url); executor = Executor(adapter=adapter)
             async def _run():
                 results = []

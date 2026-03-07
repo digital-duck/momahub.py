@@ -27,6 +27,8 @@ dependencies = [
     "pyyaml",
     "pynvml",
     "streamlit",
+    "streamlit-aggrid",
+    "pandas",
     "dd-extract",
     "dd-format",
 ]

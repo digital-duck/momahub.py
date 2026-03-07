@@ -25,6 +25,19 @@ moma join http://<hub-ip>:8000   # start agent(s)
 | 08 | Model Arena | `arena.py` | Side-by-side HTML comparison of multiple models |
 | 09 | Doc Pipeline | `pipeline.py` | PDF -> extract -> grid summarize -> formatted output |
 | 10 | Chain Relay | `chain.py` | Multi-step reasoning: Research -> Analyze -> Summarize |
+| 12 | Tier-Aware Dispatch | `tier_dispatch.py` | Submit tasks with VRAM hints, verify routing to correct agent tier |
+| 13 | Multi-Agent Throughput | `throughput.py` | Measure tokens/s scaling: 1 agent vs 2 vs 3 — key paper metric |
+| 15 | Agent Failover | `failover.py` | Kill an agent mid-run, verify tasks re-queue and complete |
+| 16 | Math Olympiad | `math_olympiad.py` | Benchmark mathstral + qwen2-math on 15 problems, score accuracy |
+| 17 | Code Review Pipeline | `code_review.py` | review → summarise → refactor across deepseek-coder + llama3 |
+| 18 | Smart Router | `smart_router.py` | Auto-route math/code/general prompts to the optimal model |
+| 19 | Privacy Chunk Demo | `privacy_demo.py` | Split document across agents — no single agent sees the full text |
+| 20 | Overnight Batch | `overnight.py` | Submit 100–500 tasks overnight, full report by morning |
+| 21 | Language Accessibility | `language_grid.py` | Same question in 10 languages in parallel — accessibility demo |
+| 22 | Rewards Report | `rewards_report.py` | Pretty-print reward ledger: tasks, tokens, credits per operator |
+| 23 | Wake/Sleep Resilience | `resilience.py` | Tasks flow continuously as agents join/leave dynamically |
+| 24 | SPL Compiler Pipeline | `compiler_demo.py` | 5-step: translate → concepts → optimise → generate → format |
+| 25 | Model Diversity | `model_diversity.py` | All 14 models benchmarked on 6 domains — latency, TPS, quality |
 | 90 | Two-Hub Cluster | `setup.py` | Set up and test hub peering and task forwarding |
 
 ## Quick start
@@ -45,6 +58,52 @@ python cookbook/08_model_arena/arena.py
 # Multi-step chain
 python cookbook/10_chain_relay/chain.py "distributed AI inference"
 
+# Tier-aware dispatch (VRAM routing)
+python cookbook/12_tier_aware_dispatch/tier_dispatch.py
+
+# Throughput scaling (run with 1, 2, 3 agents — compare results)
+python cookbook/13_multi_agent_throughput/throughput.py --label "3-agents" --out scaling.json
+
+# Failover test (kill an agent mid-run)
+python cookbook/15_agent_failover/failover.py -n 30
+
+# Math olympiad (accuracy + TPS comparison)
+python cookbook/16_math_olympiad/math_olympiad.py --models mathstral,qwen2-math
+
+# Code review pipeline (multi-step, multi-model)
+python cookbook/17_code_review_pipeline/code_review.py --file igrid/hub/dispatcher.py
+
+# Smart router (auto-route by prompt type)
+python cookbook/18_smart_router/smart_router.py --demo
+
+# Privacy chunk demo
+python cookbook/19_privacy_chunk_demo/privacy_demo.py
+
+# Overnight batch (100 tasks)
+python cookbook/20_overnight_batch/overnight.py --tasks 100
+
+# Language accessibility (10 languages in parallel)
+python cookbook/21_language_accessibility/language_grid.py --topic ai
+
+# Rewards report
+python cookbook/22_rewards_report/rewards_report.py
+
+# Wake/sleep resilience (5 minutes)
+python cookbook/23_wake_sleep_resilience/resilience.py --duration 300
+
+# MoMa Compiler pipeline demo
+python cookbook/24_spl_compiler_pipeline/compiler_demo.py --demo
+
+# Model diversity — quick probe (check which models are alive)
+python cookbook/25_model_diversity/model_diversity.py --probe
+
+# Model diversity — full 14-model benchmark
+python cookbook/25_model_diversity/model_diversity.py --out results.json --report diversity.html
+
+# Test only the 6 previously uncovered models
+python cookbook/25_model_diversity/model_diversity.py \
+  --models llama3.1,qwen3,deepseek-r1,gemma3,phi4,phi4-mini \
+  --report new_models.html
 ```
 
 ## Demo

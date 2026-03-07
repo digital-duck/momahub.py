@@ -34,15 +34,38 @@ st.sidebar.page_link("pages/4_Text2SPL.py", label="Text2SPL", icon="✏️")
 st.sidebar.page_link("pages/5_Paper_Digest.py", label="Paper Digest", icon="📚")
 st.sidebar.page_link("pages/6_Chat.py", label="Test Runner", icon="🧪")
 
+@st.cache_data(ttl=5)
+def fetch_pending_count(hub_url):
+    try:
+        tasks = httpx.get(f"{hub_url}/tasks?limit=200", timeout=3.0).json().get("tasks", [])
+        return sum(1 for t in tasks if t.get("state") == "PENDING")
+    except Exception: return 0
+
+@st.cache_data(ttl=10)
+def fetch_watchlist(hub_url):
+    try: return httpx.get(f"{hub_url}/watchlist", timeout=3.0).json().get("entries", [])
+    except Exception: return []
+
 health = fetch_health(hub_url)
 if "error" in health:
     st.error(f"Cannot reach hub: {health['error']}")
 else:
-    col1, col2, col3, col4 = st.columns(4)
+    pending = fetch_pending_count(hub_url)
+    watchlist = fetch_watchlist(hub_url)
+
+    col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("Hub ID", health.get("hub_id", "—"))
     col2.metric("Status", health.get("status", "—"))
     col3.metric("Agents Online", health.get("agents_online", 0))
-    col4.metric("Hub Time", health.get("time", "—")[:19])
+    col4.metric("Pending Tasks", pending, delta=None if pending == 0 else f"{pending} queued",
+                delta_color="inverse")
+    col5.metric("Watchlist", len(watchlist),
+                delta="⚠ blocked" if watchlist else None,
+                delta_color="inverse" if watchlist else "off")
+
+    if watchlist:
+        st.warning(f"**{len(watchlist)} watchlist entry/entries** — IPs or operators suspended. "
+                   f"Use `moma watchlist` to review.")
 
 st.divider()
 st.subheader("Online Agents")
@@ -50,9 +73,30 @@ agents = fetch_agents(hub_url)
 if not agents:
     st.info("No agents connected.")
 else:
-    import pandas as pd
-    df = pd.DataFrame(agents)[["agent_id","operator_id","tier","status","current_tps","tasks_completed","last_pulse"]]
+    import pandas as pd, json as _json
+    rows = []
+    for a in agents:
+        gpus = _json.loads(a.get("gpus") or "[]")
+        vram = gpus[0]["vram_gb"] if gpus else 0
+        rows.append({
+            "name": a.get("name", ""),
+            "tier": a["tier"],
+            "status": a["status"],
+            "tps": a.get("current_tps", 0),
+            "tasks": a.get("tasks_completed", 0),
+            "vram_gb": vram,
+            "operator": a.get("operator_id", ""),
+            "last_pulse": a.get("last_pulse", "")[:19],
+        })
+    df = pd.DataFrame(rows)
     st.dataframe(df, use_container_width=True)
+
+    # TPS bar chart
+    if len(rows) > 1:
+        tps_data = {r["name"] or r["operator"]: r["tps"] for r in rows if r["tps"] > 0}
+        if tps_data:
+            st.caption("Current TPS per agent")
+            st.bar_chart(tps_data)
 
 st.divider()
 st.subheader("Recent Tasks")
@@ -61,8 +105,17 @@ if not tasks:
     st.info("No tasks yet.")
 else:
     import pandas as pd
-    df = pd.DataFrame(tasks)[["task_id","state","model","input_tokens","output_tokens","latency_ms","created_at"]]
-    st.dataframe(df, use_container_width=True)
+    df = pd.DataFrame(tasks)
+    cols = [c for c in ["task_id","state","model","output_tokens","latency_ms","created_at"] if c in df.columns]
+    # Colour-code state
+    state_counts = df["state"].value_counts().to_dict() if "state" in df.columns else {}
+    if state_counts:
+        sc1, sc2, sc3, sc4 = st.columns(4)
+        sc1.metric("Complete", state_counts.get("COMPLETE", 0))
+        sc2.metric("Pending",  state_counts.get("PENDING", 0))
+        sc3.metric("Failed",   state_counts.get("FAILED", 0))
+        sc4.metric("In-Flight",state_counts.get("IN_FLIGHT", 0) + state_counts.get("DISPATCHED", 0))
+    st.dataframe(df[cols], use_container_width=True)
 
 if st.button("🔄 Refresh"):
     st.cache_data.clear(); st.rerun()
