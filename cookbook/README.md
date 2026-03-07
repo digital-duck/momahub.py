@@ -54,7 +54,11 @@ The i-grid is a novel distributed inference network that enables efficient and s
 
 moma run cookbook/02_multi_cte_parallel/multi_cte.spl
 
-Error: Parse error at 2:1: Expected PROMPT, CREATE, EXPLAIN, or EXECUTE, got WITH
+=== synthesis ===
+Distributed LLM (Large Language Model) inference has both empowering and challenging aspects. On the one hand, it enables faster and more scalable processing of complex language tasks by leveraging multiple devices or machines, which can be particularly beneficial for large-scale applications and those requiring real-time responses. On the other hand, distributed LLM inference also introduces added complexity in terms of infrastructure setup, data synchronization, and potential latency issues that need to be carefully managed to ensure seamless performance.
+
+[model=llama3  tokens=65+94  latency=18460ms]
+
 
 # Translate in parallel
 python cookbook/03_batch_translate/translate.py "Hello, world!"

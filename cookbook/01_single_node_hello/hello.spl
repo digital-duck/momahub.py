@@ -1,5 +1,6 @@
 -- Recipe 01: Hello Grid
 PROMPT hello_grid
+WITH BUDGET 1000 tokens
 USING MODEL 'llama3'
 ON GRID
 
@@ -7,4 +8,5 @@ SELECT
     system_role('You are a friendly assistant on the i-grid.')
 
 GENERATE
-    llm('Introduce the i-grid distributed inference network in exactly two sentences.');
+    llm('Introduce the i-grid distributed inference network in exactly two sentences.')
+WITH OUTPUT BUDGET 500 tokens;

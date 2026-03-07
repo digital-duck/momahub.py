@@ -1,24 +1,41 @@
 -- Recipe 02: Parallel CTEs — two models, one synthesis
-WITH
-    pros AS (
-        PROMPT analyse_pros
-        SELECT
-            SYSTEM_ROLE('You are a technology analyst.'),
-            GENERATE('List 3 key advantages of distributed LLM inference.')
-        USING MODEL 'llama3'
-        ON GRID
-    ),
-    cons AS (
-        PROMPT analyse_cons
-        SELECT
-            SYSTEM_ROLE('You are a critical technology reviewer.'),
-            GENERATE('List 3 key challenges of distributed LLM inference.')
-        USING MODEL 'mistral'
-        ON GRID
-    )
 PROMPT synthesis
+WITH BUDGET 4000 tokens
+USING MODEL 'llama3'
+ON GRID
+
+WITH pros AS (
+    PROMPT analyse_pros
+    WITH BUDGET 1000 tokens
+    USING MODEL 'llama3'
+    ON GRID
+
+    SELECT
+        SYSTEM_ROLE('You are a technology analyst.')
+
+    GENERATE
+        advantages('List 3 key advantages of distributed LLM inference.')
+    WITH OUTPUT BUDGET 300 tokens
+),
+cons AS (
+    PROMPT analyse_cons
+    WITH BUDGET 1000 tokens
+    USING MODEL 'mistral'
+    ON GRID
+
+    SELECT
+        SYSTEM_ROLE('You are a critical technology reviewer.')
+
+    GENERATE
+        challenges('List 3 key challenges of distributed LLM inference.')
+    WITH OUTPUT BUDGET 300 tokens
+)
+
 SELECT
     SYSTEM_ROLE('You are a balanced technology writer.'),
-    GENERATE('Given pros: {pros} and cons: {cons}, write a 3-sentence balanced assessment of distributed LLM inference.')
-USING MODEL 'llama3'
-ON GRID;
+    context.pros AS pros LIMIT 500 tokens,
+    context.cons AS cons LIMIT 500 tokens
+
+GENERATE
+    assessment('Given pros: {pros} and cons: {cons}, write a 3-sentence balanced assessment of distributed LLM inference.')
+WITH OUTPUT BUDGET 400 tokens;
