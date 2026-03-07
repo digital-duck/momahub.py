@@ -2,7 +2,6 @@
 PROMPT hello_grid
 WITH BUDGET 1000 tokens
 USING MODEL 'llama3'
-ON GRID
 
 SELECT
     system_role('You are a friendly assistant on the i-grid.')

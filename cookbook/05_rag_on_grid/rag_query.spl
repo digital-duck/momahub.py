@@ -1,13 +1,12 @@
--- Recipe 05: RAG query dispatched to the grid
+-- Recipe 05: RAG on Grid (Simulated)
 PROMPT rag_answer
 WITH BUDGET 2000 tokens
 USING MODEL 'llama3'
-ON GRID
 
 SELECT
     SYSTEM_ROLE('You are a helpful assistant that answers questions based on provided context.'),
-    RAG_QUERY('What are the key benefits of hub-and-spoke inference?') AS context
+    'Hub-and-spoke inference (i-grid) offers several key benefits: 1. Reduced hardware requirements for clients. 2. Parallel execution across multiple GPU nodes. 3. Centralized task management and reward tracking. 4. Resilience via automatic agent failover.' AS context
 
 GENERATE
-    answer('Using only the provided context, answer: What are the key benefits of hub-and-spoke inference?')
+    answer('Using only the provided {context}, answer: What are the key benefits of hub-and-spoke inference?')
 WITH OUTPUT BUDGET 1000 tokens;

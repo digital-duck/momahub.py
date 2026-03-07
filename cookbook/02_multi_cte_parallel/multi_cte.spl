@@ -2,13 +2,11 @@
 PROMPT synthesis
 WITH BUDGET 4000 tokens
 USING MODEL 'llama3'
-ON GRID
 
 WITH pros AS (
     PROMPT analyse_pros
     WITH BUDGET 1000 tokens
     USING MODEL 'llama3'
-    ON GRID
 
     SELECT
         SYSTEM_ROLE('You are a technology analyst.')
@@ -21,7 +19,6 @@ cons AS (
     PROMPT analyse_cons
     WITH BUDGET 1000 tokens
     USING MODEL 'mistral'
-    ON GRID
 
     SELECT
         SYSTEM_ROLE('You are a critical technology reviewer.')

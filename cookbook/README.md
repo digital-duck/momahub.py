@@ -93,6 +93,23 @@ python cookbook/03_batch_translate/translate.py "Hello, world!"
   Report: translations_20260307_1316.html
 
 
+# RAG on Grid
+moma run cookbook/05_rag_on_grid/rag_query.spl
+
+=== rag_answer ===
+Based on general knowledge and understanding, I can tell you that the key benefits of hub-and-spoke inference are:
+
+1. **Scalability**: Hub-and-spoke architecture allows for easy scaling by adding more nodes to the network, making it suitable for large-scale AI applications.
+2. **Flexibility**: This approach enables the use of different machine learning models and algorithms for each spoke, allowing for flexibility in model selection and experimentation.
+3. **Efficient computation**: By offloading computations to smaller, specialized machines (spokes), hub-and-spoke inference reduces the computational burden on the central node (hub), improving overall performance and efficiency.
+4. **Improved latency**: With computations distributed across multiple nodes, hub-and-spoke inference can reduce processing times and improve response latency for real-time AI applications.
+
+These benefits make hub-and-spoke inference a popular choice for many AI use cases, such as natural language processing, computer vision, and recommendation systems.
+
+[model=llama3  tokens=59+192  latency=8279ms]
+
+
+
 # Stress test (all GPUs)
 python cookbook/07_stress_test/stress.py -n 20
 
