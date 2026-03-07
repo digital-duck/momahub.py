@@ -46,8 +46,48 @@ moma join http://<hub-ip>:8000   # start agent(s)
 # Smoke test
 moma run cookbook/01_single_node_hello/hello.spl
 
+=== hello_grid ===
+The i-grid is a novel distributed inference network that enables efficient and scalable machine learning tasks by partitioning a large neural network into smaller, interconnected sub-networks, each running on different devices or nodes within a grid-like structure. By leveraging this decentralized approach, the i-grid allows for massive parallelization of computations, reduced communication overhead, and improved overall performance in complex inference scenarios.
+
+[model=llama3  tokens=41+76  latency=4893ms]
+
+
+moma run cookbook/02_multi_cte_parallel/multi_cte.spl
+
+Error: Parse error at 2:1: Expected PROMPT, CREATE, EXPLAIN, or EXECUTE, got WITH
+
 # Translate in parallel
 python cookbook/03_batch_translate/translate.py "Hello, world!"
+
+
+  Batch Translate
+    Hub:       http://localhost:8000
+    Model:     llama3
+    Languages: ['French', 'German', 'Chinese', 'Spanish']
+    Text:      Hello, world!
+
+    German          5 tok    2.1s  agent=..4f02c8a9e6cc
+    Spanish         5 tok    2.1s  agent=..4f02c8a9e6cc
+    Chinese        12 tok    2.1s  agent=..4f02c8a9e6cc
+    French          5 tok    4.5s  agent=..4f02c8a9e6cc
+
+  ==================================================
+  4/4 translations complete  wall=4.6s
+
+  [Chinese]
+  nǐ hǎo, shìjiè!
+
+  [French]
+  Bonjour, monde !
+
+  [German]
+  Hallo, Welt!
+
+  [Spanish]
+  Hola, mundo!
+
+  Report: translations_20260307_1316.html
+
 
 # Stress test (all GPUs)
 python cookbook/07_stress_test/stress.py -n 20
@@ -57,6 +97,47 @@ python cookbook/08_model_arena/arena.py
 
 # Multi-step chain
 python cookbook/10_chain_relay/chain.py "distributed AI inference"
+
+
+  Chain Relay
+    Topic:  distributed AI inference
+    Hub:    http://localhost:8000
+    Model:  llama3
+    Steps:  Research -> Analyze -> Summarize
+
+  [1/3] Research... 674 tok  18.2s  agent=..4f02c8a9e6cc
+  [2/3] Analyze... 560 tok  18.2s  agent=..4f02c8a9e6cc
+  [3/3] Summarize... 234 tok  8.1s  agent=..4f02c8a9e6cc
+
+  ============================================================
+  Chain complete!
+    Total tokens: 1,468
+    Total latency: 32908ms
+    Agents used: 1 (4f02c8a9e6cc)
+
+  --- Final Summary ---
+
+**Executive Summary:**
+
+Distributed AI inference has emerged as a crucial technology for modern AI development, offering scalability, speed, and flexibility. As the trend continues to grow, it's essential to understand its strengths, weaknesses, opportunities, and risks.
+
+**Key Takeaways:**
+
+• Distributed AI inference enables real-time processing of large datasets, making it suitable for complex AI tasks.
+• Scalability challenges and communication overhead are critical considerations in deploying distributed AI inference, requiring careful optimization.
+• The integration of edge computing and quantum computing with distributed AI inference has the potential to revolutionize AI applications.
+
+**Recommended Next Steps:**
+
+1. Conduct a thorough analysis of your organization's current infrastructure and data processing needs to determine the feasibility of implementing distributed AI inference.
+2. Develop a plan for optimizing communication between devices and ensuring scalability as you scale up your distributed AI inference architecture.
+3. Explore opportunities to integrate edge computing and quantum computing with your distributed AI inference implementation.
+
+**One-Sentence Bottom Line:**
+
+To fully unlock the potential of distributed AI inference, organizations must carefully balance scalability challenges, communication overhead, and optimization strategies while exploring innovative applications in edge computing and quantum computing.
+
+
 
 # Tier-aware dispatch (VRAM routing)
 python cookbook/12_tier_aware_dispatch/tier_dispatch.py
