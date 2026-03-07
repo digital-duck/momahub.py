@@ -34,39 +34,38 @@ SPL is a SQL-inspired declarative language for orchestrating LLM prompts on a di
 
 ## SPL Syntax Reference
 
-```
+```sql
 PROMPT <name>
 [WITH BUDGET <n> tokens]
 [USING MODEL "<ollama-model-name>"]
-[ON GRID ["<hub-url>"]]
 
 [WITH <cte_name> AS (
     PROMPT <inner_name>
     [WITH BUDGET <n> tokens]
     [USING MODEL "<model>"]
-    [ON GRID]
 
     SELECT
         SYSTEM_ROLE('system prompt text'),
         context.<param> AS <alias>
 
-    GENERATE('<instruction with {alias} placeholders>'
-             [OUTPUT FORMAT markdown|json|text]
-             [TEMPERATURE <0.0-1.0>])
+    GENERATE
+        <identifier>('<instruction with {alias} placeholders>'
+                     [FORMAT markdown|json|text]
+                     [TEMPERATURE <0.0-1.0>])
+    [WITH OUTPUT BUDGET <n>]
 ),
 <cte2> AS ( ... )]
 
 SELECT
     SYSTEM_ROLE('system prompt'),
     context.<param> AS <alias>,
-    RAG_QUERY('<query string>') AS <alias>,
-    MEMORY_GET('<key>') AS <alias>
+    RAG_QUERY('<query string>') AS <alias>
 
-GENERATE('<instruction>'
-         [OUTPUT FORMAT markdown|json|text]
-         [TEMPERATURE <0.0-1.0>])
-[WITH BUDGET <n>]
-[STORE AS <key>];
+GENERATE
+    <identifier>('<instruction>'
+                 [FORMAT markdown|json|text]
+                 [TEMPERATURE <0.0-1.0>])
+[WITH OUTPUT BUDGET <n>];
 ```
 
 ## When to Use CTEs
@@ -78,20 +77,16 @@ Use multi-model CTEs when the task has **distinct sub-tasks**:
 
 Use a **single PROMPT** when one model handles the task well.
 
-## i-grid Specific Clauses
-
-- `ON GRID` — dispatch this PROMPT to the i-grid hub for remote execution
-- `ON GRID "<url>"` — dispatch to a specific hub URL
-- `WITH VRAM <n>` — require agents with at least n GB VRAM
-
 ## Critical Syntax Rules
 
-1. Model names MUST be in double quotes: `USING MODEL "llama3"`
-2. GENERATE instruction is a single quoted string — escape inner quotes with backslash
-3. `{alias}` placeholders inside GENERATE refer to SELECT aliases
-4. Statement ends with semicolon
-5. WITH BUDGET comes BEFORE USING MODEL; CTEs come AFTER USING MODEL
-6. Output ONLY valid SPL — no explanation, no markdown code fences
+1. Statement starts with `PROMPT <name>`
+2. `WITH BUDGET <n> tokens` and `USING MODEL "<model>"` come BEFORE any `WITH` or `SELECT` clauses.
+3. Model names MUST be in double quotes: `USING MODEL "llama3"`
+4. `GENERATE` MUST be followed by an identifier: `GENERATE my_result('...')`
+5. `{alias}` placeholders inside GENERATE refer to SELECT aliases
+6. `WITH OUTPUT BUDGET <n>` comes AFTER the GENERATE block.
+7. Statement ends with semicolon.
+8. Output ONLY valid SPL — no explanation, no markdown code fences.
 
 ## Output Budget Guide
 
@@ -107,20 +102,22 @@ _TEXT2SPL_EXAMPLES = """
 ---
 ## EXAMPLE 1 — Simple single-model grid query
 
-User: "Summarize this article in 3 bullet points and run it overnight"
+User: "Summarize this article in 3 bullet points"
 
 ```sql
 PROMPT summarize_article
+WITH BUDGET 1000 tokens
+USING MODEL "llama3"
+
 SELECT
     SYSTEM_ROLE('You are a concise technical writer.'),
     context.article AS doc
 
-GENERATE('Summarize {doc} in exactly 3 bullet points. Each bullet captures a key insight.'
-         OUTPUT FORMAT markdown
-         TEMPERATURE 0.3)
-WITH BUDGET 1000
-USING MODEL "llama3"
-ON GRID;
+GENERATE
+    summary('Summarize {doc} in exactly 3 bullet points. Each bullet captures a key insight.'
+            FORMAT markdown
+            TEMPERATURE 0.3)
+WITH OUTPUT BUDGET 500 tokens;
 ```
 
 ---
@@ -129,40 +126,48 @@ ON GRID;
 User: "Compare pros and cons of distributed AI inference, then synthesise"
 
 ```sql
+PROMPT synthesise
+WITH BUDGET 4000 tokens
+USING MODEL "llama3"
+
 WITH
     pros AS (
         PROMPT list_pros
+        WITH BUDGET 1000 tokens
+        USING MODEL "llama3"
+
         SELECT
             SYSTEM_ROLE('You are a technology analyst.')
-        GENERATE('List 5 key advantages of distributed LLM inference.'
-                 OUTPUT FORMAT markdown)
-        WITH BUDGET 800
-        USING MODEL "llama3"
-        ON GRID
+        GENERATE
+            advantages('List 5 key advantages of distributed LLM inference.'
+                       FORMAT markdown)
+        WITH OUTPUT BUDGET 800 tokens
     ),
     cons AS (
         PROMPT list_cons
+        WITH BUDGET 1000 tokens
+        USING MODEL "mistral"
+
         SELECT
             SYSTEM_ROLE('You are a critical technology reviewer.')
-        GENERATE('List 5 key challenges of distributed LLM inference.'
-                 OUTPUT FORMAT markdown)
-        WITH BUDGET 800
-        USING MODEL "mistral"
-        ON GRID
+        GENERATE
+            challenges('List 5 key challenges of distributed LLM inference.'
+                       FORMAT markdown)
+        WITH OUTPUT BUDGET 800 tokens
     )
-PROMPT synthesise
+
 SELECT
     SYSTEM_ROLE('You are a balanced technology writer.'),
     context.pros AS advantages,
     context.cons AS challenges
 
-GENERATE('Given advantages: {advantages}\\nAnd challenges: {challenges}\\nWrite a balanced 4-sentence assessment.'
-         OUTPUT FORMAT markdown
-         TEMPERATURE 0.5)
-WITH BUDGET 1500
-USING MODEL "llama3"
-ON GRID;
+GENERATE
+    assessment('Given advantages: {advantages}\\nAnd challenges: {challenges}\\nWrite a balanced 4-sentence assessment.'
+               FORMAT markdown
+               TEMPERATURE 0.5)
+WITH OUTPUT BUDGET 1500 tokens;
 ```"""
+
 
 
 def _build_text2spl_prompt(user_query: str, error: str = "") -> str:

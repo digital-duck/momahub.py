@@ -192,8 +192,12 @@ def main(text, file_path, hub, model, languages, max_tokens, timeout, out):
 
     # HTML report
     html = build_html(results, text, model, hub)
-    out_path = out or f"translations_{datetime.now().strftime('%Y%m%d_%H%M')}.html"
-    Path(out_path).write_text(html, encoding="utf-8")
+    if not out:
+        ts = datetime.now().strftime('%Y%m%d_%H%M')
+        out_path = Path(__file__).parent / f"translations_{ts}.html"
+    else:
+        out_path = Path(out)
+    out_path.write_text(html, encoding="utf-8")
     click.echo(f"\n  Report: {out_path}\n")
 
 

@@ -123,15 +123,18 @@ def main(hub, out, limit):
     click.echo(f"        coming in Phase 9. Credits are currently indicative.\n")
 
     # HTML report
-    if out or True:
-        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-        out_path = out or str(Path(__file__).parent / f"rewards_{ts}.html")
-        Path(out_path).write_text(
-            _build_html(rewards, model_stats, total_tasks, total_tokens,
-                        total_credits, hub, agents_by_op),
-            encoding="utf-8"
-        )
-        click.echo(f"  Report: {out_path}\n")
+    if not out:
+        ts = datetime.now().strftime("%Y%m%d_%H%M")
+        out_path = Path(__file__).parent / f"rewards_{ts}.html"
+    else:
+        out_path = Path(out)
+    
+    out_path.write_text(
+        _build_html(rewards, model_stats, total_tasks, total_tokens,
+                    total_credits, hub, agents_by_op),
+        encoding="utf-8"
+    )
+    click.echo(f"  Report: {out_path}\n")
 
 
 def _build_html(rewards, model_stats, total_tasks, total_tokens,

@@ -179,8 +179,12 @@ def main(hub, models, prompt, max_tokens, timeout, out):
             click.echo(f" {r['state']}: {r.get('error','')}")
 
     html = build_html(results, prompt, hub)
-    out_path = out or f"arena_{datetime.now().strftime('%Y%m%d_%H%M')}.html"
-    Path(out_path).write_text(html, encoding="utf-8")
+    if not out:
+        ts = datetime.now().strftime('%Y%m%d_%H%M')
+        out_path = Path(__file__).parent / f"arena_{ts}.html"
+    else:
+        out_path = Path(out)
+    out_path.write_text(html, encoding="utf-8")
 
     # Console summary
     click.echo(f"\n  {'MODEL':<15} {'STATE':<10} {'TOKENS':>8} {'LATENCY':>10} {'TPS':>8}")

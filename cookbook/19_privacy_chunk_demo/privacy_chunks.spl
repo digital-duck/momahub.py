@@ -1,14 +1,54 @@
--- Recipe 19: Privacy Chunk Demo
+-- Recipe 19: Privacy Chunk Demo (SPL version)
 -- Split a document into 3 independent chunks, each processed by a separate agent.
 -- No single agent sees the full document — the hub assembles the final analysis.
--- This demonstrates the Phase 8 privacy architecture without requiring encryption.
 
-PROMPT chunk1_analysis
+PROMPT assembly
+WITH BUDGET 4000 tokens
 USING MODEL 'llama3'
-ON GRID
+
+WITH chunk1 AS (
+    PROMPT analyse_chunk1
+    WITH BUDGET 1000 tokens
+    USING MODEL 'llama3'
+
+    SELECT
+        system_role('You are a document analyst. Analyse only the excerpt provided. Extract key entities, dates, and facts.')
+
+    GENERATE
+        analyst('Analyse this document excerpt: The MoMaHub Distributed Inference Agreement is entered into between Digital Duck Labs (Provider) and the participating GPU operators (Contributors). The Provider operates the hub infrastructure.')
+    WITH OUTPUT BUDGET 400 tokens
+),
+chunk2 AS (
+    PROMPT analyse_chunk2
+    WITH BUDGET 1000 tokens
+    USING MODEL 'llama3'
+
+    SELECT
+        system_role('You are a document analyst. Analyse only the excerpt provided. Extract key entities, dates, and facts.')
+
+    GENERATE
+        analyst('Analyse this document excerpt: Contributors agree to make available their GPU resources during registered hours. The hub dispatches inference tasks based on tier, VRAM availability, and model support.')
+    WITH OUTPUT BUDGET 400 tokens
+),
+chunk3 AS (
+    PROMPT analyse_chunk3
+    WITH BUDGET 1000 tokens
+    USING MODEL 'llama3'
+
+    SELECT
+        system_role('You are a document analyst. Analyse only the excerpt provided. Extract key entities, dates, and facts.')
+
+    GENERATE
+        analyst('Analyse this document excerpt: Credits are earned at the rate of 1 credit per 1,000 output tokens. Either party may terminate participation with 24 hours notice via moma down.')
+    WITH OUTPUT BUDGET 400 tokens
+)
 
 SELECT
-    system_role('You are a document analyst. Analyse only the excerpt provided. Extract key entities, dates, and facts.')
+    system_role('You are a senior analyst assembling a document analysis from multiple excerpts. Combine the partial analyses into a coherent summary.'),
+    context.chunk1 AS analysis1,
+    context.chunk2 AS analysis2,
+    context.chunk3 AS analysis3
 
 GENERATE
-    analyst('Analyse this document excerpt: The distributed inference network was founded in 2026 by researchers at Digital Duck Labs. The system uses a hub-and-spoke architecture connecting GPU nodes across multiple locations.');
+    final_report('Combine these three partial document analyses into a coherent 3-paragraph summary identifying main themes and key obligations: {analysis1}, {analysis2}, {analysis3}')
+WITH OUTPUT BUDGET 1500 tokens;

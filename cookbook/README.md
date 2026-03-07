@@ -190,6 +190,43 @@ python cookbook/21_language_accessibility/language_grid.py --topic ai
 # Rewards report
 python cookbook/22_rewards_report/rewards_report.py
 
+(momahub) papagame@papa-game:~/projects/digital-duck/momahub.py$ python cookbook/22_rewards_report/rewards_report.py
+
+  Reward Economy Report
+    Hub:   http://localhost:8000
+    Time:  2026-03-07 18:18:33
+
+  ──────────────────────────────────────────────────
+  GRID TOTALS
+  ──────────────────────────────────────────────────
+  Total tasks:            54
+  Total tokens:        6,459
+  Total credits:      6.4590
+  Credit rate:    1 credit per 1,000 output tokens (PoC)
+
+  ──────────────────────────────────────────────────
+  BY OPERATOR
+  ──────────────────────────────────────────────────
+  Operator                Tasks       Tokens    Credits
+  ----------------------------------------------------
+  duck (GOLD)                54        6,459     6.4590
+
+  ──────────────────────────────────────────────────
+  BY MODEL (last 500 tasks)
+  ──────────────────────────────────────────────────
+  Model                        Tasks     Tokens    Avg Lat
+  -------------------------------------------------------
+  llama3                          44      4,132      3980ms
+  qwen3                            4      1,782     69990ms
+  mistral                          2        411      5707ms
+  mathstral                        2        134     14670ms
+
+  Note: Full reward economy (redemption, transfer, billing)
+        coming in Phase 9. Credits are currently indicative.
+
+  Report: /home/papagame/projects/digital-duck/momahub.py/cookbook/22_rewards_report/rewards_20260307_1818.html
+
+
 # Wake/sleep resilience (5 minutes)
 python cookbook/23_wake_sleep_resilience/resilience.py --duration 300
 

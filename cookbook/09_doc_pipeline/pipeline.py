@@ -159,7 +159,11 @@ def main(source, hub, model, engine, max_chars, max_tokens, fmt, out, title, tim
         return
 
     # Step 3: Format output
-    out_path = out or f"summary_{datetime.now().strftime('%Y%m%d_%H%M')}.{fmt}"
+    if not out:
+        ts = datetime.now().strftime('%Y%m%d_%H%M')
+        out_path = str(Path(__file__).parent / f"summary_{ts}.{fmt}")
+    else:
+        out_path = out
     click.echo(f"  [3/3] Formatting ({fmt})...", nl=False)
     try:
         format_output(summary, out_path, fmt, doc_title)

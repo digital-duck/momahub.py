@@ -426,10 +426,14 @@ def digest(urls, urls_file, hub, model, max_tokens, max_chars, engine, out, out_
     else:
         ext = ".html"
 
-    out_path = out or f"digest_{datetime.now().strftime('%Y%m%d_%H%M')}{ext}"
+    if not out:
+        ts = datetime.now().strftime('%Y%m%d_%H%M')
+        out_path = Path(__file__).parent / f"digest_{ts}{ext}"
+    else:
+        out_path = Path(out)
 
     if out_fmt == "html":
-        Path(out_path).write_text(output_text, encoding="utf-8")
+        out_path.write_text(output_text, encoding="utf-8")
     elif out_fmt == "docx":
         from dd_format import markdown_to_docx
         md = build_markdown(papers, model, hub)
