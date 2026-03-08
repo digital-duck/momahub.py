@@ -37,16 +37,25 @@ async def translate_one(client: httpx.AsyncClient, hub: str, text: str,
                         timeout_s: int) -> dict:
     task_id = f"translate-{language[:3].lower()}-{uuid.uuid4().hex[:6]}"
     t0 = time.monotonic()
-
-    try:
-        await client.post(f"{hub}/tasks", json={
-            "task_id": task_id, "model": model,
-            "prompt": PROMPT_TPL.format(language=language, text=text),
-            "system": SYSTEM, "max_tokens": max_tokens,
-        })
-    except Exception as exc:
-        return {"language": language, "state": "SUBMIT_FAILED", "error": str(exc),
-                "translation": "", "output_tokens": 0, "latency_s": 0, "agent_id": ""}
+    
+    max_submit_retries = 5
+    submit_attempt = 0
+    
+    while submit_attempt < max_submit_retries:
+        try:
+            resp = await client.post(f"{hub}/tasks", json={
+                "task_id": task_id, "model": model,
+                "prompt": PROMPT_TPL.format(language=language, text=text),
+                "system": SYSTEM, "max_tokens": max_tokens,
+            })
+            resp.raise_for_status()
+            break # Success
+        except Exception as exc:
+            submit_attempt += 1
+            if submit_attempt >= max_submit_retries:
+                return {"language": language, "state": "SUBMIT_FAILED", "error": str(exc),
+                        "translation": "", "output_tokens": 0, "latency_s": 0, "agent_id": ""}
+            await asyncio.sleep(1.0 * submit_attempt)
 
     deadline = time.monotonic() + timeout_s
     interval = 2.0
@@ -64,9 +73,18 @@ async def translate_one(client: httpx.AsyncClient, hub: str, text: str,
                         "latency_s": round(elapsed, 2),
                         "agent_id": result.get("agent_id", "")}
             if state == "FAILED":
-                return {"language": language, "state": "FAILED",
-                        "error": data.get("result", {}).get("error", ""),
-                        "translation": "", "output_tokens": 0, "latency_s": 0, "agent_id": ""}
+                error_msg = data.get("result", {}).get("error", "")
+                if "Agent at capacity" in error_msg:
+                    # Retry by re-submitting or just waiting? 
+                    # If it's already in FAILED state in DB, we MUST re-submit with new task_id
+                    # But the hub also has auto-retry for PENDING tasks.
+                    # If Agent returns "Agent at capacity" to hub, hub marks it as PENDING again (if retries < 3).
+                    # So we should just keep waiting here.
+                    pass
+                else:
+                    return {"language": language, "state": "FAILED",
+                            "error": error_msg,
+                            "translation": "", "output_tokens": 0, "latency_s": 0, "agent_id": ""}
         except Exception:
             pass
         await asyncio.sleep(interval)
