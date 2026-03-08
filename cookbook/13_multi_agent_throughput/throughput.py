@@ -134,7 +134,7 @@ def print_summary(results: list[dict], wall_time: float, label: str, n: int,
 
 
 @click.command()
-@click.option("--hub", default="http://localhost:8000", show_default=True)
+@click.option("--hub", default=None, help="Hub URL (defaults to config or localhost)")
 @click.option("-n", "--num-tasks", default=30, show_default=True, type=int,
               help="Number of tasks to fire")
 @click.option("--model", default="llama3", show_default=True)
@@ -146,6 +146,14 @@ def print_summary(results: list[dict], wall_time: float, label: str, n: int,
 @click.option("--out", default="", help="Append result to this JSON file")
 def main(hub, num_tasks, model, max_tokens, concurrency, timeout, label, out):
     """Measure grid throughput — run with different agent counts to build scaling chart."""
+    if not hub:
+        try:
+            from igrid.cli.config import load_config
+            cfg = load_config()
+            hub = cfg.get("hub_urls", ["http://localhost:8000"])[0]
+        except (ImportError, Exception):
+            hub = "http://localhost:8000"
+
     hub = hub.rstrip("/")
     run_label = label or f"run-{datetime.now().strftime('%H%M%S')}"
 

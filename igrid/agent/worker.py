@@ -48,6 +48,7 @@ def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
         join_req = JoinRequest(operator_id=operator_id, agent_id=_agent_id, host=host, port=port,
                                name=_agent_name, gpus=schema_gpus, cpu_cores=cpu_cores, ram_gb=ram_gb,
                                supported_models=models, cached_models=models,
+                               max_concurrent=max_concurrent,
                                pull_mode=pull_mode, api_key=api_key)
         async with httpx.AsyncClient(timeout=10.0) as client:
             for hub_url in _hub_urls:
@@ -94,10 +95,7 @@ def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
         if len(req.prompt) > _max_prompt_chars:
             return TaskResult(task_id=req.task_id, state=TaskState.FAILED,
                               error=f"Prompt exceeds {_max_prompt_chars} chars", agent_id=aid)
-        # Concurrency check
-        if _semaphore.locked():
-            return TaskResult(task_id=req.task_id, state=TaskState.FAILED,
-                              error="Agent at capacity", agent_id=aid)
+        
         async with _semaphore:
             backend: OllamaBackend = request.app.state.backend
             stats: AgentStats = request.app.state.stats

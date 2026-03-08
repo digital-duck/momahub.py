@@ -19,6 +19,7 @@ class JoinRequest(BaseModel):
     ram_gb: float = Field(default=0.0, ge=0.0, le=65536.0)
     supported_models: list[str] = Field(default_factory=list, max_length=200)
     cached_models: list[str] = Field(default_factory=list, max_length=200)
+    max_concurrent: int = Field(default=3, ge=1, le=128)
     pull_mode: bool = Field(default=False)
     api_key: str = Field(default="", max_length=512)
 

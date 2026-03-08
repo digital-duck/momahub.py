@@ -320,7 +320,6 @@ async def _dispatch_loop(state: GridState, app: FastAPI, interval_s: float = 2.0
             n = await dispatch_pending(
                 state,
                 sse_queues=app.state.sse_queues,
-                max_concurrent=app.state.max_concurrent_tasks,
             )
             if n: _log.debug("dispatched %d tasks", n)
         except Exception as exc:

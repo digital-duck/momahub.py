@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS agents (
     cpu_cores        INTEGER NOT NULL DEFAULT 0,
     ram_gb           REAL    NOT NULL DEFAULT 0.0,
     supported_models TEXT NOT NULL DEFAULT '[]',
+    max_concurrent   INTEGER NOT NULL DEFAULT 3,
     current_tps      REAL    NOT NULL DEFAULT 0.0,
     tasks_completed  INTEGER NOT NULL DEFAULT 0,
     pull_mode        INTEGER NOT NULL DEFAULT 0,

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Arena - 2026-03-08</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--accent:#4f8ef7;--text:#e0e0e0;
+      --sub:#9ca3af;--border:#2d3148;--ok:#22c55e;--warn:#f59e0b;--gold:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);
+     font-family:'Segoe UI',system-ui,sans-serif;padding:2rem;max-width:1100px;margin:0 auto}
+h1{font-size:1.8rem;color:var(--accent);margin-bottom:.25rem}
+.meta{color:var(--sub);font-size:.85rem;margin-bottom:1rem}
+.prompt-box{background:#252840;border:1px solid var(--border);border-radius:8px;
+            padding:1rem;margin-bottom:2rem;font-size:.9rem;line-height:1.5}
+.prompt-label{color:var(--accent);font-size:.75rem;text-transform:uppercase;margin-bottom:.3rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem}
+.card-title{font-size:1rem;font-weight:600;color:var(--accent);margin-bottom:.8rem;
+            display:flex;justify-content:space-between;align-items:center}
+.badge{font-size:.7rem;border-radius:12px;padding:.15rem .5rem}
+.ok{background:rgba(34,197,94,.15);color:var(--ok)}
+.fail{background:rgba(245,158,11,.15);color:var(--warn)}
+.response{font-size:.88rem;line-height:1.6;white-space:pre-wrap;margin-bottom:.8rem;
+           max-height:400px;overflow-y:auto}
+.stats{font-size:.78rem;color:var(--sub);border-top:1px solid var(--border);
+       padding-top:.6rem;display:flex;gap:1rem;flex-wrap:wrap}
+.winner{border-color:var(--gold);box-shadow:0 0 12px rgba(251,191,36,.15)}
+footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);
+       font-size:.75rem;color:var(--sub);text-align:center}
+</style>
+</head>
+<body>
+<h1>Model Arena</h1>
+<p class="meta">Generated 2026-03-08 00:13 | 3 model(s) | Hub: http://192.168.0.177:8000</p>
+<div class="prompt-label">Prompt</div>
+<div class="prompt-box">Explain the concept of information entropy (Shannon entropy) and its relationship to thermodynamic entropy. Include one concrete example. Keep it under 200 words.</div>
+<div class="grid">
+<div class="card">
+  <div class="card-title">llama3<span class="badge ok">COMPLETE</span></div>
+  <div class="response">Information entropy, also known as Shannon entropy, is a measure of the uncertainty or randomness in a message or data set. It was introduced by Claude Shannon in the 1940s as a way to quantify the amount of information contained in a message. The concept is based on the idea that the more uncertain or unpredictable the message is, the more information it contains.
+
+Interestingly, this concept has a direct relationship with thermodynamic entropy, which measures the disorder or randomness of a physical system. In 1948, Shannon himself noted this connection, pointing out that both concepts describe the same underlying phenomenon: the increase in uncertainty or disorder as energy becomes unavailable to do work.
+
+A concrete example is a deck of cards. If you know exactly what's on each card (e.g., all hearts), the entropy is low because there's little uncertainty. But if you shuffle the deck, the orderliness disappears, and the entropy increases, reflecting the increased uncertainty about which card will be drawn next. This mirrors the thermodynamic concept: as energy becomes unavailable to do work, the physical system becomes more disordered, leading to an increase in entropy.</div>
+  <div class="stats">
+    <span>Tokens: 228</span>
+    <span>Latency: 8.11s</span>
+    <span>TPS: 28.1</span>
+    <span>Agent: 58156b5c0fb5</span>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title">mistral<span class="badge ok">COMPLETE</span></div>
+  <div class="response"> Information Entropy, as defined by Claude Shannon, quantifies the randomness or uncertainty in a set of data. It measures the amount of information required on average to describe the outcome of an event, with values ranging from 0 (least entropy; highly predictable) to log2(N) for N unique possible outcomes.
+
+The connection between Shannon entropy and thermodynamic entropy lies in their shared principle of measuring disorder or uncertainty. In thermodynamics, entropy (S) describes the level of disorder or randomness in a system, with an increase in S indicating a more disordered state. The second law of thermodynamics states that total entropy in an isolated system always increases over time.
+
+A concrete example is the tossing of a fair coin: the Shannon entropy is 1 bit (log2(2)) because there are two possible outcomes (Heads or Tails). If the coin is biased, say with probability 0.6 for Heads and 0.4 for Tails, the Shannon entropy becomes log2(0.6) + log2(0.4), which is approximately 0.81 bits due to increased uncertainty in predicting the outcome.
+
+This connection allows us to analyze complex information systems using principles derived from thermodynamics, such as minimizing total system entropy to achieve maximum compression or efficiency.</div>
+  <div class="stats">
+    <span>Tokens: 285</span>
+    <span>Latency: 8.08s</span>
+    <span>TPS: 35.3</span>
+    <span>Agent: 58156b5c0fb5</span>
+  </div>
+</div>
+<div class="card winner">
+  <div class="card-title">phi3 &#x1F3C6;<span class="badge ok">COMPLETE</span></div>
+  <div class="response">Information entropy, introduced by Claude Shannon in his seminal paper on communication theory, quantifies the uncertainty or unpredictability present within a set of possible messages given their probabilities. It is calculated using the formula: H = -∑p(x)log₂(p(x)), where p(x) represents the probability of occurrence for each message x.
+
+
+Interestingly, Shannon's concept echoes thermodynamic entropy as described by Ludwig Boltzmann and J. Willard Gibbs—a measure of disorder or randomness in a physical system at thermal equilibrium: S = k log₂(W), where W is the number of possible microstates for an ensemble (the set of all ways that energy could be distributed among particles).
+
+
+Both concepts share similarities, as they reflect uncertainty and unpredictability. However, while information entropy applies to discrete systems like data transmission or coding theory, thermodynamic entropy pertains to continuous physical processes in closed systems.
+
+
+For example, consider a fair dice roll with six equally likely outcomes (1/6 probability for each side). The Shannon entropy of this system is H = -∑(1/6)log₂(1/6) ≈ 2.58 bits per outcome because we cannot predict which number will come up next without additional information, and on average it would take about three binary decisions to identify the result with certainty (since log₂(4) is approximately 2).
+
+
+This notion of uncertainty aligns closely with thermodynamic entropy where a more disordered state—characterized by higher randomness or number of microstates—has greater entropy. For instance, when ice melts into water at room temperature without adding energy to the system (a process driven purely by thermal fluctinations), it transitions from an ordered solid phase with low entropy states per particle arrangement and kinetic energies in fixed positions, towards a disordered liquid state where molecules are free to move, increasing both types of microstates.</div>
+  <div class="stats">
+    <span>Tokens: 425</span>
+    <span>Latency: 8.06s</span>
+    <span>TPS: 52.7</span>
+    <span>Agent: 58156b5c0fb5</span>
+  </div>
+</div>
+</div>
+<footer>Generated by <strong>MoMaHub i-grid</strong> | Digital Duck &amp; Dog Team</footer>
+</body>
+</html>
