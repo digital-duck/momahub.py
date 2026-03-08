@@ -4,6 +4,7 @@ docs/CHAT/
 .claude/
 specs/
 tests/demos/
+USER-GUIDE-gwg.md
 
 # Python
 __pycache__/
