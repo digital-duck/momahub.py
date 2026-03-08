@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# setup.sh — One-command node bootstrap for Momahub (Momahub).
+# setup.sh — One-command node bootstrap for Momahub.
 # Idempotent: safe to re-run. Handles GPU check, Ollama install,
 # model pull, pip install, smoke test, and prints the join command.
 set -euo pipefail

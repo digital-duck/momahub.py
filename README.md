@@ -50,6 +50,8 @@ moma --help
 
 ## Features
 
+Momahub provides a robust suite of tools for distributed AI inference. For a detailed list of current capabilities and our upcoming development roadmap (including Go re-implementation and cryptographic security), please see **[FEATURES.md](./FEATURES.md)**.
+
 - **Hub-and-spoke dispatch** — automatic agent selection by compute tier, VRAM, and model availability
 - **Multi-hub clustering** — peer hubs share capabilities and forward tasks across the network
 - **Compute tiers** — agents ranked PLATINUM / GOLD / SILVER / BRONZE by measured tokens-per-second

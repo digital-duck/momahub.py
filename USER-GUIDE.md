@@ -1,6 +1,6 @@
 # User Guide
 
-Complete guide to running Momahub (Momahub): installation, CLI reference, cookbook recipes, and a weekend LAN test plan for 3 GPUs.
+Complete guide to running Momahub: installation, CLI reference, cookbook recipes, and a weekend LAN test plan for 3 GPUs.
 
 ---
 
