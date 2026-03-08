@@ -37,9 +37,22 @@ async def submit_and_wait(client: httpx.AsyncClient, hub: str, task_id: str,
                           prompt: str, model: str, max_tokens: int,
                           timeout_s: int) -> dict:
     t0 = time.monotonic()
-    await client.post(f"{hub}/tasks", json={
-        "task_id": task_id, "model": model, "prompt": prompt, "max_tokens": max_tokens,
-    })
+    
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            r = await client.post(f"{hub}/tasks", json={
+                "task_id": task_id, "model": model, "prompt": prompt, "max_tokens": max_tokens,
+            })
+            r.raise_for_status()
+            break
+        except Exception as exc:
+            if attempt < max_retries - 1:
+                await asyncio.sleep(1.0 * (attempt + 1))
+                continue
+            return {"task_id": task_id, "state": "SUBMIT_FAILED", "prompt": prompt,
+                    "error": str(exc), "agent_id": "", "output_tokens": 0, "latency_s": 0, "tps": 0}
+
     deadline = time.monotonic() + timeout_s
     interval = 1.5
     while time.monotonic() < deadline:
@@ -56,8 +69,18 @@ async def submit_and_wait(client: httpx.AsyncClient, hub: str, task_id: str,
                         "latency_s": round(elapsed, 2),
                         "tps": round(result.get("output_tokens", 0) / max(elapsed, 0.001), 1)}
             if state == "FAILED":
+                error_msg = data.get("result", {}).get("error", "")
+                if "Agent at capacity" in error_msg:
+                    # If it failed with capacity, we need to re-submit with a NEW task_id
+                    # because the hub marks the task as FAILED in the DB.
+                    # Alternatively, we can let the hub's internal retry handle it, 
+                    # but the hub only retries 3 times.
+                    pass
+                
                 return {"task_id": task_id, "state": "FAILED", "prompt": prompt,
-                        "agent_id": "", "output_tokens": 0, "latency_s": 0, "tps": 0}
+                        "error": error_msg,
+                        "agent_id": data.get("result", {}).get("agent_id", ""),
+                        "output_tokens": 0, "latency_s": 0, "tps": 0}
         except Exception:
             pass
         await asyncio.sleep(interval)
@@ -196,8 +219,9 @@ async def run_stress(hub: str, n: int, model: str, max_tokens: int,
             results.append(r)
             status = r["state"]
             agent = r.get("agent_id", "")[-12:] or "?"
+            err = f"({r['error']})" if r.get('error') else ""
             click.echo(f"    [{len(results):>3}/{n}] {status:<8} {r['latency_s']:>6.1f}s  "
-                        f"{r['output_tokens']:>4} tok  {r['tps']:>5.1f} tps  agent=..{agent}")
+                        f"{r['output_tokens']:>4} tok  {r['tps']:>5.1f} tps  agent=..{agent} {err}")
 
     wall_time = time.monotonic() - wall_start
 

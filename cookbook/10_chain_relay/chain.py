@@ -99,15 +99,20 @@ def submit_and_wait(hub: str, task_id: str, system: str, prompt: str,
 
 @click.command()
 @click.argument("topic")
-@click.option("--hub", default="http://localhost:8000", show_default=True)
+@click.option("--hub", default=None, help="Hub URL (defaults to config or localhost)")
 @click.option("--model", default="llama3", show_default=True)
 @click.option("--max-tokens", default=2048, show_default=True, type=int)
 @click.option("--timeout", default=300, show_default=True, type=int)
 def main(topic, hub, model, max_tokens, timeout):
-    """Run a multi-step reasoning chain on the grid.
+    """Run a multi-step reasoning chain on the grid."""
+    if not hub:
+        try:
+            from igrid.cli.config import load_config
+            cfg = load_config()
+            hub = cfg.get("hub_urls", ["http://localhost:8000"])[0]
+        except (ImportError, Exception):
+            hub = "http://localhost:8000"
 
-    Each step feeds its output into the next step's prompt.
-    """
     hub = hub.rstrip("/")
     click.echo(f"\n  Chain Relay")
     click.echo(f"    Topic:  {topic}")

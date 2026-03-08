@@ -110,9 +110,6 @@ These benefits make hub-and-spoke inference a popular choice for many AI use cas
 
 
 
-# Stress test (all GPUs)
-python cookbook/07_stress_test/stress.py -n 20
-
 # Model comparison
 python cookbook/08_model_arena/arena.py
 
@@ -176,6 +173,9 @@ Distributed AI inference has emerged as a crucial technology for modern AI devel
 
 To fully unlock the potential of distributed AI inference, organizations must carefully balance scalability challenges, communication overhead, and optimization strategies while exploring innovative applications in edge computing and quantum computing.
 
+
+# Stress test (all GPUs)
+python cookbook/07_stress_test/stress.py -n 10
 
 
 # Tier-aware dispatch (VRAM routing)
