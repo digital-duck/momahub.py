@@ -13,9 +13,27 @@ METRICS_RE = re.compile(r"\[model=(?P<model>\S+)\s+tokens=(?P<tokens>\S+)\s+late
 # Specific Regex for varied formats
 TRANSLATE_RE = re.compile(r"(?P<complete>\d+)/(?P<total>\d+)\s+translations complete\s+wall=(?P<latency>\S+)")
 STRESS_RE = re.compile(r"Grid throughput:\s+(?P<tps>\S+)\s+tokens/s")
+# Benchmark: latency without 's' suffix; Arena: latency with 's' suffix
 BENCHMARK_RE = re.compile(r"(?P<model>\S+)\s+COMPLETE\s+(?P<tokens>\d+)\s+(?P<latency>[\d\.]+)\s+(?P<tps>[\d\.]+)")
+ARENA_RE = re.compile(r"(?P<model>\w[\w.]*)\s+COMPLETE\s+(?P<tokens>\d+)\s+(?P<latency>[\d\.]+)s\s+(?P<tps>[\d\.]+)")
 ARXIV_RE = re.compile(r"polling\.\.\.\s+done\s+\((?P<tokens>[\d,]+)\s+tokens\)")
 PIPELINE_RE = re.compile(r"Summarizing on grid \((?P<model>\S+)\)\.\.\.\s+(?P<tokens>[\d,]+)\s+tokens\s+(?P<latency>\d+ms)")
+# Chain relay
+CHAIN_TOKENS_RE = re.compile(r"Total tokens:\s+([\d,]+)")
+CHAIN_LATENCY_RE = re.compile(r"Total latency:\s+(\d+ms)")
+CHAIN_AGENTS_RE = re.compile(r"Agents used:\s+(\d+)")
+# Multi-agent throughput
+THROUGHPUT_RE = re.compile(r"Throughput:\s+([\d.]+)\s+tokens/s")
+THROUGHPUT_COMPLETED_RE = re.compile(r"Completed:\s+(\d+)/(\d+)")
+# Smart router
+ROUTER_COMPLETED_RE = re.compile(r"(\d+)/(\d+)\s+completed")
+ROUTER_MODELS_RE = re.compile(r"\]\s+([\w.\-]+)\s+[\d.]+s\s+[\d.]+tps")
+# Privacy chunk demo
+PRIVACY_WALL_RE = re.compile(r"Wall time:\s+([\d.]+)s")
+PRIVACY_CHUNKS_RE = re.compile(r"Chunks:\s+(\d+)")
+# Compiler pipeline
+COMPILER_WALL_RE = re.compile(r"Wall time:\s+([\d.]+)s")
+COMPILER_TOKENS_RE = re.compile(r"Total tokens:(\d+)")
 
 def parse_log(file_path):
     """Extract metrics from a single log file with multiple format support."""
@@ -85,7 +103,7 @@ def parse_log(file_path):
             if "Done!" in content:
                 is_success = True
 
-        # Try Benchmark Models format (tabular)
+        # Try Benchmark Models format (tabular, latency without 's')
         if not is_success and "MODEL" in content and "TPS" in content:
             matches = list(BENCHMARK_RE.finditer(content))
             if matches:
@@ -94,7 +112,75 @@ def parse_log(file_path):
                 metrics["tokens"] = m["tokens"]
                 metrics["latency"] = f"{m['latency']}s"
                 is_success = True
-        
+
+        # Try Model Arena format (tabular, latency with 's' suffix)
+        if not is_success and "Model Arena" in content:
+            matches = list(ARENA_RE.finditer(content))
+            if matches:
+                models = [m.group("model") for m in matches]
+                total_tokens = sum(int(m.group("tokens")) for m in matches)
+                best_tps = max(float(m.group("tps")) for m in matches)
+                metrics["model"] = "/".join(models)
+                metrics["tokens"] = str(total_tokens)
+                metrics["latency"] = f"{best_tps:.1f} tps peak"
+                is_success = True
+
+        # Try Chain Relay format
+        if not is_success and "Chain complete" in content:
+            t = CHAIN_TOKENS_RE.search(content)
+            l = CHAIN_LATENCY_RE.search(content)
+            a = CHAIN_AGENTS_RE.search(content)
+            if t and l:
+                metrics["model"] = "llama3"
+                metrics["tokens"] = t.group(1)
+                metrics["latency"] = l.group(1)
+                if a:
+                    metrics["model"] = f"llama3 ({a.group(1)} agents)"
+                is_success = True
+
+        # Try Multi-Agent Throughput format
+        if not is_success and "Multi-Agent Throughput" in content:
+            t = THROUGHPUT_RE.search(content)
+            c = THROUGHPUT_COMPLETED_RE.search(content)
+            tok = re.search(r"Tokens:\s+([\d,]+)", content)
+            if t and c:
+                metrics["model"] = "llama3"
+                metrics["tokens"] = tok.group(1) if tok else f"{c.group(1)} tasks"
+                metrics["latency"] = f"{t.group(1)} tok/s"
+                is_success = c.group(1) == c.group(2)
+
+        # Try Smart Router format
+        if not is_success and "Smart Router" in content:
+            c = ROUTER_COMPLETED_RE.search(content)
+            if c:
+                models = list(dict.fromkeys(ROUTER_MODELS_RE.findall(content)))  # unique, ordered
+                metrics["model"] = "/".join(models[:3]) if models else "multi-model"
+                metrics["tokens"] = f"{c.group(1)} prompts"
+                metrics["latency"] = f"{c.group(1)}/{c.group(2)} routed"
+                is_success = c.group(1) == c.group(2)
+
+        # Try Privacy Chunk Demo format
+        if not is_success and "Privacy Chunk Demo" in content:
+            w = PRIVACY_WALL_RE.search(content)
+            ch = PRIVACY_CHUNKS_RE.search(content)
+            if w:
+                n_chunks = ch.group(1) if ch else "?"
+                metrics["model"] = "llama3"
+                metrics["tokens"] = f"{n_chunks} chunks"
+                metrics["latency"] = f"{w.group(1)}s"
+                is_success = "Assembly complete" in content
+
+        # Try Compiler Pipeline format
+        if not is_success and "Compiler Pipeline" in content:
+            w = COMPILER_WALL_RE.search(content)
+            tok = COMPILER_TOKENS_RE.search(content)
+            steps = re.search(r"Steps:\s+(\d+)", content)
+            if w:
+                metrics["model"] = "llama3"
+                metrics["tokens"] = tok.group(1) if tok else "-"
+                metrics["latency"] = f"{w.group(1)}s ({steps.group(1)} steps)" if steps else f"{w.group(1)}s"
+                is_success = "FINAL OUTPUT" in content
+
     # Fallback Success Check
     if not is_success:
         completion_markers = ["COMPLETE", "SUCCESS", "Results:", "Report:", "======", "Done!", "Document Pipeline"]
