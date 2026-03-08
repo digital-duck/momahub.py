@@ -88,6 +88,7 @@ tests/         Unit and integration tests
 
 ## Contributing
 
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our development workflow and coding standards.
 
 ## Research
 
@@ -103,8 +104,19 @@ The paper introduces two key ideas:
 2. **The Distributed Inference Runtime** — MoMaHub as the runtime layer that abstracts distributed consumer GPUs into a programmable compute surface, analogous to the JVM or the Linux kernel for traditional computing.
 
 ### Related work:
-- SPL (Structured Prompt Language): [arXiv:2602.21257](https://arxiv.org/abs/2602.21257)
-- Geodesic Reranking: [arXiv:2602.15860](https://arxiv.org/abs/2602.15860)
+- **SPL (Structured Prompt Language):** [arXiv:2602.21257](https://arxiv.org/abs/2602.21257)
+  > Wen Gong. (2026). *Structured Prompt Language: Declarative Context Management for LLMs*. arXiv preprint arXiv:2602.21257.
+
+  ```bibtex
+  @article{gong2026spl,
+    title={Structured Prompt Language: Declarative Context Management for LLMs},
+    author={Gong, Wen},
+    journal={arXiv preprint arXiv:2602.21257},
+    year={2026}
+  }
+  ```
+- **Geodesic Reranking:** [arXiv:2602.15860](https://arxiv.org/abs/2602.15860)
+  > Wen G. Gong. (2026). *Reranker Optimization via Geodesic Distances on k-NN Manifolds*. arXiv preprint arXiv:2602.15860.
 
 ## License
 
