@@ -194,12 +194,11 @@ def main(text, file_path, hub, model, languages, max_tokens, timeout, out):
     html = build_html(results, text, model, hub)
     if not out:
         ts = datetime.now().strftime('%Y%m%d_%H%M')
-        out_path = Path(__file__).parent / f"translations_{ts}.html"
+        out_path = Path(__file__).parent / f"cookbook/03_batch_translate/translations_{ts}.html"
     else:
         out_path = Path(out)
     out_path.write_text(html, encoding="utf-8")
     click.echo(f"\n  Report: {out_path}\n")
-
 
 if __name__ == "__main__":
     main()

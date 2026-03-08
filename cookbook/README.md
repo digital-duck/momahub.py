@@ -13,32 +13,32 @@ moma join http://<hub-ip>:8000   # start agent(s)
 
 ## Recipes
 
-| # | Recipe | Script | Description |
-|---|--------|--------|-------------|
-| 01 | Single Node Hello | `hello.spl` | Minimal SPL program — verify hub + agent + Ollama work |
-| 02 | Multi-CTE Parallel | `multi_cte.spl` | Two models in parallel, then synthesis — fan-out demo |
-| 03 | Batch Translate | `translate.py` | One text to 5 languages in parallel |
-| 04 | Benchmark Models | `benchmark.py` | Same prompt to multiple models, compare TPS and latency |
-| 05 | RAG on Grid | `rag_query.spl` | Retrieval-augmented generation dispatched to the grid |
-| 06 | Paper Digest | `digest.py` | Arxiv papers to dark-mode HTML digest overnight |
-| 07 | Stress Test | `stress.py` | Fire N tasks, watch all GPUs light up, measure throughput |
-| 08 | Model Arena | `arena.py` | Side-by-side HTML comparison of multiple models |
-| 09 | Doc Pipeline | `pipeline.py` | PDF -> extract -> grid summarize -> formatted output |
-| 10 | Chain Relay | `chain.py` | Multi-step reasoning: Research -> Analyze -> Summarize |
-| 12 | Tier-Aware Dispatch | `tier_dispatch.py` | Submit tasks with VRAM hints, verify routing to correct agent tier |
-| 13 | Multi-Agent Throughput | `throughput.py` | Measure tokens/s scaling: 1 agent vs 2 vs 3 — key paper metric |
-| 15 | Agent Failover | `failover.py` | Kill an agent mid-run, verify tasks re-queue and complete |
-| 16 | Math Olympiad | `math_olympiad.py` | Benchmark mathstral + qwen2-math on 15 problems, score accuracy |
-| 17 | Code Review Pipeline | `code_review.py` | review → summarise → refactor across deepseek-coder + llama3 |
-| 18 | Smart Router | `smart_router.py` | Auto-route math/code/general prompts to the optimal model |
-| 19 | Privacy Chunk Demo | `privacy_demo.py` | Split document across agents — no single agent sees the full text |
-| 20 | Overnight Batch | `overnight.py` | Submit 100–500 tasks overnight, full report by morning |
-| 21 | Language Accessibility | `language_grid.py` | Same question in 10 languages in parallel — accessibility demo |
-| 22 | Rewards Report | `rewards_report.py` | Pretty-print reward ledger: tasks, tokens, credits per operator |
-| 23 | Wake/Sleep Resilience | `resilience.py` | Tasks flow continuously as agents join/leave dynamically |
-| 24 | SPL Compiler Pipeline | `compiler_demo.py` | 5-step: translate → concepts → optimise → generate → format |
-| 25 | Model Diversity | `model_diversity.py` | All 14 models benchmarked on 6 domains — latency, TPS, quality |
-| 90 | Two-Hub Cluster | `setup.py` | Set up and test hub peering and task forwarding |
+| # | Recipe | Script | Description | Status |
+|---|--------|--------|-------------|--------|
+| 01 | Single Node Hello | `hello.spl` | Minimal SPL program — verify hub + agent + Ollama work | x |
+| 02 | Multi-CTE Parallel | `multi_cte.spl` | Two models in parallel, then synthesis — fan-out demo | x |
+| 03 | Batch Translate | `translate.py` | One text to 5 languages in parallel | x |
+| 04 | Benchmark Models | `benchmark.py` | Same prompt to multiple models, compare TPS and latency | - |
+| 05 | RAG on Grid | `rag_query.spl` | Retrieval-augmented generation dispatched to the grid | x |
+| 06 | Paper Digest | `digest.py` | Arxiv papers to dark-mode HTML digest overnight | - |
+| 07 | Stress Test | `stress.py` | Fire N tasks, watch all GPUs light up, measure throughput | - |
+| 08 | Model Arena | `arena.py` | Side-by-side HTML comparison of multiple models | x |
+| 09 | Doc Pipeline | `pipeline.py` | PDF -> extract -> grid summarize -> formatted output | - |
+| 10 | Chain Relay | `chain.py` | Multi-step reasoning: Research -> Analyze -> Summarize | x | - |
+| 12 | Tier-Aware Dispatch | `tier_dispatch.py` | Submit tasks with VRAM hints, verify routing to correct agent tier | - |
+| 13 | Multi-Agent Throughput | `throughput.py` | Measure tokens/s scaling: 1 agent vs 2 vs 3 — key paper metric | - |
+| 15 | Agent Failover | `failover.py` | Kill an agent mid-run, verify tasks re-queue and complete | - |
+| 16 | Math Olympiad | `math_olympiad.py` | Benchmark mathstral + qwen2-math on 15 problems, score accuracy | - |
+| 17 | Code Review Pipeline | `code_review.py` | review → summarise → refactor across deepseek-coder + llama3 | - |
+| 18 | Smart Router | `smart_router.py` | Auto-route math/code/general prompts to the optimal model | - |
+| 19 | Privacy Chunk Demo | `privacy_demo.py` | Split document across agents — no single agent sees the full text | - |
+| 20 | Overnight Batch | `overnight.py` | Submit 100–500 tasks overnight, full report by morning | - |
+| 21 | Language Accessibility | `language_grid.py` | Same question in 10 languages in parallel — accessibility demo | - |
+| 22 | Rewards Report | `rewards_report.py` | Pretty-print reward ledger: tasks, tokens, credits per operator | x | - |
+| 23 | Wake/Sleep Resilience | `resilience.py` | Tasks flow continuously as agents join/leave dynamically | - |
+| 24 | SPL Compiler Pipeline | `compiler_demo.py` | 5-step: translate → concepts → optimise → generate → format | - |
+| 25 | Model Diversity | `model_diversity.py` | All 14 models benchmarked on 6 domains — latency, TPS, quality | - |
+| 90 | Two-Hub Cluster | `setup.py` | Set up and test hub peering and task forwarding | - |
 
 ## Quick start
 
@@ -115,6 +115,24 @@ python cookbook/07_stress_test/stress.py -n 20
 
 # Model comparison
 python cookbook/08_model_arena/arena.py
+
+  Model Arena
+    Hub:    http://localhost:8000
+    Models: ['llama3', 'mistral', 'phi3']
+
+    [llama3] submitting... 245 tok  45.36s  5.4 tps
+    [mistral] submitting... 389 tok  12.51s  31.1 tps
+    [phi3] submitting... 351 tok  25.72s  13.6 tps
+
+  MODEL           STATE        TOKENS    LATENCY      TPS
+  -------------------------------------------------------
+  llama3          COMPLETE        245      45.4s     5.4
+  mistral         COMPLETE        389      12.5s    31.1
+  phi3            COMPLETE        351      25.7s    13.6
+
+  Report: /home/papagame/projects/digital-duck/momahub.py/cookbook/08_model_arena/arena_20260307_2233.html
+  Open in browser for dark-mode side-by-side comparison.
+
 
 # Multi-step chain
 python cookbook/10_chain_relay/chain.py "distributed AI inference"
