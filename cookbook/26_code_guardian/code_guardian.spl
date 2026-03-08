@@ -1,0 +1,47 @@
+-- Momahub Code Guardian: Multi-Specialist Code Review
+-- Demonstrates the power of specialized models running in parallel on the grid.
+
+PROMPT code_guardian
+WITH BUDGET 16000 tokens
+USING MODEL auto
+
+-- CTE 1: Security Audit (Specialized in vulnerabilities and safety)
+WITH security_audit AS (
+    SELECT context.source_code AS code
+    GENERATE security_review(code)
+    WITH OUTPUT BUDGET 1500 tokens, 
+         SYSTEM "You are a senior security engineer. Scan the code for prompt injection, SQL injection, and credential leakage."
+),
+
+-- CTE 2: Performance Audit (Specialized in algorithm efficiency)
+WITH performance_audit AS (
+    SELECT context.source_code AS code
+    GENERATE performance_review(code)
+    WITH OUTPUT BUDGET 1500 tokens,
+         SYSTEM "You are a performance optimization expert. Identify O(N^2) bottlenecks, redundant I/O, and blocking async calls."
+),
+
+-- CTE 3: Documentation & Architecture (Specialized in technical communication)
+WITH documentation AS (
+    SELECT context.source_code AS code
+    GENERATE architecture_notes(code)
+    WITH OUTPUT BUDGET 1500 tokens,
+         SYSTEM "You are a technical writer. Generate high-level architecture notes and identify missing docstrings/JSDoc."
+),
+
+-- CTE 4: Modular Refactoring (Specialized in clean code and maintainability)
+WITH refactoring AS (
+    SELECT context.source_code AS code
+    GENERATE refactor_suggestions(code)
+    WITH OUTPUT BUDGET 1500 tokens,
+         SYSTEM "You are a clean code advocate. Suggest how to split large functions, reduce coupling, and improve modularity."
+)
+
+-- Final Synthesis: Composing the reviews into a Unified Report
+SELECT
+    security_audit    AS security,
+    performance_audit AS performance,
+    documentation     AS docs,
+    refactoring       AS refactor
+GENERATE unified_code_report(security, performance, docs, refactor)
+WITH OUTPUT BUDGET 3000 tokens, FORMAT markdown;

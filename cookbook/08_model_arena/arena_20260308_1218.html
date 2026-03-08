@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Arena - 2026-03-08</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--accent:#4f8ef7;--text:#e0e0e0;
+      --sub:#9ca3af;--border:#2d3148;--ok:#22c55e;--warn:#f59e0b;--gold:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);
+     font-family:'Segoe UI',system-ui,sans-serif;padding:2rem;max-width:1100px;margin:0 auto}
+h1{font-size:1.8rem;color:var(--accent);margin-bottom:.25rem}
+.meta{color:var(--sub);font-size:.85rem;margin-bottom:1rem}
+.prompt-box{background:#252840;border:1px solid var(--border);border-radius:8px;
+            padding:1rem;margin-bottom:2rem;font-size:.9rem;line-height:1.5}
+.prompt-label{color:var(--accent);font-size:.75rem;text-transform:uppercase;margin-bottom:.3rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem}
+.card-title{font-size:1rem;font-weight:600;color:var(--accent);margin-bottom:.8rem;
+            display:flex;justify-content:space-between;align-items:center}
+.badge{font-size:.7rem;border-radius:12px;padding:.15rem .5rem}
+.ok{background:rgba(34,197,94,.15);color:var(--ok)}
+.fail{background:rgba(245,158,11,.15);color:var(--warn)}
+.response{font-size:.88rem;line-height:1.6;white-space:pre-wrap;margin-bottom:.8rem;
+           max-height:400px;overflow-y:auto}
+.stats{font-size:.78rem;color:var(--sub);border-top:1px solid var(--border);
+       padding-top:.6rem;display:flex;gap:1rem;flex-wrap:wrap}
+.winner{border-color:var(--gold);box-shadow:0 0 12px rgba(251,191,36,.15)}
+footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);
+       font-size:.75rem;color:var(--sub);text-align:center}
+</style>
+</head>
+<body>
+<h1>Model Arena</h1>
+<p class="meta">Generated 2026-03-08 12:18 | 3 model(s) | Hub: http://localhost:8000</p>
+<div class="prompt-label">Prompt</div>
+<div class="prompt-box">Explain factorials</div>
+<div class="grid">
+<div class="card">
+  <div class="card-title">llama3<span class="badge ok">COMPLETE</span></div>
+  <div class="response">Factorials! A fundamental concept in mathematics that can seem intimidating at first, but is actually quite simple and powerful once you understand it.
+
+**What is a factorial?**
+
+A factorial (denoted by the exclamation mark, !) is an operation on positive integers that multiplies them together in a specific way. The formula for calculating the factorial of a number n is:
+
+n! = n × (n-1) × (n-2) × ... × 2 × 1
+
+In other words, you multiply the number by all the positive integers that are smaller than it, down to 1.
+
+**Examples:**
+
+* 5! = 5 × 4 × 3 × 2 × 1 = 120
+* 3! = 3 × 2 × 1 = 6
+* 0! = 1 (by convention)
+
+**Properties and uses of factorials:**
+
+1. **Multiplication**: Factorials are used to multiply a sequence of numbers together.
+2. **Counting permutations**: The factorial is often used to count the number of ways to arrange objects in a specific order, such as the number of ways to permute a set of items.
+3. **Probability**: Factorials appear in probability calculations, particularly when dealing with combinations and permutations.
+4. **Combinatorics**: Factorials are essential in combinatorial mathematics, which deals with counting and arranging objects in various ways.
+
+**Fascinating facts about factorials:**
+
+1. The factorial of a number grows extremely fast as the number increases. For example, 10! = 3,628,800 is much larger than 5!, which is only 120.
+2. Factorials are used in many areas of mathematics, science, and engineering, such as algebra, calculus, statistics, and computer science.
+3. The factorial function has no inverse function, meaning that there is no "undo" operation for factorials.
+
+**Common misconceptions:**
+
+1. **Factorial is only for big numbers**: While it's true that the value of a factorial grows rapidly with increasing input, even small values like 2! or 3! have practical applications.
+2. **Factorial is just multiplication**: While multiplication is a fundamental aspect of factorials, the operation involves more than just simple multiplication.
+
+Now that you know what factorials are and their properties, I hope you'll feel more comfortable exploring this fascinating mathematical concept!</div>
+  <div class="stats">
+    <span>Tokens: 500</span>
+    <span>Latency: 12.53s</span>
+    <span>TPS: 39.9</span>
+    <span>Agent: 58156b5c0fb5</span>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title">mistral<span class="badge ok">COMPLETE</span></div>
+  <div class="response"> Factorials are a mathematical function that represents the product of all positive integers up to a given number. The symbol for factorial is "!". For example, the factorial of 5 (written as 5!) is calculated as follows:
+
+   5! = 5 × 4 × 3 × 2 × 1
+
+So, 5! equals 120. If we have a number n, then n! is equal to n multiplied by all the integers from n down to 1 (inclusive). For example, 7! equals 7 × 6 × 5 × 4 × 3 × 2 × 1 which equals 5040.
+
+Factorials are used in many areas of mathematics, including combinatorics, probability theory, and calculus. They also appear in various formulas from different fields such as physics and engineering. The concept of factorial is an extension of the multiplication operation to larger numbers that would be difficult or impossible to calculate using standard multiplication.</div>
+  <div class="stats">
+    <span>Tokens: 221</span>
+    <span>Latency: 8.08s</span>
+    <span>TPS: 27.4</span>
+    <span>Agent: 58156b5c0fb5</span>
+  </div>
+</div>
+<div class="card winner">
+  <div class="card-title">phi3 &#x1F3C6;<span class="badge ok">COMPLETE</span></div>
+  <div class="response">A factorial is a mathematical operation denoted by an exclamation mark (!) following a non-negative integer. It represents the product of all positive integers less than or equal to that number. The symbolism for calculating a factorial can be represented as follows: if `n` is our chosen non-negative integer, then its factorial (often written as `n!`) equals n × (n - 1) × (n - 2) × ... × 3 × 2 × 1. It’s important to note that by convention, the factorial of zero (0!) is defined to be equal to one (1).
+
+Here's an example: The calculation of `5!` or "five factorial" would yield a result as follows:
+
+- Start with the original number 5. Multiply it downwards by each successive integer less than itself until you reach 1, so we get this sequence - 5 × 4 × 3 × 2 × 1 = 120. Thus `5!` equals to 120.
+- Similarly for calculating the factorial of zero (0!) which by convention is equal to one: since it’s just a single term, we don't need any multiplication and hence result in 1 i.e., `0! = 1`.</div>
+  <div class="stats">
+    <span>Tokens: 286</span>
+    <span>Latency: 4.74s</span>
+    <span>TPS: 60.4</span>
+    <span>Agent: 4f02c8a9e6cc</span>
+  </div>
+</div>
+</div>
+<footer>Generated by <strong>Momahub</strong> | Digital Duck &amp; Dog Team</footer>
+</body>
+</html>

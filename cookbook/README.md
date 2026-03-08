@@ -45,6 +45,13 @@ moma join http://<hub-ip>:8000   # start agent(s)
 | 25 | Model Diversity | `model_diversity.py` | All 14 models benchmarked on 6 domains — latency, TPS, quality | - |
 | 90 | Two-Hub Cluster | `setup.py` | Set up and test hub peering and task forwarding | - |
 
+
+### Smoke test
+
+```bash
+moma submit "Explain distributed inference in two sentences"
+```
+
 ### Test - Hello
 
 ```bash

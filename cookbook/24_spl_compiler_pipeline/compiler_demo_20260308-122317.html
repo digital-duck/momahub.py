@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Momahub Compiler Pipeline Demo</title>
+<style>body{background:#0f1117;color:#e0e0e0;font-family:system-ui;padding:2rem;max-width:960px;margin:0 auto}
+h1{color:#4f8ef7}.meta{color:#9ca3af;font-size:.85rem;margin-bottom:1.5rem}
+.card{background:#1a1d27;border:1px solid #2d3148;border-radius:8px;padding:1rem;margin:1rem 0}
+.card-title{font-weight:600;color:#4f8ef7;margin-bottom:.5rem;display:flex;gap:.8rem;align-items:baseline}
+.stat{color:#9ca3af;font-size:.75rem;margin-left:auto}.content{white-space:pre-wrap;font-size:.88rem;line-height:1.6}</style>
+</head><body>
+<h1>Momahub Compiler Pipeline Demo</h1>
+<p class="meta">2026-03-08 12:23 | Hub: http://localhost:8000 | Wall: 25.2s</p>
+<div class="card"><div class="card-title">Input Query</div>
+<div class="content">What is distributed inference and why does it matter?</div></div>
+<div class="card">
+<div class="card-title">Step 1: Translate [front-end]
+<span style="color:#4ade80;font-size:.75rem">COMPLETE</span>
+<span class="stat">8.1s | 256 tok | llama3</span>
+</div>
+<div class="content">What is distributed inference and why does it matter?
+
+Distributed inference refers to an AI technique where complex decision-making or reasoning processes are broken down into smaller, more manageable tasks that can be performed by multiple machines or devices in a network. This allows the system to scale horizontally and process large volumes of data efficiently.
+
+In traditional centralized approaches, AI models are trained on a single machine and then deployed for inference. However, this can lead to limitations such as:
+
+1. Limited processing power: Centralized systems may struggle with large datasets, slow performance, or high latency.
+2. Inadequate scalability: As the volume of data increases, the system's capacity to handle it becomes constrained.
+
+Distributed inference addresses these challenges by distributing the workload across multiple machines or devices. This enables:
+
+1. Faster processing times: By offloading tasks to multiple nodes, distributed inference accelerates processing and reduces latency.
+2. Increased scalability: Distributed systems can handle larger volumes of data and more concurrent requests without compromising performance.
+3. Improved fault tolerance: If one node fails or is unavailable, the system can continue operating by re-routing tasks to other available nodes.
+
+Distributed inference has significant implications in various domains:
+
+1. Edge AI: Enables real-time processing and decision-making at the edge, where devices</div>
+</div><div class="card">
+<div class="card-title">Step 2: Extract Concepts [mid-end, parallel]
+<span style="color:#4ade80;font-size:.75rem">COMPLETE</span>
+<span class="stat">1.6s | 10 tok | llama3</span>
+</div>
+<div class="content">Complexity, Scalability, Fault Tolerance</div>
+</div><div class="card">
+<div class="card-title">Step 3: Optimise Query [mid-end, parallel]
+<span style="color:#4ade80;font-size:.75rem">COMPLETE</span>
+<span class="stat">3.4s | 80 tok | llama3</span>
+</div>
+<div class="content">Here is a rewritten query that is clearer, more specific, and likely to get a precise answer:
+
+What are the key benefits of distributed inference techniques in artificial intelligence (AI) applications, particularly in terms of scalability, processing speed, and fault tolerance? How do these approaches address traditional limitations of centralized AI models, such as limited processing power and inadequate scalability, in handling large datasets and concurrent requests?</div>
+</div><div class="card">
+<div class="card-title">Step 4: Generate Response [back-end]
+<span style="color:#4ade80;font-size:.75rem">COMPLETE</span>
+<span class="stat">5.5s | 113 tok | llama3</span>
+</div>
+<div class="content">Distributed inference techniques in AI enable the key benefits of improved scalability, accelerated processing speed, and enhanced fault tolerance. By distributing computation across multiple nodes or devices, these approaches can handle large datasets and concurrent requests with increased efficiency, addressing traditional limitations of centralized models. This is achieved by leveraging parallel processing capabilities, reducing computational bottlenecks, and allowing for more effective handling of failures or node outages. As a result, distributed inference techniques can significantly improve the overall performance and reliability of AI applications, particularly those involving large-scale data processing and real-time decision-making.</div>
+</div><div class="card">
+<div class="card-title">Step 5: Format Output [post-process]
+<span style="color:#4ade80;font-size:.75rem">COMPLETE</span>
+<span class="stat">8.1s | 224 tok | llama3</span>
+</div>
+<div class="content">Here is the formatted summary:
+
+**TL;DR:** Distributed inference techniques in AI enable improved scalability, accelerated processing speed, and enhanced fault tolerance by distributing computation across multiple nodes or devices.
+
+**Full Explanation:**
+
+Distributed inference refers to an AI technique where complex decision-making or reasoning processes are broken down into smaller, more manageable tasks that can be performed by multiple machines or devices in a network. This allows the system to scale horizontally and process large volumes of data efficiently.
+
+In traditional centralized approaches, AI models are trained on a single machine and then deployed for inference. However, this can lead to limitations such as limited processing power, inadequate scalability, and high latency. Distributed inference addresses these challenges by distributing the workload across multiple machines or devices. This enables faster processing times, increased scalability, and improved fault tolerance.
+
+By leveraging parallel processing capabilities, reducing computational bottlenecks, and allowing for more effective handling of failures or node outages, distributed inference techniques can significantly improve the overall performance and reliability of AI applications. This is particularly important in domains such as edge AI, where real-time processing and decision-making are critical.</div>
+</div>
+</body></html>

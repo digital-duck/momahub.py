@@ -1,0 +1,17 @@
+{
+  "label": "run-122010",
+  "hub": "http://localhost:8000",
+  "model": "llama3",
+  "n": 30,
+  "completed": 30,
+  "failed": 0,
+  "wall_time_s": 72.15,
+  "total_tokens": 3367,
+  "throughput_tps": 46.67,
+  "avg_latency_s": 34.01,
+  "agent_distribution": {
+    "fcc-58156b5c0fb5": 15,
+    "55e-4f02c8a9e6cc": 15
+  },
+  "timestamp": "2026-03-08T12:21:22.362448"
+}

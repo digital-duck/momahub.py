@@ -20,6 +20,7 @@ RECIPES = [
     {"id": "18", "name": "Smart Router", "cmd": "python ./18_smart_router/smart_router.py", "dir": "18_smart_router", "log": "smart_router"},
     {"id": "19", "name": "Privacy Chunk Demo", "cmd": "python ./19_privacy_chunk_demo/privacy_demo.py", "dir": "19_privacy_chunk_demo", "log": "privacy_demo"},
     {"id": "24", "name": "Compiler Pipeline", "cmd": "python ./24_spl_compiler_pipeline/compiler_demo.py", "dir": "24_spl_compiler_pipeline", "log": "compiler_demo"},
+    {"id": "26", "name": "Code Guardian", "cmd": "python ./26_code_guardian/guardian.py ./26_code_guardian/guardian.py", "dir": "26_code_guardian", "log": "guardian"},
 ]
 
 def run_all():

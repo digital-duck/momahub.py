@@ -1,0 +1,175 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Momahub Cookbook Report</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0e1117; color: #fafafa; margin: 40px; }
+            h1 { color: #4f8ef7; border-bottom: 2px solid #1e293b; padding-bottom: 10px; }
+            .summary { color: #888; margin-bottom: 30px; font-size: 1.1em; }
+            .summary span { color: #3fb950; font-weight: bold; }
+            table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+            th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #30363d; }
+            th { background-color: #21262d; color: #8b949e; font-weight: 600; text-transform: uppercase; font-size: 12px; }
+            tr:hover { background-color: #1c2128; }
+            .status-ok { color: #3fb950; font-weight: bold; }
+            .status-fail { color: #f85149; font-weight: bold; }
+            .metric { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 13px; color: #c9d1d9; }
+            .footer { margin-top: 40px; font-size: 12px; color: #8b949e; text-align: center; }
+            code { background: #21262d; padding: 2px 4px; border-radius: 4px; }
+            a { color: #58a6ff; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+        </style>
+    </head>
+    <body>
+        <h1>Momahub Cookbook Batch Run Report</h1>
+        <div class="summary">Generated on 2026-03-08 12:55:55 | Status: <span>14/14 Success</span></div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Recipe</th>
+                    <th>Status</th>
+                    <th>Engine/Model</th>
+                    <th>Context/Tokens</th>
+                    <th>Perf/Latency</th>
+                    <th>View Log</th>
+                </tr>
+            </thead>
+            <tbody>
+    
+                <tr>
+                    <td><strong><a href="01_single_node_hello/hello.spl" target="_blank">01_single_node_hello</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">llama3</td>
+                    <td class="metric">43+67</td>
+                    <td class="metric">2648ms</td>
+                    <td style="font-size: 11px;"><a href="01_single_node_hello/hello_20260308_121710.log" target="_blank">hello_20260308_121710.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="02_multi_cte_parallel/multi_cte.spl" target="_blank">02_multi_cte_parallel</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">llama3</td>
+                    <td class="metric">65+116</td>
+                    <td class="metric">18271ms</td>
+                    <td style="font-size: 11px;"><a href="02_multi_cte_parallel/multi_cte_20260308_121713.log" target="_blank">multi_cte_20260308_121713.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="03_batch_translate/translate.py" target="_blank">03_batch_translate</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">batch</td>
+                    <td class="metric">multiple</td>
+                    <td class="metric">4.6s</td>
+                    <td style="font-size: 11px;"><a href="03_batch_translate/translate_20260308_121732.log" target="_blank">translate_20260308_121732.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="04_benchmark_models/benchmark.py" target="_blank">04_benchmark_models</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">llama3 (+2)</td>
+                    <td class="metric">108</td>
+                    <td class="metric">8.08s</td>
+                    <td style="font-size: 11px;"><a href="04_benchmark_models/benchmark_20260308_121737.log" target="_blank">benchmark_20260308_121737.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="05_rag_on_grid/rag_query.spl" target="_blank">05_rag_on_grid</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">llama3</td>
+                    <td class="metric">59+275</td>
+                    <td class="metric">13314ms</td>
+                    <td style="font-size: 11px;"><a href="05_rag_on_grid/rag_query_20260308_121745.log" target="_blank">rag_query_20260308_121745.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="06_arxiv_paper_digest/digest.py" target="_blank">06_arxiv_paper_digest</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">digest</td>
+                    <td class="metric">3,691</td>
+                    <td class="metric">polling</td>
+                    <td style="font-size: 11px;"><a href="06_arxiv_paper_digest/digest_20260308_121758.log" target="_blank">digest_20260308_121758.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="07_stress_test/stress.py" target="_blank">07_stress_test</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">stress</td>
+                    <td class="metric">high-volume</td>
+                    <td class="metric">37.0 tps</td>
+                    <td style="font-size: 11px;"><a href="07_stress_test/stress_20260308_121818.log" target="_blank">stress_20260308_121818.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="08_model_arena/arena.py" target="_blank">08_model_arena</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td style="font-size: 11px;"><a href="08_model_arena/arena_20260308_121833.log" target="_blank">arena_20260308_121833.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="09_doc_pipeline/pipeline.py" target="_blank">09_doc_pipeline</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">llama3</td>
+                    <td class="metric">365</td>
+                    <td class="metric">15594ms</td>
+                    <td style="font-size: 11px;"><a href="09_doc_pipeline/pipeline_20260308_121859.log" target="_blank">pipeline_20260308_121859.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="10_chain_relay/chain.py" target="_blank">10_chain_relay</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td style="font-size: 11px;"><a href="10_chain_relay/chain_20260308_121917.log" target="_blank">chain_20260308_121917.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="13_multi_agent_throughput/throughput.py" target="_blank">13_multi_agent_throughput</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td style="font-size: 11px;"><a href="13_multi_agent_throughput/throughput_20260308_122010.log" target="_blank">throughput_20260308_122010.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="18_smart_router/smart_router.py" target="_blank">18_smart_router</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td style="font-size: 11px;"><a href="18_smart_router/smart_router_20260308_122122.log" target="_blank">smart_router_20260308_122122.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="19_privacy_chunk_demo/privacy_chunks.spl" target="_blank">19_privacy_chunk_demo</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td style="font-size: 11px;"><a href="19_privacy_chunk_demo/privacy_demo_20260308_122225.log" target="_blank">privacy_demo_20260308_122225.log</a></td>
+                </tr>
+        
+                <tr>
+                    <td><strong><a href="24_spl_compiler_pipeline/compiler_demo.py" target="_blank">24_spl_compiler_pipeline</a></strong></td>
+                    <td class="status-ok">SUCCESS</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td class="metric">-</td>
+                    <td style="font-size: 11px;"><a href="24_spl_compiler_pipeline/compiler_demo_20260308_122251.log" target="_blank">compiler_demo_20260308_122251.log</a></td>
+                </tr>
+        
+            </tbody>
+        </table>
+        
+        <div class="footer">
+            Momahub - Decentralized Inference Network &copy; 2026 | Digital Duck & Dog Team
+        </div>
+    </body>
+    </html>
+    

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>spl-paper-v3.0</title>
+<style>
+:root {
+    --bg: #0f1117; --card: #1a1d27; --accent: #4f8ef7;
+    --text: #e0e0e0; --sub: #9ca3af; --border: #2d3148;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    padding: 2rem; max-width: 800px; margin: 0 auto;
+    line-height: 1.7;
+}
+h1 { font-size: 1.8rem; color: var(--accent); margin: 1.5rem 0 0.5rem; }
+h2 { font-size: 1.4rem; color: var(--accent); margin: 1.2rem 0 0.4rem; }
+h3 { font-size: 1.1rem; color: var(--accent); margin: 1rem 0 0.3rem; }
+p  { margin: 0.5rem 0; }
+ul { padding-left: 1.5rem; margin: 0.5rem 0; }
+li { margin: 0.2rem 0; }
+pre {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem; overflow-x: auto;
+    font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.88rem;
+    margin: 0.8rem 0;
+}
+code {
+    background: var(--card); padding: 0.15rem 0.4rem; border-radius: 4px;
+    font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.88rem;
+}
+strong { color: #fff; }
+hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+</style>
+</head>
+<body>
+<p>Here is a structured summary of the document:</p>
+<h3>Overview</h3>
+<p>This document presents SPL (Structured Prompt Language), a declarative query language for large language models (LLMs) that treats LLMs as generative knowledge bases and their context windows as constrained resources. SPL provides explicit token budgeting, automatic query optimization, and native integration of retrieval-augmented generation (RAG) and persistent memory.</p>
+<h3>Key Points</h3>
+<p>• SPL is a declarative query language for managing LLM context windows.</p>
+<p>• SPL treats LLMs as generative knowledge bases, enabling the synthesis of novel responses.</p>
+<p>• The language includes explicit token budgeting, automatic query optimization, and native integration of RAG and persistent memory.</p>
+<p>• SPL provides transparency through an EXPLAIN mechanism, allowing developers to inspect and reason about token allocation before execution.</p>
+<h3>Details</h3>
+<p>SPL&#x27;s central conceptual innovation is treating LLMs as generative knowledge bases, which enables the synthesis of novel responses. This perspective is not purely theoretical, but rather a reflection of how practitioners who build AI applications daily find that the mental model of &quot;LLM as database&quot; is the most productive frame for understanding what LLMs actually do.</p>
+<p>SPL&#x27;s dual-clause architecture (SELECT + GENERATE) directly mirrors this distinction: SELECT populates the contextual knowledge, and GENERATE triggers the full synthesis process. This separation enables the optimizer to treat context gathering and generation as distinct phases with different resource characteristics, leading to better budget allocation.</p>
+<h3>Conclusion</h3>
+<p>The main takeaways from this document are that SPL is a declarative query language for managing LLM context windows, treating LLMs as generative knowledge bases, and providing transparency through an EXPLAIN mechanism. The language&#x27;s design enables efficient token budgeting, automatic query optimization, and native integration of RAG and persistent memory.</p>
+</body>
+</html>
