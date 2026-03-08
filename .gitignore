@@ -5,6 +5,8 @@ docs/CHAT/
 specs/
 tests/demos/
 USER-GUIDE-gwg.md
+CLAUDE.md
+GEMINI.md
 
 # Python
 __pycache__/
