@@ -33,6 +33,13 @@ moma agents
 moma tasks
 ```
 
+## Proven Performance
+
+MoMaHub has been validated in real-world LAN environments:
+
+- **2-GPU Milestone (2026-03-08):** Successfully deployed across two nodes using **NVIDIA GTX 1080 Ti (11GB VRAM)**. Achieved 100% completion rate on burst stress tests with automated agent-side queueing and hub-level load balancing.
+- **Tiers:** Measured ~55 TPS (GOLD) and ~105 TPS (PLATINUM) on benchmarked models.
+
 ## Project layout
 
 ```

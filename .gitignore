@@ -1,3 +1,5 @@
+go_git.log
+
 # Python
 __pycache__/
 *.py[cod]

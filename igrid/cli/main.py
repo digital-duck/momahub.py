@@ -220,13 +220,16 @@ def list_tasks(hub_url: str = typer.Option(""), limit: int = typer.Option(20),
                 if t.get('error'): typer.echo(f"  error:    {t['error']}")
             typer.echo(f"{'─'*72}")
         else:
-            typer.echo(f"{'TASK_ID':<38} {'STATE':<12} {'MODEL':<20} {'SUBMITTED':<10}")
-            typer.echo("-" * 82)
+            typer.echo(f"{'TASK_ID':<38} {'STATE':<12} {'MODEL':<20} {'AGENT':<16} {'SUBMITTED':<10}")
+            typer.echo("-" * 98)
             for t in tasks:
                 # Format created_at (ISO 8601) to HH:MM:SS
                 created = t.get("created_at", "")
                 ts_str = created.split("T")[-1][:8] if "T" in created else created[:8]
-                typer.echo(f"{t['task_id']:<38} {t['state']:<12} {t['model']:<20} {ts_str:<10}")
+                
+                agent_display = t.get("agent_name") or (f"..{t['agent_id'][-12:]}" if t.get("agent_id") else "-")
+                
+                typer.echo(f"{t['task_id']:<38} {t['state']:<12} {t['model']:<20} {agent_display:<16} {ts_str:<10}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("logs")

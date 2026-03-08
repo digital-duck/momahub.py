@@ -69,6 +69,14 @@ moma config --set hub_urls=http://192.168.0.177:8000
 moma config --set operator_id=duck
 ```
 
+> **Tip:** Cookbook recipes (in `cookbook/`) now automatically detect your Hub URL from this configuration. You no longer need to pass `--hub` manually for every script.
+
+### Concurrency Defaults
+
+The system is tuned for multi-GPU performance by default:
+- **Hub:** Tracks individual agent capacity and supports up to 8 concurrent global tasks.
+- **Agent:** Buffers tasks locally and supports 4 concurrent inferences per node.
+
 Key settings:
 
 | Key | Default | Description |
@@ -117,10 +125,20 @@ moma down --agent-id <uuid>                 # deregister a specific agent
 ### Task operations
 
 ```bash
-
 moma submit 'what is 10!' --model mistral
 moma submit "Summarize this" --model mistral --max-tokens 512
 moma tasks                                  # list recent tasks
+```
+
+Example `moma tasks` output:
+```text
+TASK_ID                                STATE        MODEL                AGENT            SUBMITTED 
+------------------------------------------------------------------------------------------------------
+stress-c775daae                        COMPLETE     llama3               papa-game        05:52:41  
+stress-67b96180                        COMPLETE     llama3               wengong          05:52:41  
+```
+
+```bash
 moma tasks --limit 50                       # show more
 ```
 
@@ -443,6 +461,27 @@ python cookbook/11_batch_translate/translate.py --file input.txt --languages fr,
 ```
 
 All agents work simultaneously on different languages. Generates an HTML report.
+
+---
+
+## Milestone: 2-GPU LAN Success (2026-03-08)
+
+The first verified multi-node i-grid deployment was achieved with the following configuration:
+
+### Hardware
+- **Node A (Hub + Agent):** 1x NVIDIA GTX 1080 Ti (11GB VRAM)
+- **Node B (Agent):** 1x NVIDIA GTX 1080 Ti (11GB VRAM)
+
+### Verification Results
+Running the `stress.py` recipe with `-n 10` and concurrency 10:
+- **Success Rate:** 100% (10/10 tasks complete)
+- **Zero-Drop Reliability:** Transient burst load was handled by agent-side queueing.
+- **Load Balancing:** Hub correctly distributed tasks across both machines (`papa-game` and `wengong`).
+- **Throughput:** ~41 tokens/s aggregate grid throughput.
+
+### Key Learnings
+1. **Per-Agent Capacity:** Setting `max_concurrent` to 4 on agents and 8 on the Hub provided the best balance of speed and stability.
+2. **Local Queueing:** Allowing agents to buffer tasks locally prevents "hard failures" during sub-second dispatch bursts.
 
 ---
 

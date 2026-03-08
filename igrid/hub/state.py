@@ -178,7 +178,12 @@ class GridState:
         await self.db.commit()
 
     async def list_tasks(self, limit: int = 100) -> list[dict]:
-        async with self.db.execute("SELECT * FROM tasks ORDER BY created_at DESC LIMIT ?", (limit,)) as cur:
+        async with self.db.execute("""
+            SELECT t.*, a.name as agent_name 
+            FROM tasks t 
+            LEFT JOIN agents a ON t.agent_id = a.agent_id 
+            ORDER BY t.created_at DESC LIMIT ?
+        """, (limit,)) as cur:
             return [dict(row) for row in await cur.fetchall()]
 
     async def record_reward(self, operator_id: str, agent_id: str, task_id: str, tokens: int, credits: float) -> None:
