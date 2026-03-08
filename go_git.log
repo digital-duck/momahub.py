@@ -1234,3 +1234,156 @@ M .claude/settings.local.json
 M go_git.log
 ?? scripts/
 2026-03-06 10:04:36,042 - INFO - Running 'git add .' in 'momahub.py'...
+2026-03-06 10:04:36,047 - INFO - Running 'git commit -m "refine"' in 'momahub.py'...
+2026-03-06 10:04:36,054 - INFO - Running 'git push' in 'momahub.py'...
+2026-03-06 10:04:36,678 - INFO - Successfully committed and pushed changes for 'momahub.py'.
+2026-03-06 10:04:36,678 - INFO - 
+>>>>>> SUCCESS: 'momahub.py'.
+2026-03-06 10:04:36,678 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:36,679 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/momahub.go ...........
+2026-03-06 10:04:36,679 - INFO - Local repository 'momahub.go' found at '/home/wengong/projects/digital-duck/momahub.go'.
+2026-03-06 10:04:36,685 - INFO - Running 'git pull' in 'momahub.go'...
+2026-03-06 10:04:37,258 - INFO - Successfully pulled changes for 'momahub.go'.
+2026-03-06 10:04:37,258 - INFO - Running 'git status --porcelain' in 'momahub.go' to check for local changes...
+2026-03-06 10:04:37,266 - INFO - No local changes in 'momahub.go'. Done.
+2026-03-06 10:04:37,266 - INFO - 
+>>>>>> SUCCESS: 'momahub.go'.
+2026-03-06 10:04:37,267 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:37,268 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/momahub ...........
+2026-03-06 10:04:37,268 - INFO - Local repository 'momahub' found at '/home/wengong/projects/digital-duck/momahub'.
+2026-03-06 10:04:37,274 - INFO - Running 'git pull' in 'momahub'...
+2026-03-06 10:04:37,836 - INFO - Successfully pulled changes for 'momahub'.
+2026-03-06 10:04:37,836 - INFO - Running 'git status --porcelain' in 'momahub' to check for local changes...
+2026-03-06 10:04:37,847 - INFO - No local changes in 'momahub'. Done.
+2026-03-06 10:04:37,847 - INFO - 
+>>>>>> SUCCESS: 'momahub'.
+2026-03-06 10:04:37,848 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:37,848 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/momahub-opus ...........
+2026-03-06 10:04:37,848 - INFO - Local repository 'momahub-opus' found at '/home/wengong/projects/digital-duck/momahub-opus'.
+2026-03-06 10:04:37,853 - INFO - Running 'git pull' in 'momahub-opus'...
+2026-03-06 10:04:38,411 - INFO - Successfully pulled changes for 'momahub-opus'.
+2026-03-06 10:04:38,411 - INFO - Running 'git status --porcelain' in 'momahub-opus' to check for local changes...
+2026-03-06 10:04:38,428 - INFO - No local changes in 'momahub-opus'. Done.
+2026-03-06 10:04:38,428 - INFO - 
+>>>>>> SUCCESS: 'momahub-opus'.
+2026-03-06 10:04:38,429 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:38,429 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/momahub-sonnet ...........
+2026-03-06 10:04:38,429 - INFO - Local repository 'momahub-sonnet' found at '/home/wengong/projects/digital-duck/momahub-sonnet'.
+2026-03-06 10:04:38,435 - INFO - Running 'git pull' in 'momahub-sonnet'...
+2026-03-06 10:04:39,025 - INFO - Successfully pulled changes for 'momahub-sonnet'.
+2026-03-06 10:04:39,026 - INFO - Running 'git status --porcelain' in 'momahub-sonnet' to check for local changes...
+2026-03-06 10:04:39,037 - INFO - No local changes in 'momahub-sonnet'. Done.
+2026-03-06 10:04:39,037 - INFO - 
+>>>>>> SUCCESS: 'momahub-sonnet'.
+2026-03-06 10:04:39,038 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:39,038 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/momahub-gemini ...........
+2026-03-06 10:04:39,038 - INFO - Local repository 'momahub-gemini' found at '/home/wengong/projects/digital-duck/momahub-gemini'.
+2026-03-06 10:04:39,044 - INFO - Running 'git pull' in 'momahub-gemini'...
+2026-03-06 10:04:39,606 - INFO - Successfully pulled changes for 'momahub-gemini'.
+2026-03-06 10:04:39,606 - INFO - Running 'git status --porcelain' in 'momahub-gemini' to check for local changes...
+2026-03-06 10:04:39,615 - INFO - No local changes in 'momahub-gemini'. Done.
+2026-03-06 10:04:39,615 - INFO - 
+>>>>>> SUCCESS: 'momahub-gemini'.
+2026-03-06 10:04:39,616 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:39,616 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/pocoflow ...........
+2026-03-06 10:04:39,616 - INFO - Local repository 'pocoflow' found at '/home/wengong/projects/digital-duck/pocoflow'.
+2026-03-06 10:04:39,622 - INFO - Running 'git pull' in 'pocoflow'...
+2026-03-06 10:04:40,183 - INFO - Successfully pulled changes for 'pocoflow'.
+2026-03-06 10:04:40,184 - INFO - Running 'git status --porcelain' in 'pocoflow' to check for local changes...
+2026-03-06 10:04:40,197 - INFO - No local changes in 'pocoflow'. Done.
+2026-03-06 10:04:40,197 - INFO - 
+>>>>>> SUCCESS: 'pocoflow'.
+2026-03-06 10:04:40,198 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:40,198 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/markoflow ...........
+2026-03-06 10:04:40,198 - INFO - Local repository 'markoflow' found at '/home/wengong/projects/digital-duck/markoflow'.
+2026-03-06 10:04:40,204 - INFO - Running 'git pull' in 'markoflow'...
+2026-03-06 10:04:40,772 - INFO - Successfully pulled changes for 'markoflow'.
+2026-03-06 10:04:40,772 - INFO - Running 'git status --porcelain' in 'markoflow' to check for local changes...
+2026-03-06 10:04:40,782 - INFO - No local changes in 'markoflow'. Done.
+2026-03-06 10:04:40,782 - INFO - 
+>>>>>> SUCCESS: 'markoflow'.
+2026-03-06 10:04:40,783 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:40,783 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/monteflow ...........
+2026-03-06 10:04:40,783 - INFO - Local repository 'monteflow' found at '/home/wengong/projects/digital-duck/monteflow'.
+2026-03-06 10:04:40,789 - INFO - Running 'git pull' in 'monteflow'...
+2026-03-06 10:04:41,321 - INFO - Successfully pulled changes for 'monteflow'.
+2026-03-06 10:04:41,322 - INFO - Running 'git status --porcelain' in 'monteflow' to check for local changes...
+2026-03-06 10:04:41,330 - INFO - No local changes in 'monteflow'. Done.
+2026-03-06 10:04:41,330 - INFO - 
+>>>>>> SUCCESS: 'monteflow'.
+2026-03-06 10:04:41,331 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:41,331 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/research-copilot ...........
+2026-03-06 10:04:41,331 - INFO - Local repository 'research-copilot' found at '/home/wengong/projects/digital-duck/research-copilot'.
+2026-03-06 10:04:41,336 - INFO - Running 'git pull' in 'research-copilot'...
+2026-03-06 10:04:41,892 - INFO - Successfully pulled changes for 'research-copilot'.
+2026-03-06 10:04:41,892 - INFO - Running 'git status --porcelain' in 'research-copilot' to check for local changes...
+2026-03-06 10:04:41,895 - INFO - No local changes in 'research-copilot'. Done.
+2026-03-06 10:04:41,895 - INFO - 
+>>>>>> SUCCESS: 'research-copilot'.
+2026-03-06 10:04:41,895 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:41,895 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/elegant-elefant ...........
+2026-03-06 10:04:41,895 - INFO - Local repository 'elegant-elefant' found at '/home/wengong/projects/digital-duck/elegant-elefant'.
+2026-03-06 10:04:41,897 - INFO - Running 'git pull' in 'elegant-elefant'...
+2026-03-06 10:04:42,419 - INFO - Successfully pulled changes for 'elegant-elefant'.
+2026-03-06 10:04:42,419 - INFO - Running 'git status --porcelain' in 'elegant-elefant' to check for local changes...
+2026-03-06 10:04:42,427 - INFO - No local changes in 'elegant-elefant'. Done.
+2026-03-06 10:04:42,427 - INFO - 
+>>>>>> SUCCESS: 'elegant-elefant'.
+2026-03-06 10:04:42,428 - INFO - 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2026-03-06 10:04:42,428 - INFO - <<<<< Processing: /home/wengong/projects/digital-duck/vibe-coding ...........
+2026-03-06 10:04:42,428 - INFO - Local repository 'vibe-coding' found at '/home/wengong/projects/digital-duck/vibe-coding'.
+2026-03-06 10:04:42,434 - INFO - Running 'git pull' in 'vibe-coding'...
+2026-03-06 10:04:42,983 - INFO - Successfully pulled changes for 'vibe-coding'.
+2026-03-06 10:04:42,983 - INFO - Running 'git status --porcelain' in 'vibe-coding' to check for local changes...
+2026-03-06 10:04:42,991 - INFO - No local changes in 'vibe-coding'. Done.
+2026-03-06 10:04:42,991 - INFO - 
+>>>>>> SUCCESS: 'vibe-coding'.
+2026-03-06 10:04:42,993 - INFO - 
+
+
+============================================================
+2026-03-06 10:04:42,993 - INFO - === OPERATION SUMMARY ===
+2026-03-06 10:04:42,993 - INFO - ============================================================
+2026-03-06 10:04:42,993 - INFO - Total repositories processed: 37
+2026-03-06 10:04:42,994 - INFO - Repositories cloned: 0
+2026-03-06 10:04:42,994 - INFO - Repositories pulled: 37
+2026-03-06 10:04:42,994 - INFO - Repositories committed: 1
+2026-03-06 10:04:42,994 - INFO - Repositories pushed: 1
+2026-03-06 10:04:42,994 - INFO - Failed operations: 0
+2026-03-06 10:04:42,994 - INFO - 
+============================================================
+2026-03-06 10:04:42,994 - INFO - --- go_git.py finished at 2026-03-06 10:04:42.994757 ---
+2026-03-06 10:04:42,994 - INFO - All specified repositories have been processed.
