@@ -65,6 +65,7 @@ async def submit_and_wait(client: httpx.AsyncClient, hub: str, task_id: str,
                 elapsed = time.monotonic() - t0
                 return {"task_id": task_id, "state": "COMPLETE", "prompt": prompt,
                         "agent_id": result.get("agent_id", ""),
+                        "agent_name": result.get("agent_name", ""),
                         "output_tokens": result.get("output_tokens", 0),
                         "latency_s": round(elapsed, 2),
                         "tps": round(result.get("output_tokens", 0) / max(elapsed, 0.001), 1)}
@@ -80,6 +81,7 @@ async def submit_and_wait(client: httpx.AsyncClient, hub: str, task_id: str,
                 return {"task_id": task_id, "state": "FAILED", "prompt": prompt,
                         "error": error_msg,
                         "agent_id": data.get("result", {}).get("agent_id", ""),
+                        "agent_name": data.get("result", {}).get("agent_name", ""),
                         "output_tokens": 0, "latency_s": 0, "tps": 0}
         except Exception:
             pass
@@ -101,9 +103,12 @@ def write_report(results: list[dict], hub: str, n: int, model: str,
     total_tokens = sum(r["output_tokens"] for r in completed)
 
     agent_counts: dict[str, int] = {}
+    agent_names: dict[str, str] = {}
     for r in completed:
         aid = r.get("agent_id", "unknown")
+        name = r.get("agent_name", "unknown")
         agent_counts[aid] = agent_counts.get(aid, 0) + 1
+        agent_names[aid] = name
 
     lines = [
         f"# Stress Test Results",
@@ -146,11 +151,12 @@ def write_report(results: list[dict], hub: str, n: int, model: str,
             f"",
             f"## Agent Distribution",
             f"",
-            f"| Agent | Tasks |",
-            f"|-------|-------|",
+            f"| Agent Name | Agent ID | Tasks |",
+            f"|------------|----------|-------|",
         ]
         for aid, cnt in sorted(agent_counts.items(), key=lambda x: -x[1]):
-            lines.append(f"| `{aid}` | {cnt} |")
+            name = agent_names.get(aid, "unknown")
+            lines.append(f"| **{name}** | `{aid}` | {cnt} |")
 
     lines += [
         f"",
@@ -162,9 +168,11 @@ def write_report(results: list[dict], hub: str, n: int, model: str,
     for i, r in enumerate(results, 1):
         prompt_preview = r.get("prompt", "")[:60]
         agent_short = r.get("agent_id", "")[-16:] or "-"
+        name = r.get("agent_name", "")
+        agent_display = f"{name} (..{agent_short})" if name else f"..{agent_short}"
         lines.append(
             f"| {i} | {r['state']} | {r['latency_s']}s | {r['output_tokens']} "
-            f"| {r['tps']} | `..{agent_short}` | {prompt_preview} |"
+            f"| {r['tps']} | {agent_display} | {prompt_preview} |"
         )
 
     lines.append("")
@@ -218,10 +226,12 @@ async def run_stress(hub: str, n: int, model: str, max_tokens: int,
             r = await coro
             results.append(r)
             status = r["state"]
-            agent = r.get("agent_id", "")[-12:] or "?"
+            agent_id = r.get("agent_id", "")[-12:] or "?"
+            agent_name = r.get("agent_name", "")
+            agent_display = f"{agent_name} (..{agent_id})" if agent_name else f"..{agent_id}"
             err = f"({r['error']})" if r.get('error') else ""
             click.echo(f"    [{len(results):>3}/{n}] {status:<8} {r['latency_s']:>6.1f}s  "
-                        f"{r['output_tokens']:>4} tok  {r['tps']:>5.1f} tps  agent=..{agent} {err}")
+                        f"{r['output_tokens']:>4} tok  {r['tps']:>5.1f} tps  agent={agent_display} {err}")
 
     wall_time = time.monotonic() - wall_start
 
@@ -245,14 +255,19 @@ async def run_stress(hub: str, n: int, model: str, max_tokens: int,
 
     # Agent distribution
     agent_counts: dict[str, int] = {}
+    agent_names: dict[str, str] = {}
     for r in completed:
         aid = r.get("agent_id", "unknown")
+        name = r.get("agent_name", "unknown")
         agent_counts[aid] = agent_counts.get(aid, 0) + 1
+        agent_names[aid] = name
+        
     if agent_counts:
         click.echo(f"\n  Agent distribution:")
         for aid, cnt in sorted(agent_counts.items(), key=lambda x: -x[1]):
+            name = agent_names.get(aid, "unknown")
             bar = "#" * cnt
-            click.echo(f"    {aid[-16:]:<18} {cnt:>3} tasks  {bar}")
+            click.echo(f"    {name:<18} {cnt:>3} tasks  {bar}")
 
     # Persist results
     report_path = write_report(results, hub, n, model, max_tokens, concurrency, wall_time)

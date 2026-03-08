@@ -174,20 +174,32 @@ def create_app(hub_id: str | None = None, operator_id: str = "duck",
 
     @app.get("/tasks/{task_id}", response_model=TaskStatusResponse)
     async def get_task(task_id: str, state=_grid_dep):
-        row = await state.get_task(task_id)
+        # Join with agents to get human name
+        async with state.db.execute("""
+            SELECT t.*, a.name as agent_name 
+            FROM tasks t 
+            LEFT JOIN agents a ON t.agent_id = a.agent_id 
+            WHERE t.task_id=?
+        """, (task_id,)) as cur:
+            row = await cur.fetchone()
+            
         if row is None: raise HTTPException(status_code=404, detail="Task not found")
+        row = dict(row)
         result = None
         if row["state"] in (TaskState.COMPLETE.value, TaskState.FAILED.value):
             result = TaskResult(task_id=row["task_id"], state=TaskState(row["state"]),
                                 content=row.get("content") or "", model=row.get("model") or "",
                                 input_tokens=row.get("input_tokens") or 0, output_tokens=row.get("output_tokens") or 0,
-                                latency_ms=row.get("latency_ms") or 0.0, agent_id=row.get("agent_id") or "",
+                                latency_ms=row.get("latency_ms") or 0.0, 
+                                agent_id=row.get("agent_id") or "",
+                                agent_name=row.get("agent_name") or "",
                                 error=row.get("error") or "")
         return TaskStatusResponse(task_id=row["task_id"], state=TaskState(row["state"]), result=result)
 
     @app.get("/tasks")
     async def list_tasks(state=_grid_dep, limit: int = 50):
-        return {"tasks": await state.list_tasks(limit)}
+        tasks = await state.list_tasks(limit)
+        return {"tasks": tasks}
 
     @app.get("/agents")
     async def list_agents(state=_grid_dep):

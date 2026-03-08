@@ -24,6 +24,7 @@ class TaskResult(BaseModel):
     output_tokens: int = 0
     latency_ms: float = 0.0
     agent_id: str = ""
+    agent_name: str = ""
     error: str = ""
 
 class TaskStatusResponse(BaseModel):
