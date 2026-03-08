@@ -62,7 +62,7 @@ tests/         Unit and integration tests
 
 ## Documentation
 
-- **[USER-GUIDE](USER-GUIDE.md)** for detailed usage instructions, 
+- **[User Guide](./docs/USER-GUIDE.md)** for detailed usage instructions, 
 - **[Cookbook](./cookbook/README.md)** with 20+ examples.
 
 ## Research
