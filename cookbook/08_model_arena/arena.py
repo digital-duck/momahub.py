@@ -151,7 +151,7 @@ def build_html(results: list[dict], prompt: str, hub: str) -> str:
 
 
 @click.command()
-@click.option("--hub", default="http://localhost:8000", show_default=True)
+@click.option("--hub", default=None, help="Hub URL (defaults to ~/.igrid/config.yaml or http://localhost:8000)")
 @click.option("--models", default=DEFAULT_MODELS, show_default=True,
               help="Comma-separated model names")
 @click.option("--prompt", default=DEFAULT_PROMPT, show_default=True)
@@ -160,6 +160,14 @@ def build_html(results: list[dict], prompt: str, hub: str) -> str:
 @click.option("--out", default="", help="Output HTML path (default: auto)")
 def main(hub, models, prompt, max_tokens, timeout, out):
     """Run the same prompt through multiple models and compare."""
+    if not hub:
+        try:
+            from igrid.cli.config import load_config
+            cfg = load_config()
+            hub = cfg.get("hub_urls", ["http://localhost:8000"])[0]
+        except (ImportError, Exception):
+            hub = "http://localhost:8000"
+
     model_list = [m.strip() for m in models.split(",") if m.strip()]
     hub = hub.rstrip("/")
 

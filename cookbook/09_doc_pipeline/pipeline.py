@@ -113,7 +113,7 @@ def format_output(md_text: str, out_path: str, fmt: str, title: str):
 
 @click.command()
 @click.argument("source")
-@click.option("--hub", default="http://localhost:8000", show_default=True)
+@click.option("--hub", default=None, help="Hub URL (defaults to config or localhost)")
 @click.option("--model", default="llama3", show_default=True)
 @click.option("--engine", type=click.Choice(["pypdf", "docling"]), default="pypdf", show_default=True)
 @click.option("--max-chars", default=12000, show_default=True, type=int,
@@ -125,10 +125,15 @@ def format_output(md_text: str, out_path: str, fmt: str, title: str):
 @click.option("--title", default="", help="Document title")
 @click.option("--timeout", default=300, show_default=True, type=int)
 def main(source, hub, model, engine, max_chars, max_tokens, fmt, out, title, timeout):
-    """Extract PDF, summarize on the grid, format output.
+    """Extract PDF, summarize on the grid, format output."""
+    if not hub:
+        try:
+            from igrid.cli.config import load_config
+            cfg = load_config()
+            hub = cfg.get("hub_urls", ["http://localhost:8000"])[0]
+        except (ImportError, Exception):
+            hub = "http://localhost:8000"
 
-    SOURCE can be a local PDF path or a URL to a PDF.
-    """
     hub = hub.rstrip("/")
     doc_title = title or Path(source).stem if not source.startswith("http") else "Document Summary"
 

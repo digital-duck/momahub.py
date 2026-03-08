@@ -22,6 +22,11 @@ Complete guide to running MoMaHub (i-grid): installation, CLI reference, cookboo
 conda create -n momahub python=3.11
 conda activate momahub
 
+
+# (Optional) Install SPL for moma run / ON GRID syntax
+pip install -e $HOME/projects/digital-duck/SPL
+pip install -e $HOME/projects/digital-duck/SPL-flow
+
 # Clone the repo
 
 git clone https://github.com/digital-duck/momahub.py.git
@@ -30,9 +35,6 @@ cd momahub.py
 # Install in dev mode
 pip install -e ".[dev]"
 
-# (Optional) Install SPL for moma run / ON GRID syntax
-pip install -e $HOME/projects/digital-duck/SPL
-pip install -e $HOME/projects/digital-duck/SPL-flow
 ```
 
 Every agent node needs [Ollama](https://ollama.com) installed and running with at least one model pulled:
@@ -61,6 +63,8 @@ Config lives at `~/.igrid/config.yaml`. View or update it with:
 ```bash
 moma config                          # show current config
 # use `hostname -I` or `ip a` to identify IP address
+hostname -I
+
 moma config --set hub_urls=http://192.168.0.177:8000
 moma config --set operator_id=duck
 ```
@@ -95,6 +99,12 @@ moma hub up --api-key mysecret             # require API key for joins
 ### Agent management
 
 ```bash
+# open a new terminal 
+
+hostname -I
+# 192.168.0.170
+moma join http://192.168.0.177:8000
+
 moma join http://localhost:8000             # start agent, join one hub
 moma join http://hub1:8000 http://hub2:8000 # join multiple hubs
 moma join http://hub:8000 --port 8100       # custom agent port
@@ -107,6 +117,7 @@ moma down --agent-id <uuid>                 # deregister a specific agent
 ### Task operations
 
 ```bash
+
 moma submit 'what is 10!' --model mistral
 moma submit "Summarize this" --model mistral --max-tokens 512
 moma tasks                                  # list recent tasks
@@ -214,6 +225,37 @@ Task submitted: fb3df4ab-8b7b-4ae8-9e96-561aee112a12
 5! (which is read as "five factorial") means the product of all positive integers up to and including 5. So, 5! = 5 × 4 × 3 × 2 × 1 = 120.
 [model=mathstral tokens=10+54 latency=945ms]
 
+
+python cookbook/03_batch_translate/translate.py "Welcome to MoMa-Grid! What is 10! " --hub http://192.168.0.177:8000
+
+
+(momahub) wengong@wengong:~/projects/digital-duck/momahub.py$ python cookbook/03_batch_translate/translate.py "Welcome to MoMa-Grid! What is 10! "
+
+  Batch Translate
+    Hub:       http://192.168.0.177:8000
+    Model:     llama3
+    Languages: ['French', 'German', 'Chinese', 'Spanish']
+    Text:      Welcome to MoMa-Grid! What is 10! 
+
+    French         17 tok    4.6s  agent=..77ea8b6ee4c8
+    Spanish      FAILED: Agent at capacity
+    German         14 tok    4.7s  agent=..77ea8b6ee4c8
+    Chinese        14 tok    7.5s  agent=..77ea8b6ee4c8
+
+  ==================================================
+  3/4 translations complete  wall=7.6s
+
+  [Chinese]
+  欢迎来到MoMa-Grid！这是10吗？
+
+  [French]
+  Bienvenue à MoMa-Grid ! Qu'est-ce que cela signifie ?
+
+  [German]
+  Willkommen zu MoMa-Grid! Was ist 10?
+
+  Report: /home/wengong/projects/digital-duck/momahub.py/cookbook/03_batch_translate/translations_20260307_2336.html
+
 ```
 
 
@@ -224,7 +266,7 @@ Launch the Streamlit dashboard:
 ```bash
 moma-ui
 # or point it at a specific hub:
-IGRID_HUB_URL=http://192.168.1.10:8000 moma-ui
+IGRID_HUB_URL=http://192.168.0.177:8000 moma-ui
 ```
 
 Pages:

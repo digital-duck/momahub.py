@@ -152,7 +152,7 @@ def build_html(results: list[dict], original: str, model: str, hub: str) -> str:
 @click.argument("text", default="")
 @click.option("--file", "file_path", type=click.Path(exists=True), default=None,
               help="Read text from file instead")
-@click.option("--hub", default="http://localhost:8000", show_default=True)
+@click.option("--hub", default=None, help="Hub URL (defaults to ~/.igrid/config.yaml or http://localhost:8000)")
 @click.option("--model", default="llama3", show_default=True)
 @click.option("--languages", default=DEFAULT_LANGUAGES, show_default=True,
               help="Comma-separated target languages")
@@ -161,6 +161,14 @@ def build_html(results: list[dict], original: str, model: str, hub: str) -> str:
 @click.option("--out", default="", help="Output HTML path (default: auto)")
 def main(text, file_path, hub, model, languages, max_tokens, timeout, out):
     """Translate text into multiple languages in parallel on the grid."""
+    if not hub:
+        try:
+            from igrid.cli.config import load_config
+            cfg = load_config()
+            hub = cfg.get("hub_urls", ["http://localhost:8000"])[0]
+        except (ImportError, Exception):
+            hub = "http://localhost:8000"
+
     if file_path:
         text = Path(file_path).read_text(encoding="utf-8").strip()
     if not text:
@@ -194,7 +202,7 @@ def main(text, file_path, hub, model, languages, max_tokens, timeout, out):
     html = build_html(results, text, model, hub)
     if not out:
         ts = datetime.now().strftime('%Y%m%d_%H%M')
-        out_path = Path(__file__).parent / f"cookbook/03_batch_translate/translations_{ts}.html"
+        out_path = Path(__file__).parent / f"translations_{ts}.html"
     else:
         out_path = Path(out)
     out_path.write_text(html, encoding="utf-8")
