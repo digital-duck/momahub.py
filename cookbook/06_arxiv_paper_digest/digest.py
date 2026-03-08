@@ -285,7 +285,7 @@ def build_markdown(papers: list[dict], model: str, hub: str) -> str:
 @click.command()
 @click.argument("urls", nargs=-1)
 @click.option("--urls-file", type=click.Path(exists=True), help="File with one URL/ID per line")
-@click.option("--hub", default=DEFAULT_HUB, show_default=True, help="Hub URL")
+@click.option("--hub", default=None, help="Hub URL (defaults to config or localhost)")
 @click.option("--model", default=DEFAULT_MODEL, show_default=True, help="Ollama model")
 @click.option("--max-tokens", default=DEFAULT_MAX_TOKENS, type=int, show_default=True)
 @click.option("--max-chars", default=DEFAULT_MAX_CHARS, type=int, show_default=True,
@@ -296,14 +296,15 @@ def build_markdown(papers: list[dict], model: str, hub: str) -> str:
 @click.option("--format", "out_fmt", type=click.Choice(["html", "docx", "pdf"]),
               default="html", show_default=True, help="Output format")
 def digest(urls, urls_file, hub, model, max_tokens, max_chars, engine, out, out_fmt):
-    """Digest papers from arxiv IDs, arxiv URLs, or any PDF URL.
+    """Digest papers from arxiv IDs, arxiv URLs, or any PDF URL."""
+    if not hub:
+        try:
+            from igrid.cli.config import load_config
+            cfg = load_config()
+            hub = cfg.get("hub_urls", ["http://localhost:8000"])[0]
+        except (ImportError, Exception):
+            hub = "http://localhost:8000"
 
-    Examples:\n
-      python digest.py 2312.12345 2401.99999\n
-      python digest.py https://arxiv.org/abs/2409.11111\n
-      python digest.py https://example.com/paper.pdf\n
-      python digest.py --urls-file urls.txt --format docx
-    """
     # Collect raw inputs
     raw = list(urls)
     if urls_file:

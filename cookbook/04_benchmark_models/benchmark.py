@@ -3,7 +3,15 @@
 import asyncio, uuid, time
 import httpx
 
-HUB_URL = "http://localhost:8000"
+def get_hub_url():
+    try:
+        from igrid.cli.config import load_config
+        cfg = load_config()
+        return cfg.get("hub_urls", ["http://localhost:8000"])[0]
+    except (ImportError, Exception):
+        return "http://localhost:8000"
+
+HUB_URL = get_hub_url()
 MODELS = ["llama3", "mistral", "phi3"]
 PROMPT = "Explain gradient descent in three sentences."
 MAX_TOKENS = 150

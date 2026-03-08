@@ -151,6 +151,14 @@ def write_report(results: list[dict], hub: str, n: int, model: str,
 
 async def run_stress(hub: str, n: int, model: str, max_tokens: int,
                      concurrency: int, timeout_s: int, prompts_file: str):
+    if not hub:
+        try:
+            from igrid.cli.config import load_config
+            cfg = load_config()
+            hub = cfg.get("hub_urls", ["http://localhost:8000"])[0]
+        except (ImportError, Exception):
+            hub = "http://localhost:8000"
+
     prompt_path = Path(prompts_file) if prompts_file else SCRIPT_DIR / "prompts.txt"
     if not prompt_path.exists():
         click.echo(f"Prompts file not found: {prompt_path}", err=True)
@@ -229,7 +237,7 @@ async def run_stress(hub: str, n: int, model: str, max_tokens: int,
 
 
 @click.command()
-@click.option("--hub", default="http://localhost:8000", show_default=True)
+@click.option("--hub", default=None, help="Hub URL (defaults to config or localhost)")
 @click.option("-n", "--num-tasks", default=20, show_default=True, type=int, help="Number of tasks")
 @click.option("--model", default="llama3", show_default=True)
 @click.option("--max-tokens", default=150, show_default=True, type=int)

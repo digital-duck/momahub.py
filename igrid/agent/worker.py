@@ -24,7 +24,7 @@ def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
                      hub_urls: list[str] | None = None, ollama_url: str = "http://localhost:11434",
                      api_key: str = "", pull_mode: bool = False,
                      agent_name: str = "",
-                     max_concurrent: int = 3,
+                     max_concurrent: int = 4,
                      max_prompt_chars: int = 200_000) -> FastAPI:
     _agent_id = agent_id or str(uuid.uuid4())
     _agent_name = agent_name or socket.gethostname()

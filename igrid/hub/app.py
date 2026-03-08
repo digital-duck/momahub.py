@@ -34,7 +34,7 @@ _log = logging.getLogger("igrid.hub")
 def create_app(hub_id: str | None = None, operator_id: str = "duck",
                db_path: str = ".igrid/hub.sqlite", hub_url: str = "http://localhost:8000",
                api_key: str = "", admin_mode: bool = False,
-               max_concurrent_tasks: int = 3,
+               max_concurrent_tasks: int = 8,
                max_prompt_chars: int = 50_000,
                max_queue_depth: int = 1000,
                rate_limit: int = 60,
