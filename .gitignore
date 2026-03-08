@@ -1,6 +1,9 @@
 go_git.log
 docs/DEV/
 docs/CHAT/
+.claude/
+specs/
+tests/demos/
 
 # Python
 __pycache__/
