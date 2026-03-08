@@ -15,14 +15,21 @@ Hub-and-spoke distributed AI inference network. Clients submit tasks to a **Hub*
 ## Quick start
 
 ```bash
-# 1. Install
+# Create virtualenv
+conda create -n moma python=3.11
+conda activate moma
+
+# Git clone
+git clone https://github.com/digital-duck/momahub.py.git
+
+# Install from source
 pip install -e "."
 
 # 2. Start the hub
 moma hub up
 
 # 3. Start an agent (requires Ollama running locally)
-moma join http://localhost:8000
+moma join http://<hub-ip-address>:8000
 
 # 4. Submit a task
 moma submit "Explain distributed inference in two sentences" --model llama3
@@ -31,6 +38,10 @@ moma submit "Explain distributed inference in two sentences" --model llama3
 moma status
 moma agents
 moma tasks
+moma rewards
+
+# 6. Help
+moma --help
 ```
 
 ## Proven Performance
