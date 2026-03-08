@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "momahub"
-version = "0.2.4"
+version = "0.2.5"
 authors = [
   { name="Wen G. Gong", email="wen.gong.research@gmail.com" },
   { name="Digital Duck & Dog Team", email="wen.gong.research@gmail.com" },
@@ -28,7 +28,7 @@ dependencies = [
     "requests",
     "httpx",
     "pyyaml",
-    "pynvml",
+    "nvidia-ml-py",
     "streamlit",
     "streamlit-aggrid",
     "pandas",

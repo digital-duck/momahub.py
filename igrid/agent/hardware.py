@@ -21,6 +21,7 @@ def detect_gpus() -> list[GPUInfo]:
 
 def _detect_via_pynvml() -> list[GPUInfo] | None:
     try:
+        # nvidia-ml-py provides the pynvml module without the deprecation warning
         import pynvml
         pynvml.nvmlInit()
         count = pynvml.nvmlDeviceGetCount()
