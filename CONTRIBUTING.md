@@ -1,6 +1,6 @@
-# Contributing to MoMaHub
+# Contributing to Momahub
 
-Thank you for your interest in contributing to MoMaHub! As a distributed AI inference network, we value contributions that improve performance, resilience, security, and usability.
+Thank you for your interest in contributing to Momahub! As a distributed AI inference network, we value contributions that improve performance, resilience, security, and usability.
 
 ## Getting Started
 
@@ -43,8 +43,8 @@ If you add a new feature, please include corresponding unit tests in `tests/unit
 4. **Review**: Maintainers will review your PR and may suggest changes.
 
 ## Research & SPL
-MoMaHub is closely tied to the **Structured Prompt Language (SPL)**. If your changes affect the SPL adapter or compiler pipeline, please refer to the foundational paper:
+Momahub is closely tied to the **Structured Prompt Language (SPL)**. If your changes affect the SPL adapter or compiler pipeline, please refer to the foundational paper:
 - [SPL: Structured Prompt Language for Generative AI (arXiv:2602.21257)](https://arxiv.org/abs/2602.21257)
 
 ## License
-By contributing to MoMaHub, you agree that your contributions will be licensed under the **Apache 2.0 License**.
+By contributing to Momahub, you agree that your contributions will be licensed under the **Apache 2.0 License**.

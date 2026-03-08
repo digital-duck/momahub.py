@@ -1,9 +1,9 @@
-"""MoMa Compiler Pipeline Demo page.
+"""Momahub Compiler Pipeline Demo page.
 
 Interactive 5-step pipeline: translate → concepts → optimise → generate → format.
 Each step dispatched to the grid. Steps 2+3 run in parallel. Live progress timeline.
 
-Demonstrates the MoMa Compiler front-end → mid-end → back-end architecture.
+Demonstrates the Momahub Compiler front-end → mid-end → back-end architecture.
 """
 from __future__ import annotations
 
@@ -15,8 +15,8 @@ import httpx
 import streamlit as st
 
 HUB_URL = os.environ.get("IGRID_HUB_URL", "http://localhost:8000")
-st.set_page_config(page_title="MoMa Compiler Demo", layout="wide")
-st.title("🔧 MoMa Compiler Pipeline")
+st.set_page_config(page_title="Momahub Compiler Demo", layout="wide")
+st.title("🔧 Momahub Compiler Pipeline")
 st.caption(
     "Type a query in any language. Watch the 5-step compiler pipeline execute on the grid: "
     "translate → extract concepts → optimise → generate → format."

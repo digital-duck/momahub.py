@@ -15,7 +15,7 @@ WITH chunk1 AS (
         system_role('You are a document analyst. Analyse only the excerpt provided. Extract key entities, dates, and facts.')
 
     GENERATE
-        analyst('Analyse this document excerpt: The MoMaHub Distributed Inference Agreement is entered into between Digital Duck Labs (Provider) and the participating GPU operators (Contributors). The Provider operates the hub infrastructure.')
+        analyst('Analyse this document excerpt: The Momahub Distributed Inference Agreement is entered into between Digital Duck Labs (Provider) and the participating GPU operators (Contributors). The Provider operates the hub infrastructure.')
     WITH OUTPUT BUDGET 400 tokens
 ),
 chunk2 AS (

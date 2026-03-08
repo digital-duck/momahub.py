@@ -3,7 +3,7 @@
 Load one or more throughput-*.json files produced by:
     python cookbook/13_multi_agent_throughput/throughput.py --label "N-agents" --out scaling.json
 
-Plots tokens/s vs agent count as a line chart — the key scaling figure for the MoMa paper.
+Plots tokens/s vs agent count as a line chart — the key scaling figure for the Momahub paper.
 """
 import json
 import os
@@ -129,7 +129,7 @@ st.dataframe(df, use_container_width=True)
 # ── Paper figure caption ───────────────────────────────────────────────────────
 st.divider()
 st.caption(
-    "**Figure caption (MoMa paper):** Throughput scaling on a 3-node GTX 1080 Ti grid. "
+    "**Figure caption (Momahub paper):** Throughput scaling on a 3-node GTX 1080 Ti grid. "
     "Grid throughput (tokens/s) as a function of active agent count. "
     "Measured using recipe 13 with identical 30-task batches at each configuration."
 )

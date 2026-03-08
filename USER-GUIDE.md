@@ -1,6 +1,6 @@
 # User Guide
 
-Complete guide to running Momahub (i-grid): installation, CLI reference, cookbook recipes, and a weekend LAN test plan for 3 GPUs.
+Complete guide to running MoMaHub (i-grid): installation, CLI reference, cookbook recipes, and a weekend LAN test plan for 3 GPUs.
 
 ---
 
@@ -264,7 +264,7 @@ python cookbook/03_batch_translate/translate.py "Welcome to Momahub! What is 10!
   3/4 translations complete  wall=7.6s
 
   [Chinese]
-  欢迎来到Momahub！这是10吗？
+  欢迎来到MoMa-Grid！这是10吗？
 
   [French]
   Bienvenue à Momahub ! Qu'est-ce que cela signifie ?
@@ -498,7 +498,7 @@ On **every machine**:
    ollama pull llama3
    ollama pull mistral   # optional
    ```
-2. Install Momahub:
+2. Install MoMaHub:
    ```bash
    pip install -e ".[dev]"
    ```

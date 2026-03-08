@@ -19,7 +19,7 @@ def _detect_lan_ip() -> str:
     except Exception:
         return "127.0.0.1"
 
-app = typer.Typer(name="moma", help="MoMaHub i-grid: distributed AI inference network.", no_args_is_help=True)
+app = typer.Typer(name="moma", help="Momahub i-grid: distributed AI inference network.", no_args_is_help=True)
 hub_app = typer.Typer(help="Hub management commands.")
 agent_app = typer.Typer(help="Agent management commands.")
 peer_app = typer.Typer(help="Cluster peer management.")

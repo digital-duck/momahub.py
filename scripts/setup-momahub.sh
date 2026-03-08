@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# setup.sh — One-command node bootstrap for MoMaHub (i-grid).
+# setup.sh — One-command node bootstrap for Momahub (i-grid).
 # Idempotent: safe to re-run. Handles GPU check, Ollama install,
 # model pull, pip install, smoke test, and prints the join command.
 set -euo pipefail
@@ -63,8 +63,8 @@ for model in $MODELS; do
     fi
 done
 
-# ── Stage 4: Install MoMaHub ────────────────────────────────────
-info "Stage 4/5: Installing MoMaHub..."
+# ── Stage 4: Install Momahub ────────────────────────────────────
+info "Stage 4/5: Installing Momahub..."
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if pip show moma-hub &>/dev/null; then
     info "moma-hub already installed."

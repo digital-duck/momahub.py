@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Recipe 24: SPL Compiler Pipeline — 5-step chain demonstrating the MoMa Compiler.
+"""Recipe 24: SPL Compiler Pipeline — 5-step chain demonstrating the Momahub Compiler.
 
-Simulates the MoMa Compiler front-end → mid-end → back-end pipeline:
+Simulates the Momahub Compiler front-end → mid-end → back-end pipeline:
   Step 1: Translate input (non-English → English)
   Step 2: Extract key concepts (front-end parsing)
   Step 3: Optimise the query (mid-end rewriting)
@@ -104,7 +104,7 @@ async def run_pipeline(hub: str, query: str,
                        translate_model: str, analysis_model: str,
                        generate_model: str, format_model: str,
                        max_tokens: int, timeout_s: int) -> None:
-    click.echo(f"\n  MoMa Compiler Pipeline Demo")
+    click.echo(f"\n  Momahub Compiler Pipeline Demo")
     click.echo(f"    Hub:     {hub}")
     click.echo(f"    Input:   {query[:80]}")
     click.echo()
@@ -198,14 +198,14 @@ def _build_html(query, steps, wall_time, hub) -> str:
 </div>"""
 
     return f"""<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>MoMa Compiler Pipeline Demo</title>
+<html><head><meta charset="UTF-8"><title>Momahub Compiler Pipeline Demo</title>
 <style>body{{background:#0f1117;color:#e0e0e0;font-family:system-ui;padding:2rem;max-width:960px;margin:0 auto}}
 h1{{color:#4f8ef7}}.meta{{color:#9ca3af;font-size:.85rem;margin-bottom:1.5rem}}
 .card{{background:#1a1d27;border:1px solid #2d3148;border-radius:8px;padding:1rem;margin:1rem 0}}
 .card-title{{font-weight:600;color:#4f8ef7;margin-bottom:.5rem;display:flex;gap:.8rem;align-items:baseline}}
 .stat{{color:#9ca3af;font-size:.75rem;margin-left:auto}}.content{{white-space:pre-wrap;font-size:.88rem;line-height:1.6}}</style>
 </head><body>
-<h1>MoMa Compiler Pipeline Demo</h1>
+<h1>Momahub Compiler Pipeline Demo</h1>
 <p class="meta">{datetime.now().strftime("%Y-%m-%d %H:%M")} | Hub: {hub} | Wall: {wall_time:.1f}s</p>
 <div class="card"><div class="card-title">Input Query</div>
 <div class="content">{query}</div></div>

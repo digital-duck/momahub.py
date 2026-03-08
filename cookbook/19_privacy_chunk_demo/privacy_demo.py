@@ -22,7 +22,7 @@ import click
 import httpx
 
 SAMPLE_DOCUMENT = """
-MoMaHub Distributed Inference Agreement (Demo Document)
+Momahub Distributed Inference Agreement (Demo Document)
 
 Section 1 — Parties
 This agreement is entered into between Digital Duck Labs ("Provider") and the

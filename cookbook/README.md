@@ -1,6 +1,6 @@
 # Cookbook
 
-Ready-to-run recipes demonstrating MoMaHub i-grid capabilities. Each recipe is self-contained.
+Ready-to-run recipes demonstrating Momahub i-grid capabilities. Each recipe is self-contained.
 
 ## Prerequisites
 
@@ -316,10 +316,10 @@ python cookbook/23_wake_sleep_resilience/resilience.py --duration 300
 ```
 
 
-### Test - MoMa Compiler pipeline demo
+### Test - Momahub Compiler pipeline demo
 
 ```bash
-# MoMa Compiler pipeline demo
+# Momahub Compiler pipeline demo
 python cookbook/24_spl_compiler_pipeline/compiler_demo.py --demo
 ```
 

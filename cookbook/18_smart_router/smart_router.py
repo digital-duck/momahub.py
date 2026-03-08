@@ -2,7 +2,7 @@
 """Recipe 18: Smart Router — auto-route prompts to the right model by type.
 
 Detects prompt intent (math, code, general) and routes to the optimal model.
-Prototype of the MoMa Compiler back-end targeting pass.
+Prototype of the Momahub Compiler back-end targeting pass.
 
 Usage:
     python smart_router.py "What is the integral of x^2?"

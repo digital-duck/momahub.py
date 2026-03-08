@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""setup-momahub.py — One-command node bootstrap for MoMaHub (i-grid).
+"""setup-momahub.py — One-command node bootstrap for Momahub (i-grid).
 
 Idempotent: safe to re-run. Handles GPU check, Ollama install,
 model pull, pip install, smoke test, and prints the join command.
@@ -150,7 +150,7 @@ def stage_pull(models: list[str]) -> None:
 
 
 def stage_install() -> None:
-    info("Stage 4/5: Installing MoMaHub...")
+    info("Stage 4/5: Installing Momahub...")
     result = run([sys.executable, "-m", "pip", "show", "moma-hub"],
                  check=False, capture=True)
     if result.returncode == 0:
@@ -179,7 +179,7 @@ def stage_smoke(model: str) -> None:
 def main() -> None:
     import argparse
     parser = argparse.ArgumentParser(
-        description="One-command node bootstrap for MoMaHub (i-grid).")
+        description="One-command node bootstrap for Momahub (i-grid).")
     parser.add_argument("--models", nargs="+", default=["llama3"],
                         help="Models to pull (default: llama3)")
     parser.add_argument("--skip-ollama", action="store_true",

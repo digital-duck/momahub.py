@@ -1,6 +1,7 @@
 go_git.log
 docs/DEV/
 docs/CHAT/
+docs/blogs/
 .claude/
 specs/
 tests/demos/

@@ -2,7 +2,7 @@
 """Recipe 13: Multi-Agent Throughput — measure scaling across 1, 2, 3 agents.
 
 Fires N tasks per run and records wall-clock time and tokens/s.
-Run once per agent configuration to build the scaling chart for the MoMa paper.
+Run once per agent configuration to build the scaling chart for the Momahub paper.
 
 Usage:
     python throughput.py                          # 30 tasks, default model
