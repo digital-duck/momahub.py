@@ -1,6 +1,6 @@
-# MoMaHub
+# MoMaHub - Hub-and-spoke distributed AI inference network
 
-Hub-and-spoke distributed AI inference network. Clients submit tasks to a **Hub**; the Hub dispatches them to **Agent** nodes running [Ollama](https://ollama.com).
+Clients submit tasks to a **Hub**; the Hub dispatches them to **Agent** nodes running [Ollama](https://ollama.com).
 
 ## Features
 
@@ -80,10 +80,10 @@ tests/         Unit and integration tests
 
 MoMaHub is the reference implementation for the paper:
 
-> **MoMaHub: A Prompt Compiler and Accessible Inference Grid**
-> Wen Gong (2026). *arXiv preprint in preparation.*
+> **MoMaHub: A Prompt Compiler and Decentralized LLM Inference Network**
+> Wen Gong (2026) (*arXiv preprint in preparation.*)
 
-The paper introduces two core ideas:
+The paper introduces two key ideas:
 
 1. **The Prompt Compiler** — reframing Text2SPL as a full compiler pipeline (front-end NL→SPL, mid-end CTE DAG optimisation, back-end model/VRAM mapping), with SPL as the intermediate representation between human intent and GPU execution. The compiler is self-hosting: it runs on the i-grid it compiles for.
 
