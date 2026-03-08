@@ -1,3 +1,9 @@
+#!/bin/bash
+
+# install ollama
+# curl -fsSL https://ollama.com/install.sh | sh
+
+# pull ollama models
 ollama pull llama3
 ollama pull llama3.1
 ollama pull mistral
