@@ -1,6 +1,6 @@
 # MoMaHub - Hub-and-spoke distributed AI inference network
 
-Clients submit tasks to a **Hub**; the Hub dispatches them to **Agent** nodes running [Ollama](https://ollama.com).
+Users submit requests to a **Hub**, the Hub dispatches them to **Agent** nodes running [Ollama](https://ollama.com).
 
 ## Requirements
 
@@ -23,7 +23,7 @@ conda activate moma
 git clone https://github.com/digital-duck/momahub.py.git
 
 # Install from source
-pip install -e "."
+pip install -e .
 
 # (Re)Start the hub on a GPU node
 moma hub up
@@ -86,16 +86,12 @@ tests/         Unit and integration tests
 - **[User Guide](./docs/USER-GUIDE.md)** for detailed usage instructions, 
 - **[Cookbook](./cookbook/README.md)** with 20+ examples.
 
-## Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our development workflow and coding standards.
-
 ## Research
 
-### MoMaHub - the reference implementation in python for the paper:
+### MoMaHub - the python implementation for this upcoming arxiv paper (in preparation)
 
 > **MoMaHub: A Prompt Compiler and Decentralized LLM Inference Network**
-> Wen Gong (2026) (*arXiv preprint in preparation.*)
+> Wen G. Gong (2026)
 
 The paper introduces two key ideas:
 
@@ -103,20 +99,33 @@ The paper introduces two key ideas:
 
 2. **The Distributed Inference Runtime** — MoMaHub as the runtime layer that abstracts distributed consumer GPUs into a programmable compute surface, analogous to the JVM or the Linux kernel for traditional computing.
 
-### Related work:
-- **SPL (Structured Prompt Language):** [arXiv:2602.21257](https://arxiv.org/abs/2602.21257)
-  > Wen Gong. (2026). *Structured Prompt Language: Declarative Context Management for LLMs*. arXiv preprint arXiv:2602.21257.
+### Related work
+- **SPL - Structured Prompt Language:** [arXiv:2602.21257](https://arxiv.org/abs/2602.21257)
+  > Wen G. Gong. (2026). *Structured Prompt Language: Declarative Context Management for LLMs*. arXiv preprint arXiv:2602.21257.
 
   ```bibtex
   @article{gong2026spl,
     title={Structured Prompt Language: Declarative Context Management for LLMs},
-    author={Gong, Wen},
+    author={Gong, Wen G.},
     journal={arXiv preprint arXiv:2602.21257},
     year={2026}
   }
   ```
 - **Geodesic Reranking:** [arXiv:2602.15860](https://arxiv.org/abs/2602.15860)
   > Wen G. Gong. (2026). *Reranker Optimization via Geodesic Distances on k-NN Manifolds*. arXiv preprint arXiv:2602.15860.
+
+  ```bibtex
+  @article{gong2026geodesic,
+    title={Reranker Optimization via Geodesic Distances on k-NN Manifolds},
+    author={Gong, Wen G.},
+    journal={arXiv preprint arXiv:2602.15860},
+    year={2026}
+  }
+  ```
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our development workflow and coding standards.
 
 ## License
 

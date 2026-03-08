@@ -3,9 +3,10 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "moma-hub"
-version = "0.2.0"
+name = "momahub"
+version = "0.2.1"
 authors = [
+  { name="Wen Gong", email="wen@digitalduck.org" },
   { name="Digital Duck & Dog Team", email="info@digitalduck.org" },
 ]
 description = "MoMaHub (i-grid): Hub-and-spoke distributed AI inference network."
@@ -15,6 +16,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Intended Audience :: Science/Research",
 ]
 dependencies = [
     "fastapi>=0.111",
@@ -34,11 +37,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev     = ["pytest", "pytest-asyncio", "httpx"]
+dev     = ["pytest", "pytest-asyncio", "httpx", "build", "twine"]
 docling = ["dd-extract[docling]"]  # layout-aware PDF: tables, figures, multi-column
 
 [project.urls]
-"Homepage" = "https://github.com/digital-duck/momahub-claude"
+"Homepage" = "https://github.com/digital-duck/momahub.py"
+"Repository" = "https://github.com/digital-duck/momahub.py"
+"Bug Tracker" = "https://github.com/digital-duck/momahub.py/issues"
+"Documentation" = "https://github.com/digital-duck/momahub.py/blob/main/docs/USER-GUIDE.md"
 
 [project.scripts]
 moma = "igrid.cli.main:app"
