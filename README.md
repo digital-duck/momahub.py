@@ -16,7 +16,7 @@ Hub-and-spoke distributed AI inference network. Clients submit tasks to a **Hub*
 
 ```bash
 # 1. Install
-pip install -e ".[dev]"
+pip install -e "."
 
 # 2. Start the hub
 moma hub up
@@ -58,18 +58,19 @@ tests/         Unit and integration tests
 
 - Python >= 3.11
 - [Ollama](https://ollama.com) on every agent node
-- GPU recommended (CPU-only works but is slow)
+- GPU recommended (CPU-only works but will be slow)
 
 ## Documentation
 
-See **[USER-GUIDE.md](USER-GUIDE.md)** for detailed usage instructions, cookbook walkthroughs, and a step-by-step guide for running a weekend LAN test on 3 GPUs.
+- **[USER-GUIDE](USER-GUIDE.md)** for detailed usage instructions, 
+- **[Cookbook](./cookbook/README.md)** with 20+ examples.
 
 ## Research
 
 MoMaHub is the reference implementation for the paper:
 
-> **MoMa: A Prompt Compiler and Accessible Inference Grid**
-> Wen Gong (2026). *arXiv preprint, target submission 2026-03-31.*
+> **MoMaHub: A Prompt Compiler and Accessible Inference Grid**
+> Wen Gong (2026). *arXiv preprint in preparation.*
 
 The paper introduces two core ideas:
 
