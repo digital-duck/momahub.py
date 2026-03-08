@@ -2,8 +2,7 @@ go_git.log
 docs/DEV/
 docs/CHAT/
 docs/blogs/
-docs/REVIEW/
-
+docs/REVIEW/gemini-20260308.md
 
 .claude/
 specs/
