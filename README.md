@@ -1,4 +1,4 @@
-# MoMaHub (i-grid)
+# MoMaHub
 
 Hub-and-spoke distributed AI inference network. Clients submit tasks to a **Hub**; the Hub dispatches them to **Agent** nodes running [Ollama](https://ollama.com).
 
