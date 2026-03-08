@@ -18,5 +18,7 @@ async def init_db(path: str) -> aiosqlite.Connection:
         await db.execute("ALTER TABLE agents ADD COLUMN pull_mode INTEGER NOT NULL DEFAULT 0")
     if "name" not in cols:
         await db.execute("ALTER TABLE agents ADD COLUMN name TEXT NOT NULL DEFAULT ''")
+    if "max_concurrent" not in cols:
+        await db.execute("ALTER TABLE agents ADD COLUMN max_concurrent INTEGER NOT NULL DEFAULT 3")
     await db.commit()
     return db

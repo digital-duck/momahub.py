@@ -5,7 +5,12 @@ Ready-to-run recipes demonstrating MoMaHub i-grid capabilities. Each recipe is s
 ## Prerequisites
 
 ```bash
+conda create -n momahub python=3.11
+conda activate momahub
+
 pip install -e ".[dev]"          # install momahub
+
+
 ollama pull llama3               # at least one model
 moma hub up --host 0.0.0.0      # start hub
 moma join http://<hub-ip>:8000   # start agent(s)
@@ -40,11 +45,11 @@ moma join http://<hub-ip>:8000   # start agent(s)
 | 25 | Model Diversity | `model_diversity.py` | All 14 models benchmarked on 6 domains — latency, TPS, quality | - |
 | 90 | Two-Hub Cluster | `setup.py` | Set up and test hub peering and task forwarding | - |
 
-## Quick start
+### Test - Hello
 
 ```bash
-# Smoke test
 moma run cookbook/01_single_node_hello/hello.spl
+```
 
 === hello_grid ===
 The i-grid is a novel distributed inference network that enables efficient and scalable machine learning tasks by partitioning a large neural network into smaller, interconnected sub-networks, each running on different devices or nodes within a grid-like structure. By leveraging this decentralized approach, the i-grid allows for massive parallelization of computations, reduced communication overhead, and improved overall performance in complex inference scenarios.
@@ -52,7 +57,11 @@ The i-grid is a novel distributed inference network that enables efficient and s
 [model=llama3  tokens=41+76  latency=4893ms]
 
 
+### Test - CTE
+
+```bash
 moma run cookbook/02_multi_cte_parallel/multi_cte.spl
+```
 
 === synthesis ===
 Distributed LLM (Large Language Model) inference has both empowering and challenging aspects. On the one hand, it enables faster and more scalable processing of complex language tasks by leveraging multiple devices or machines, which can be particularly beneficial for large-scale applications and those requiring real-time responses. On the other hand, distributed LLM inference also introduces added complexity in terms of infrastructure setup, data synchronization, and potential latency issues that need to be carefully managed to ensure seamless performance.
@@ -60,9 +69,11 @@ Distributed LLM (Large Language Model) inference has both empowering and challen
 [model=llama3  tokens=65+94  latency=18460ms]
 
 
-# Translate in parallel
-python cookbook/03_batch_translate/translate.py "Hello, world!"
+### Test - Translate in parallel
 
+```bash
+python cookbook/03_batch_translate/translate.py "Hello, world!"
+```
 
   Batch Translate
     Hub:       http://localhost:8000
@@ -93,8 +104,11 @@ python cookbook/03_batch_translate/translate.py "Hello, world!"
   Report: translations_20260307_1316.html
 
 
-# RAG on Grid
+### Test - RAG
+
+```bash
 moma run cookbook/05_rag_on_grid/rag_query.spl
+```
 
 === rag_answer ===
 Based on general knowledge and understanding, I can tell you that the key benefits of hub-and-spoke inference are:
@@ -110,8 +124,11 @@ These benefits make hub-and-spoke inference a popular choice for many AI use cas
 
 
 
-# Model comparison
+### Test - Model comparison
+
+```bash
 python cookbook/08_model_arena/arena.py
+```
 
   Model Arena
     Hub:    http://localhost:8000
@@ -131,9 +148,11 @@ python cookbook/08_model_arena/arena.py
   Open in browser for dark-mode side-by-side comparison.
 
 
-# Multi-step chain
-python cookbook/10_chain_relay/chain.py "distributed AI inference"
+### Test - Multi-step chain
 
+```bash
+python cookbook/10_chain_relay/chain.py "distributed AI inference"
+```
 
   Chain Relay
     Topic:  distributed AI inference
@@ -174,39 +193,84 @@ Distributed AI inference has emerged as a crucial technology for modern AI devel
 To fully unlock the potential of distributed AI inference, organizations must carefully balance scalability challenges, communication overhead, and optimization strategies while exploring innovative applications in edge computing and quantum computing.
 
 
-# Stress test (all GPUs)
+### Test - Stress test (all GPUs)
+
+```bash
 python cookbook/07_stress_test/stress.py -n 10
+```
 
+### Test - Tier-aware dispatch (VRAM routing)
 
-# Tier-aware dispatch (VRAM routing)
+```bash
 python cookbook/12_tier_aware_dispatch/tier_dispatch.py
+```
 
+### Test - Throughput scaling
+
+```bash
 # Throughput scaling (run with 1, 2, 3 agents — compare results)
 python cookbook/13_multi_agent_throughput/throughput.py --label "3-agents" --out scaling.json
+```
 
+
+### Test - Failover test
+
+```bash
 # Failover test (kill an agent mid-run)
 python cookbook/15_agent_failover/failover.py -n 30
+```
 
+
+### Test - Math olympiad
+
+```bash
 # Math olympiad (accuracy + TPS comparison)
 python cookbook/16_math_olympiad/math_olympiad.py --models mathstral,qwen2-math
+```
 
+
+### Test - Code review pipeline (multi-step, multi-model)
+
+```bash
 # Code review pipeline (multi-step, multi-model)
 python cookbook/17_code_review_pipeline/code_review.py --file igrid/hub/dispatcher.py
+```
 
+
+### Test - Smart router (auto-route by prompt type)
+
+```bash
 # Smart router (auto-route by prompt type)
 python cookbook/18_smart_router/smart_router.py --demo
+```
 
+### Test - Privacy chunk demo
+
+```bash
 # Privacy chunk demo
 python cookbook/19_privacy_chunk_demo/privacy_demo.py
+```
 
+### Test - Overnight batch (100 tasks)
+```bash
 # Overnight batch (100 tasks)
 python cookbook/20_overnight_batch/overnight.py --tasks 100
+```
 
+
+### Test - Language accessibility (10 languages in parallel)
+
+```bash
 # Language accessibility (10 languages in parallel)
 python cookbook/21_language_accessibility/language_grid.py --topic ai
+```
 
+### Test - Rewards report
+
+```bash
 # Rewards report
 python cookbook/22_rewards_report/rewards_report.py
+```
 
 (momahub) papagame@papa-game:~/projects/digital-duck/momahub.py$ python cookbook/22_rewards_report/rewards_report.py
 
@@ -244,19 +308,39 @@ python cookbook/22_rewards_report/rewards_report.py
 
   Report: /home/papagame/projects/digital-duck/momahub.py/cookbook/22_rewards_report/rewards_20260307_1818.html
 
+### Test - Wake/sleep resilience
 
+```bash
 # Wake/sleep resilience (5 minutes)
 python cookbook/23_wake_sleep_resilience/resilience.py --duration 300
+```
 
+
+### Test - MoMa Compiler pipeline demo
+
+```bash
 # MoMa Compiler pipeline demo
 python cookbook/24_spl_compiler_pipeline/compiler_demo.py --demo
+```
 
+### Test -  Model diversity - probe
+
+```bash
 # Model diversity — quick probe (check which models are alive)
 python cookbook/25_model_diversity/model_diversity.py --probe
+```
 
+
+### Test - Model diversity — full 14-model benchmark
+
+```bash
 # Model diversity — full 14-model benchmark
 python cookbook/25_model_diversity/model_diversity.py --out results.json --report diversity.html
+```
 
+### Test - 6 previously uncovered models
+
+```bash
 # Test only the 6 previously uncovered models
 python cookbook/25_model_diversity/model_diversity.py \
   --models llama3.1,qwen3,deepseek-r1,gemma3,phi4,phi4-mini \
