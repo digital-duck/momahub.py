@@ -1,2 +1,2 @@
-"""i-grid: Hub-and-spoke distributed AI inference network."""
+"""Momahub: Hub-and-spoke distributed AI inference network."""
 __version__ = "0.2.0"

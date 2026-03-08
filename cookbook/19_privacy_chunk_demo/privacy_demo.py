@@ -27,12 +27,12 @@ Momahub Distributed Inference Agreement (Demo Document)
 Section 1 — Parties
 This agreement is entered into between Digital Duck Labs ("Provider") and the
 participating GPU operators ("Contributors"). The Provider operates the hub
-infrastructure; Contributors supply compute via the i-grid agent software.
+infrastructure; Contributors supply compute via the Momahub agent software.
 
 Section 2 — Compute Contribution
 Contributors agree to make available their GPU resources during registered hours.
 The hub dispatches inference tasks based on tier (PLATINUM/GOLD/SILVER/BRONZE),
-VRAM availability, and model support. Contributors are compensated in i-grid
+VRAM availability, and model support. Contributors are compensated in Momahub
 credits at the rate of 1 credit per 1,000 output tokens generated.
 
 Section 3 — Privacy and Data Handling

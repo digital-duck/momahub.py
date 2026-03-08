@@ -1,1 +1,1 @@
-"""i-grid UI package."""
+"""Momahub UI package."""

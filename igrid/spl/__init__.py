@@ -1,1 +1,1 @@
-"""i-grid SPL integration package."""
+"""Momahub SPL integration package."""

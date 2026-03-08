@@ -41,7 +41,7 @@ Thumbs.db
 .coverage
 htmlcov/
 
-# i-grid runtime
+# Momahub runtime
 .igrid/
 *.db
 *.db-journal

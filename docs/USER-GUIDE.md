@@ -1,6 +1,6 @@
 # User Guide
 
-Complete guide to running Momahub (i-grid): installation, CLI reference, cookbook recipes, and a weekend LAN test plan for 3 GPUs.
+Complete guide to running Momahub (Momahub): installation, CLI reference, cookbook recipes, and a weekend LAN test plan for 3 GPUs.
 
 ---
 
@@ -177,9 +177,9 @@ moma run cookbook/01_single_node_hello/hello.spl
 
 ```response
 === hello_grid ===
-Here is an introduction to the i-grid:
+Here is an introduction to the Momahub:
 
-The i-grid is a novel distributed inference network that enables efficient and scalable inference across multiple devices, allowing for real-time processing of complex data streams. By harnessing the power of interconnected devices on the grid, the i-grid facilitates collaborative learning and reasoning, breaking down traditional boundaries between devices and unlocking new possibilities in artificial intelligence, machine learning, and beyond.
+The Momahub is a novel distributed inference network that enables efficient and scalable inference across multiple devices, allowing for real-time processing of complex data streams. By harnessing the power of interconnected devices on the grid, the Momahub facilitates collaborative learning and reasoning, breaking down traditional boundaries between devices and unlocking new possibilities in artificial intelligence, machine learning, and beyond.
 
 [model=llama3  tokens=41+80  latency=33446ms]
 
@@ -314,7 +314,7 @@ A minimal SPL program that sends one prompt to the grid. Good for verifying that
 moma run cookbook/01_single_node_hello/hello.spl
 ```
 
-The program asks the grid to introduce i-grid in two sentences using `llama3`.
+The program asks the grid to introduce Momahub in two sentences using `llama3`.
 
 ### 02 — Multi-CTE parallel
 
@@ -466,7 +466,7 @@ All agents work simultaneously on different languages. Generates an HTML report.
 
 ## Milestone: 2-GPU LAN Success (2026-03-08)
 
-The first verified multi-node i-grid deployment was achieved with the following configuration:
+The first verified multi-node Momahub deployment was achieved with the following configuration:
 
 ### Hardware
 - **Node A (Hub + Agent):** 1x NVIDIA GTX 1080 Ti (11GB VRAM)
@@ -487,7 +487,7 @@ Running the `stress.py` recipe with `-n 10` and concurrency 10:
 
 ## Weekend LAN test — 3 GPU setup
 
-This section walks through setting up a 3-node i-grid on a home LAN using 3 machines each with a GTX 1080 Ti (11 GB VRAM). Expected performance: ~35-45 TPS per card (GOLD tier).
+This section walks through setting up a 3-node Momahub on a home LAN using 3 machines each with a GTX 1080 Ti (11 GB VRAM). Expected performance: ~35-45 TPS per card (GOLD tier).
 
 ### Prerequisites
 

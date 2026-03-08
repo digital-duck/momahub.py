@@ -1,4 +1,4 @@
-"""SPL runner: parse and execute .spl files on the i-grid."""
+"""SPL runner: parse and execute .spl files on the Momahub."""
 from __future__ import annotations
 import logging
 import typer

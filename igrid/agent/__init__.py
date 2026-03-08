@@ -1,1 +1,1 @@
-"""i-grid Agent package."""
+"""Momahub Agent package."""

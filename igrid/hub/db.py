@@ -1,4 +1,4 @@
-"""SQLite schema creation for the i-grid hub."""
+"""SQLite schema creation for the Momahub hub."""
 from pathlib import Path
 
 import aiosqlite

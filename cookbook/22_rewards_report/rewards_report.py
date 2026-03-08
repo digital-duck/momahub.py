@@ -156,7 +156,7 @@ def _build_html(rewards, model_stats, total_tasks, total_tokens,
                        f"<td>{s['tokens']:,}</td><td>{avg_lat:.0f}ms</td></tr>")
 
     return f"""<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>i-grid Reward Report</title>
+<html><head><meta charset="UTF-8"><title>Momahub Reward Report</title>
 <style>body{{background:#0f1117;color:#e0e0e0;font-family:system-ui;padding:2rem;max-width:900px;margin:0 auto}}
 h1{{color:#4f8ef7}}.meta{{color:#9ca3af;font-size:.85rem;margin-bottom:1.5rem}}
 .metrics{{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}}
@@ -168,7 +168,7 @@ table{{width:100%;border-collapse:collapse;margin-top:.5rem}}
 th,td{{padding:.5rem .8rem;border:1px solid #2d3148;text-align:left}}
 th{{background:#1a1d27;color:#4f8ef7}}</style>
 </head><body>
-<h1>i-grid Reward Economy Report</h1>
+<h1>Momahub Reward Economy Report</h1>
 <p class="meta">{datetime.now().strftime("%Y-%m-%d %H:%M")} | Hub: {hub}</p>
 <div class="metrics">
 <div class="metric"><div class="metric-value">{total_tasks:,}</div><div class="metric-label">Total Tasks</div></div>

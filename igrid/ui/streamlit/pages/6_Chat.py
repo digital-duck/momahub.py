@@ -1,9 +1,9 @@
-"""Test Runner page — submit prompts to i-grid via UI, single or batch."""
+"""Test Runner page — submit prompts to Momahub via UI, single or batch."""
 import json, os, time, uuid, httpx, streamlit as st
 
 HUB_URL = os.environ.get("IGRID_HUB_URL", "http://localhost:8000")
-st.set_page_config(page_title="i-grid Test Runner", layout="wide")
-st.title("i-grid Test Runner")
+st.set_page_config(page_title="Momahub Test Runner", layout="wide")
+st.title("Momahub Test Runner")
 
 # ── Sidebar ──────────────────────────────────────────────────────────
 hub_url = st.sidebar.text_input("Hub URL", value=HUB_URL)

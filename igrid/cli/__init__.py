@@ -1,1 +1,1 @@
-"""i-grid CLI package."""
+"""Momahub CLI package."""

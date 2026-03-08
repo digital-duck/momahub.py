@@ -1,11 +1,11 @@
-"""i-grid Hub Dashboard — Streamlit main page."""
+"""Momahub Hub Dashboard — Streamlit main page."""
 import os
 import httpx
 import streamlit as st
 
 HUB_URL = os.environ.get("IGRID_HUB_URL", "http://localhost:8000")
-st.set_page_config(page_title="i-grid Hub Dashboard", page_icon="🌐", layout="wide")
-st.title("🌐 i-grid Hub Dashboard")
+st.set_page_config(page_title="Momahub Hub Dashboard", page_icon="🌐", layout="wide")
+st.title("🌐 Momahub Hub Dashboard")
 
 @st.cache_data(ttl=5)
 def fetch_health(hub_url):

@@ -9,7 +9,7 @@ authors = [
   { name="Wen G. Gong", email="wen.gong.research@gmail.com" },
   { name="Digital Duck & Dog Team", email="wen.gong.research@gmail.com" },
 ]
-description = "Momahub (i-grid): Hub-and-spoke distributed AI inference network."
+description = "Momahub (Momahub): Hub-and-spoke distributed AI inference network."
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [

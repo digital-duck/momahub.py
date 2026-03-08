@@ -1,4 +1,4 @@
-"""i-grid Hub FastAPI application."""
+"""Momahub Hub FastAPI application."""
 from __future__ import annotations
 import asyncio
 import json
@@ -76,7 +76,7 @@ def create_app(hub_id: str | None = None, operator_id: str = "duck",
         for t in tasks: t.cancel()
         await db.close()
 
-    app = FastAPI(title="i-grid Hub", version="0.2.0", lifespan=lifespan)
+    app = FastAPI(title="Momahub Hub", version="0.2.0", lifespan=lifespan)
 
     def get_state(request: Request) -> GridState: return request.app.state.grid
     def get_cluster(request: Request) -> ClusterManager: return request.app.state.cluster

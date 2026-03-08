@@ -1,4 +1,4 @@
-"""Shared enumerations for i-grid protocol."""
+"""Shared enumerations for Momahub protocol."""
 from enum import Enum
 
 class ComputeTier(str, Enum):

@@ -95,7 +95,7 @@ tests/         Unit and integration tests
 
 The paper introduces two key ideas:
 
-1. **The Prompt Compiler** — reframing Text2SPL as a full compiler pipeline (front-end NL→SPL, mid-end CTE DAG optimisation, back-end model/VRAM mapping), with SPL as the intermediate representation between human intent and GPU execution. The compiler is self-hosting: it runs on the i-grid it compiles for.
+1. **The Prompt Compiler** — reframing Text2SPL as a full compiler pipeline (front-end NL→SPL, mid-end CTE DAG optimisation, back-end model/VRAM mapping), with SPL as the intermediate representation between human intent and GPU execution. The compiler is self-hosting: it runs on the Momahub it compiles for.
 
 2. **The Distributed Inference Runtime** — Momahub as the runtime layer that abstracts distributed consumer GPUs into a programmable compute surface, analogous to the JVM or the Linux kernel for traditional computing.
 

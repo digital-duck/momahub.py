@@ -1,6 +1,6 @@
 # Cookbook
 
-Ready-to-run recipes demonstrating Momahub i-grid capabilities. Each recipe is self-contained.
+Ready-to-run recipes demonstrating Momahub capabilities. Each recipe is self-contained.
 
 ## Prerequisites
 
@@ -52,7 +52,7 @@ moma run cookbook/01_single_node_hello/hello.spl
 ```
 
 === hello_grid ===
-The i-grid is a novel distributed inference network that enables efficient and scalable machine learning tasks by partitioning a large neural network into smaller, interconnected sub-networks, each running on different devices or nodes within a grid-like structure. By leveraging this decentralized approach, the i-grid allows for massive parallelization of computations, reduced communication overhead, and improved overall performance in complex inference scenarios.
+The Momahub is a novel distributed inference network that enables efficient and scalable machine learning tasks by partitioning a large neural network into smaller, interconnected sub-networks, each running on different devices or nodes within a grid-like structure. By leveraging this decentralized approach, the Momahub allows for massive parallelization of computations, reduced communication overhead, and improved overall performance in complex inference scenarios.
 
 [model=llama3  tokens=41+76  latency=4893ms]
 

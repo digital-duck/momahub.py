@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Recipe 09: Document Pipeline -- PDF -> extract -> grid summarize -> format output.
 
-End-to-end demo combining dd-extract, the i-grid, and dd-format:
+End-to-end demo combining dd-extract, the Momahub, and dd-format:
   1. Extract text from a PDF (local file or URL) using dd-extract
   2. Submit the text to the grid for LLM summarization
   3. Format the summary into HTML, DOCX, or PDF using dd-format

@@ -1,4 +1,4 @@
-"""i-grid protocol schemas."""
+"""Momahub protocol schemas."""
 from igrid.schema.enums import ComputeTier, TaskState, AgentStatus, tier_from_tps
 from igrid.schema.handshake import GPUInfo, JoinRequest, JoinAck, LeaveRequest, LeaveAck
 from igrid.schema.pulse import PulseReport, PulseAck

@@ -1,6 +1,6 @@
 # E2E Test Runner
 
-End-to-end test runner for i-grid. Submits real prompts to a live hub and collects results (prompt, response, latency, tokens, TPS, agent assignment).
+End-to-end test runner for Momahub. Submits real prompts to a live hub and collects results (prompt, response, latency, tokens, TPS, agent assignment).
 
 Works from both **CLI** (`moma test`) and **Streamlit UI** (Test Runner page).
 

@@ -1,4 +1,4 @@
-"""Test runner: submit batches of prompts to an i-grid hub and collect results."""
+"""Test runner: submit batches of prompts to an Momahub hub and collect results."""
 from __future__ import annotations
 import json
 import time

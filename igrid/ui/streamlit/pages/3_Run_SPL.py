@@ -38,7 +38,7 @@ with tab_simple:
 
 with tab_spl:
     st.subheader("Run SPL on the grid")
-    spl_source = st.text_area("SPL source", height=250, value="PROMPT hello_grid\nSELECT\n    SYSTEM_ROLE('You are a helpful assistant.'),\n    GENERATE('Say hello from the i-grid in one sentence.')\nUSING MODEL 'llama3'\nON GRID;")
+    spl_source = st.text_area("SPL source", height=250, value="PROMPT hello_grid\nSELECT\n    SYSTEM_ROLE('You are a helpful assistant.'),\n    GENERATE('Say hello from the Momahub in one sentence.')\nUSING MODEL 'llama3'\nON GRID;")
     params_json = st.text_input("Params (JSON)", value="{}")
     if st.button("Run SPL", key="run_spl"):
         try:

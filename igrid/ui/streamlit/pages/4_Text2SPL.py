@@ -1,5 +1,5 @@
 """
-Text2SPL page: natural language → SPL query, then run on the i-grid.
+Text2SPL page: natural language → SPL query, then run on the Momahub.
 
 Adapted from SPL-flow's Text2SPLNode — uses the hub's Ollama backend
 (or any registered adapter) to do the NL→SPL translation.
@@ -354,7 +354,7 @@ with hint_col:
     )
 
 if run_btn and st.session_state.generated_spl.strip():
-    with st.spinner("Running SPL on the i-grid..."):
+    with st.spinner("Running SPL on the Momahub..."):
         content, err = _run_spl_on_grid(hub_url, st.session_state.generated_spl)
     if err:
         st.error(f"Run error: {err}")

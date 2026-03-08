@@ -4,8 +4,8 @@ WITH BUDGET 1000 tokens
 USING MODEL 'llama3'
 
 SELECT
-    system_role('You are a friendly assistant on the i-grid.')
+    system_role('You are a friendly assistant on the Momahub.')
 
 GENERATE
-    llm('Introduce the i-grid distributed inference network in exactly two sentences.')
+    llm('Introduce the Momahub distributed inference network in exactly two sentences.')
 WITH OUTPUT BUDGET 500 tokens;

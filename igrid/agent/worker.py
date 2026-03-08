@@ -79,7 +79,7 @@ def create_agent_app(agent_id: str | None = None, operator_id: str = "duck",
                 except Exception: pass
         tele.stop(); tele_task.cancel()
 
-    app = FastAPI(title="i-grid Agent", version="0.2.0", lifespan=lifespan)
+    app = FastAPI(title="Momahub Agent", version="0.2.0", lifespan=lifespan)
     app.state.host = "127.0.0.1"; app.state.port = 8100
 
     @app.get("/health")

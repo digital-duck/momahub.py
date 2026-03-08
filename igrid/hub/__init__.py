@@ -1,1 +1,1 @@
-"""i-grid Hub package."""
+"""Momahub Hub package."""

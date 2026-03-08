@@ -1,4 +1,4 @@
-"""IGridAdapter: SPL LLMAdapter that routes inference to the i-grid hub."""
+"""IGridAdapter: SPL LLMAdapter that routes inference to the Momahub hub."""
 from __future__ import annotations
 import asyncio
 import logging

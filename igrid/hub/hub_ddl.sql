@@ -1,4 +1,4 @@
--- momahub_ddl.sql - i-grid Hub schema (SQLite)
+-- momahub_ddl.sql - Momahub Hub schema (SQLite)
 
 PRAGMA journal_mode=WAL;
 
