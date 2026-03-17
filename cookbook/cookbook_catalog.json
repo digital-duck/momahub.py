@@ -1,0 +1,274 @@
+{
+  "_comment": "Momahub Cookbook Catalog — single source of truth for all recipes.",
+  "_schema": {
+    "is_active":       "bool   — included in default batch run (python run_all.py)",
+    "approval_status": "string — new | approved | wip | disabled | rejected",
+    "category":        "string — basics | performance | resilience | application | ai-quality | developer | research | operations | cluster"
+  },
+  "recipes": [
+    {
+      "id":              "01",
+      "name":            "Hello SPL",
+      "description":     "Basic SPL query via grid",
+      "args":            ["moma", "run", "./01_single_node_hello/hello.spl"],
+      "dir":             "01_single_node_hello",
+      "log":             "hello",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "basics"
+    },
+    {
+      "id":              "02",
+      "name":            "Multi-CTE Parallel",
+      "description":     "Parallel multi-CTE queries",
+      "args":            ["moma", "run", "./02_multi_cte_parallel/multi_cte.spl"],
+      "dir":             "02_multi_cte_parallel",
+      "log":             "multi_cte",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "basics"
+    },
+    {
+      "id":              "03",
+      "name":            "Batch Translate",
+      "description":     "Batch translation — 4 languages",
+      "args":            ["python", "./03_batch_translate/translate.py", "--hub", "{hub}", "Hello Momahub"],
+      "dir":             "03_batch_translate",
+      "log":             "translate",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "application"
+    },
+    {
+      "id":              "04",
+      "name":            "Benchmark Models",
+      "description":     "Model benchmark — latency & TPS",
+      "args":            ["python", "./04_benchmark_models/benchmark.py", "--hub", "{hub}"],
+      "dir":             "04_benchmark_models",
+      "log":             "benchmark",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "performance"
+    },
+    {
+      "id":              "05",
+      "name":            "RAG on Grid",
+      "description":     "Retrieval-Augmented Generation on the grid",
+      "args":            ["moma", "run", "./05_rag_on_grid/rag_query.spl"],
+      "dir":             "05_rag_on_grid",
+      "log":             "rag_query",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "application"
+    },
+    {
+      "id":              "06",
+      "name":            "Arxiv Paper Digest",
+      "description":     "Academic paper summarization via arXiv API",
+      "args":            ["python", "./06_arxiv_paper_digest/digest.py", "--hub", "{hub}", "2312.00752"],
+      "dir":             "06_arxiv_paper_digest",
+      "log":             "digest",
+      "is_active":       false,
+      "approval_status": "disabled",
+      "category":        "research"
+    },
+    {
+      "id":              "07",
+      "name":            "Stress Test",
+      "description":     "Stress test — sustained load",
+      "args":            ["python", "./07_stress_test/stress.py", "--hub", "{hub}", "-n", "5"],
+      "dir":             "07_stress_test",
+      "log":             "stress",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "performance"
+    },
+    {
+      "id":              "08",
+      "name":            "Model Arena",
+      "description":     "Model arena — head-to-head comparison",
+      "args":            ["python", "./08_model_arena/arena.py", "--hub", "{hub}", "--prompt", "Explain factorials"],
+      "dir":             "08_model_arena",
+      "log":             "arena",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "ai-quality"
+    },
+    {
+      "id":              "09",
+      "name":            "Doc Pipeline",
+      "description":     "Document processing pipeline",
+      "args":            ["python", "./09_doc_pipeline/pipeline.py", "--hub", "{hub}", "../docs/spl-paper-v3.0.pdf"],
+      "dir":             "09_doc_pipeline",
+      "log":             "pipeline",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "application"
+    },
+    {
+      "id":              "10",
+      "name":            "Chain Relay",
+      "description":     "Chain relay — sequential prompts",
+      "args":            ["python", "./10_chain_relay/chain.py", "--hub", "{hub}", "quantum computing"],
+      "dir":             "10_chain_relay",
+      "log":             "chain",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "application"
+    },
+    {
+      "id":              "13",
+      "name":            "Multi-Agent Throughput",
+      "description":     "Multi-agent throughput benchmark",
+      "args":            ["python", "./13_multi_agent_throughput/throughput.py", "--hub", "{hub}"],
+      "dir":             "13_multi_agent_throughput",
+      "log":             "throughput",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "performance"
+    },
+    {
+      "id":              "18",
+      "name":            "Smart Router",
+      "description":     "Smart router — query classification",
+      "args":            ["python", "./18_smart_router/smart_router.py", "--hub", "{hub}"],
+      "dir":             "18_smart_router",
+      "log":             "smart_router",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "application"
+    },
+    {
+      "id":              "19",
+      "name":            "Privacy Chunk Demo",
+      "description":     "Privacy chunk — distributed doc analysis",
+      "args":            ["python", "./19_privacy_chunk_demo/privacy_demo.py", "--hub", "{hub}"],
+      "dir":             "19_privacy_chunk_demo",
+      "log":             "privacy_demo",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "application"
+    },
+    {
+      "id":              "24",
+      "name":            "SPL Compiler Pipeline",
+      "description":     "SPL compiler pipeline",
+      "args":            ["python", "./24_spl_compiler_pipeline/compiler_demo.py", "--hub", "{hub}"],
+      "dir":             "24_spl_compiler_pipeline",
+      "log":             "compiler_demo",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "basics"
+    },
+    {
+      "id":              "25",
+      "name":            "Model Diversity",
+      "description":     "Model diversity — all models probed",
+      "args":            ["python", "./25_model_diversity/model_diversity.py", "--hub", "{hub}", "--probe"],
+      "dir":             "25_model_diversity",
+      "log":             "model_diversity",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "ai-quality"
+    },
+    {
+      "id":              "26",
+      "name":            "Code Guardian",
+      "description":     "Code guardian — parallel security reviews",
+      "args":            ["python", "./26_code_guardian/guardian.py", "--hub", "{hub}", "./26_code_guardian/guardian.py"],
+      "dir":             "26_code_guardian",
+      "log":             "guardian",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "developer"
+    },
+    {
+      "id":              "27",
+      "name":            "Model Health Check",
+      "description":     "Model health check — load & TPS",
+      "args":            ["python", "./27_model_health/model_health.py", "--hub", "{hub}"],
+      "dir":             "27_model_health",
+      "log":             "model_health",
+      "is_active":       false,
+      "approval_status": "new",
+      "category":        "operations"
+    },
+    {
+      "id":              "28",
+      "name":            "Federated Search Grid",
+      "description":     "Federated search — gathering & synthesis",
+      "args":            ["python", "./28_federated_search/search.py", "--hub", "{hub}", "recent breakthroughs in AI"],
+      "dir":             "28_federated_search",
+      "log":             "search",
+      "is_active":       false,
+      "approval_status": "new",
+      "category":        "operations"
+    },
+    {
+      "id":              "29",
+      "name":            "Model Fingerprinting",
+      "description":     "Model fingerprinting — cross-agent consistency",
+      "args":            ["python", "./29_model_fingerprinting/model_fingerprinting.py", "--hub", "{hub}"],
+      "dir":             "29_model_fingerprinting",
+      "log":             "model_fingerprinting",
+      "is_active":       false,
+      "approval_status": "new",
+      "category":        "ai-quality"
+    },
+    {
+      "id":              "30",
+      "name":            "Academic Paper Pipeline",
+      "description":     "Academic paper pipeline — 4 parallel stages + synthesis",
+      "args":            ["python", "./30_academic_paper_pipeline/academic_pipeline.py", "--hub", "{hub}"],
+      "dir":             "30_academic_paper_pipeline",
+      "log":             "academic_pipeline",
+      "is_active":       false,
+      "approval_status": "new",
+      "category":        "research"
+    },
+    {
+      "id":              "33",
+      "name":            "Micro-Learning Grid",
+      "description":     "Micro-learning — textbook generation",
+      "args":            ["python", "./33_micro_learning/learning.py", "--hub", "{hub}", "--subject", "Gradient Descent"],
+      "dir":             "33_micro_learning",
+      "log":             "learning",
+      "is_active":       false,
+      "approval_status": "new",
+      "category":        "research"
+    },
+    {
+      "id":              "34",
+      "name":            "Junior Dev Assistant",
+      "description":     "Junior dev assistant — code review, refactoring & docs",
+      "args":            ["python", "./34_junior_developer_assistant/junior_dev_assistant.py", "--hub", "{hub}"],
+      "dir":             "34_junior_developer_assistant",
+      "log":             "junior_dev_assistant",
+      "is_active":       false,
+      "approval_status": "new",
+      "category":        "developer"
+    },
+    {
+      "id":              "80",
+      "name":            "Fibonacci Sequence",
+      "description":     "Simple Click CLI example — Fibonacci numbers less than N",
+      "args":            ["python", "./80_fibonacci_seq/fib_seq.py", "--n", "50"],
+      "dir":             "80_fibonacci_seq",
+      "log":             "fib_seq",
+      "is_active":       true,
+      "approval_status": "approved",
+      "category":        "basics"
+    },
+    {
+      "id":              "90",
+      "name":            "Two-Hub Cluster",
+      "description":     "Two-hub cluster federation",
+      "args":            ["python", "./90_two_hub_cluster/setup.py", "--hub", "{hub}"],
+      "dir":             "90_two_hub_cluster",
+      "log":             "cluster",
+      "is_active":       false,
+      "approval_status": "disabled",
+      "category":        "cluster"
+    }
+  ]
+}

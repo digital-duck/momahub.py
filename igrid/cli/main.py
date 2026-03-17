@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio, json, socket, time, uuid
 from typing import Optional
 import httpx, typer, uvicorn
-from igrid.cli.config import load_config, save_config, show_config
+from igrid.cli.config import load_config, save_config, show_config, hub_url
 
 
 def _detect_lan_ip() -> str:
@@ -29,7 +29,7 @@ app.add_typer(peer_app, name="peer")
 
 @hub_app.command("up")
 def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
-           hub_url: str = typer.Option(""), db: str = typer.Option(""),
+           hub_url_opt: str = typer.Option("", "--hub-url"), db: str = typer.Option(""),
            operator_id: str = typer.Option(""), api_key: str = typer.Option(""),
            admin: bool = typer.Option(False, "--admin", help="Enable admin mode: agents require verification before receiving tasks"),
            max_concurrent: int = typer.Option(3, "--max-concurrent", help="Max concurrent tasks per agent"),
@@ -41,9 +41,9 @@ def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
     cfg = load_config()
     from igrid.hub.app import create_app
     fastapi_app = create_app(operator_id=operator_id or cfg["operator_id"],
-                              db_path=db or cfg["db_path"],
-                              hub_url=hub_url or f"http://{host}:{port}",
-                              api_key=api_key or cfg["api_key"],
+                              db_path=db or cfg["hub"]["db_path"],
+                              hub_url=hub_url_opt or f"http://{host}:{port}",
+                              api_key=api_key or cfg["hub"]["api_key"],
                               admin_mode=admin,
                               max_concurrent_tasks=max_concurrent,
                               max_prompt_chars=max_prompt_chars,
@@ -51,7 +51,7 @@ def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
                               rate_limit=rate_limit,
                               burst_threshold=burst_threshold)
     lan_ip = _detect_lan_ip()
-    actual_url = hub_url or f"http://{lan_ip}:{port}"
+    actual_url = hub_url_opt or f"http://{lan_ip}:{port}"
     mode_label = "ADMIN (agents require verification)" if admin else "OPEN (any agent can join)"
     typer.echo(f"Starting hub on {host}:{port}")
     typer.echo(f"  Mode: {mode_label}")
@@ -68,9 +68,9 @@ def hub_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000),
 def hub_down(): typer.echo("Use Ctrl+C or your process manager to stop the hub.")
 
 @hub_app.command("pending")
-def hub_pending(hub_url: str = typer.Option("")):
+def hub_pending(hub_url_opt: str = typer.Option("", "--hub-url")):
     """List agents awaiting approval."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = (hub_url_opt or hub_url(cfg))
     try:
         agents = httpx.get(f"{url}/agents/pending", timeout=5.0).json().get("agents", [])
         if not agents: typer.echo("No agents pending approval."); return
@@ -82,9 +82,9 @@ def hub_pending(hub_url: str = typer.Option("")):
 
 @hub_app.command("approve")
 def hub_approve(agent_id: str = typer.Argument(..., help="Agent ID to approve"),
-                hub_url: str = typer.Option("")):
+                hub_url_opt: str = typer.Option("", "--hub-url")):
     """Approve a pending agent."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = (hub_url_opt or hub_url(cfg))
     try:
         resp = httpx.post(f"{url}/agents/{agent_id}/approve", timeout=5.0)
         resp.raise_for_status()
@@ -95,9 +95,9 @@ def hub_approve(agent_id: str = typer.Argument(..., help="Agent ID to approve"),
 
 @hub_app.command("reject")
 def hub_reject(agent_id: str = typer.Argument(..., help="Agent ID to reject"),
-               hub_url: str = typer.Option("")):
+               hub_url_opt: str = typer.Option("", "--hub-url")):
     """Reject/ban a pending agent."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = (hub_url_opt or hub_url(cfg))
     try:
         resp = httpx.post(f"{url}/agents/{agent_id}/reject", timeout=5.0)
         resp.raise_for_status()
@@ -114,16 +114,16 @@ def agent_up(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8100)
              pull: bool = typer.Option(False, "--pull", help="Use SSE pull mode (WAN-safe, no inbound ports needed)")):
     """Start the agent node."""
     cfg = load_config()
-    hub_urls = [u.strip() for u in join.split(",") if u.strip()] if join else cfg["hub_urls"]
-    agent_id = cfg.get("agent_id") or str(uuid.uuid4())
+    hub_urls = [u.strip() for u in join.split(",") if u.strip()] if join else cfg["hub"]["urls"]
+    agent_id = cfg["agent"]["id"] or str(uuid.uuid4())
     from igrid.agent.worker import create_agent_app
     agent_app_instance = create_agent_app(agent_id=agent_id, operator_id=operator_id or cfg["operator_id"],
-                                          hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"],
-                                          api_key=api_key or cfg["api_key"], pull_mode=pull,
-                                          agent_name=name or cfg.get("agent_name", ""))
+                                          hub_urls=hub_urls, ollama_url=ollama_url or cfg["agent"]["ollama_url"],
+                                          api_key=api_key or cfg["hub"]["api_key"], pull_mode=pull,
+                                          agent_name=name or cfg["agent"]["name"])
     agent_app_instance.state.host = host if host != "0.0.0.0" else "127.0.0.1"
     agent_app_instance.state.port = port
-    cfg["agent_id"] = agent_id; cfg["hub_urls"] = hub_urls; save_config(cfg)
+    cfg["agent"]["id"] = agent_id; cfg["hub"]["urls"] = hub_urls; save_config(cfg)
     mode = "PULL (SSE)" if pull else "PUSH (HTTP)"
     typer.echo(f"Starting agent on {host}:{port}  mode={mode}  hubs={hub_urls}")
     uvicorn.run(agent_app_instance, host=host, port=port, log_level="info")
@@ -136,29 +136,29 @@ def join_grid(hub_urls: list[str] = typer.Argument(...),
               pull: bool = typer.Option(False, "--pull", help="Use SSE pull mode (WAN-safe, no inbound ports needed)")):
     """Start an agent and join hub(s)."""
     cfg = load_config()
-    agent_id = cfg.get("agent_id") or str(uuid.uuid4())
+    agent_id = cfg["agent"]["id"] or str(uuid.uuid4())
     from igrid.agent.worker import create_agent_app
     agent_app_instance = create_agent_app(agent_id=agent_id, operator_id=operator_id or cfg["operator_id"],
-                                          hub_urls=hub_urls, ollama_url=ollama_url or cfg["ollama_url"],
+                                          hub_urls=hub_urls, ollama_url=ollama_url or cfg["agent"]["ollama_url"],
                                           pull_mode=pull,
-                                          agent_name=name or cfg.get("agent_name", ""))
+                                          agent_name=name or cfg["agent"]["name"])
     agent_app_instance.state.host = host if host != "0.0.0.0" else "127.0.0.1"
     agent_app_instance.state.port = port
-    cfg["agent_id"] = agent_id; cfg["hub_urls"] = hub_urls; save_config(cfg)
+    cfg["agent"]["id"] = agent_id; cfg["hub"]["urls"] = list(hub_urls); save_config(cfg)
     mode = "PULL (SSE)" if pull else "PUSH (HTTP)"
     typer.echo(f"Joining grid: mode={mode}  hubs={hub_urls}")
     uvicorn.run(agent_app_instance, host=host, port=port, log_level="info")
 
 @app.command("down")
-def down(hub_url: str = typer.Option(""), agent_id: str = typer.Option("", help="Agent ID (default: from config)")):
+def down(hub_url_opt: str = typer.Option("", "--hub-url"), agent_id: str = typer.Option("", help="Agent ID (default: from config)")):
     """Deregister this agent from all hubs and shut down gracefully."""
     cfg = load_config()
-    aid = agent_id or cfg.get("agent_id", "")
+    aid = agent_id or cfg["agent"]["id"]
     if not aid:
         typer.echo("No agent_id found. Use --agent-id or run 'moma join' first.", err=True)
         raise typer.Exit(1)
     oid = cfg["operator_id"]
-    hub_urls = [hub_url.rstrip("/")] if hub_url else [u.rstrip("/") for u in cfg["hub_urls"]]
+    hub_urls = [hub_url_opt.rstrip("/")] if hub_url_opt else [u.rstrip("/") for u in cfg["hub"]["urls"]]
     ok_count = 0
     for url in hub_urls:
         try:
@@ -169,24 +169,24 @@ def down(hub_url: str = typer.Option(""), agent_id: str = typer.Option("", help=
         except Exception as exc:
             typer.echo(f"  Failed to deregister from {url}: {exc}", err=True)
     if ok_count:
-        cfg["agent_id"] = ""; save_config(cfg)
+        cfg["agent"]["id"] = ""; save_config(cfg)
         typer.echo(f"Agent {aid} is down. ({ok_count}/{len(hub_urls)} hubs)")
     else:
         typer.echo("Could not reach any hub.", err=True); raise typer.Exit(1)
 
 @app.command("status")
-def status(hub_url: str = typer.Option("")):
+def status(hub_url_opt: str = typer.Option("", "--hub-url")):
     """Show hub health."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         data = httpx.get(f"{url}/health", timeout=5.0).json()
         typer.echo(f"Hub: {data.get('hub_id')}  Status: {data.get('status')}  Agents: {data.get('agents_online')}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("agents")
-def list_agents(hub_url: str = typer.Option("")):
+def list_agents(hub_url_opt: str = typer.Option("", "--hub-url")):
     """List online agents."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         agents = httpx.get(f"{url}/agents", timeout=5.0).json().get("agents", [])
         if not agents: typer.echo("No agents online."); return
@@ -197,10 +197,10 @@ def list_agents(hub_url: str = typer.Option("")):
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("tasks")
-def list_tasks(hub_url: str = typer.Option(""), limit: int = typer.Option(20),
+def list_tasks(hub_url_opt: str = typer.Option("", "--hub-url"), limit: int = typer.Option(20),
                detail: bool = typer.Option(False, "--detail", "-d", help="Show latency, tokens, agent, and response")):
     """List recent tasks."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         tasks = httpx.get(f"{url}/tasks?limit={limit}", timeout=5.0).json().get("tasks", [])
         if not tasks: typer.echo("No tasks."); return
@@ -223,20 +223,17 @@ def list_tasks(hub_url: str = typer.Option(""), limit: int = typer.Option(20),
             typer.echo(f"{'TASK_ID':<38} {'STATE':<12} {'MODEL':<20} {'AGENT':<16} {'SUBMITTED':<10}")
             typer.echo("-" * 98)
             for t in tasks:
-                # Format created_at (ISO 8601) to HH:MM:SS
                 created = t.get("created_at", "")
                 ts_str = created.split("T")[-1][:8] if "T" in created else created[:8]
-                
                 agent_display = t.get("agent_name") or (f"..{t['agent_id'][-12:]}" if t.get("agent_id") else "-")
-                
                 typer.echo(f"{t['task_id']:<38} {t['state']:<12} {t['model']:<20} {agent_display:<16} {ts_str:<10}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("logs")
-def logs(hub_url: str = typer.Option(""), follow: bool = typer.Option(False, "--follow", "-f"),
+def logs(hub_url_opt: str = typer.Option("", "--hub-url"), follow: bool = typer.Option(False, "--follow", "-f"),
          interval: float = typer.Option(5.0), limit: int = typer.Option(20)):
     """Show recent pulse log entries."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     seen_ids: set = set()
     try:
         while True:
@@ -253,10 +250,10 @@ def logs(hub_url: str = typer.Option(""), follow: bool = typer.Option(False, "--
 
 @app.command("submit")
 def submit_task(prompt: str = typer.Argument(...), model: str = typer.Option("llama3"),
-                hub_url: str = typer.Option(""), max_tokens: int = typer.Option(1024),
+                hub_url_opt: str = typer.Option("", "--hub-url"), max_tokens: int = typer.Option(1024),
                 wait: bool = typer.Option(True)):
     """Submit a single inference task."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     task_id = str(uuid.uuid4())
     try:
         httpx.post(f"{url}/tasks", json={"task_id":task_id,"model":model,"prompt":prompt,"max_tokens":max_tokens}, timeout=10.0).raise_for_status()
@@ -275,29 +272,29 @@ def submit_task(prompt: str = typer.Argument(...), model: str = typer.Option("ll
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("run")
-def run_spl(spl_file: str = typer.Argument(...), hub_url: str = typer.Option(""),
+def run_spl(spl_file: str = typer.Argument(...), hub_url_opt: str = typer.Option("", "--hub-url"),
             params: Optional[str] = typer.Option(None)):
     """Execute an SPL file on the grid."""
     cfg = load_config()
     try:
         from igrid.spl.runner import run_spl_file
-        asyncio.run(run_spl_file(spl_file, hub_url or cfg["hub_urls"][0], json.loads(params) if params else {}))
+        asyncio.run(run_spl_file(spl_file, hub_url_opt or hub_url(cfg), json.loads(params) if params else {}))
     except ImportError: typer.echo("SPL package required.", err=True); raise typer.Exit(1)
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @peer_app.command("add")
-def peer_add(peer_url: str = typer.Argument(...), hub_url: str = typer.Option("")):
+def peer_add(peer_url: str = typer.Argument(...), hub_url_opt: str = typer.Option("", "--hub-url")):
     """Add a peer hub to the cluster."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         data = httpx.post(f"{url}/cluster/peers", json={"url": peer_url}, timeout=10.0).json()
         typer.echo(f"Peer {data.get('hub_id')} {'added' if data.get('accepted') else 'rejected: ' + data.get('message','')}")
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @peer_app.command("list")
-def peer_list(hub_url: str = typer.Option("")):
+def peer_list(hub_url_opt: str = typer.Option("", "--hub-url")):
     """List peer hubs."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         data = httpx.get(f"{url}/cluster/status", timeout=5.0).json()
         typer.echo(f"This hub: {data.get('this_hub_id')}")
@@ -307,9 +304,9 @@ def peer_list(hub_url: str = typer.Option("")):
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("rewards")
-def rewards(hub_url: str = typer.Option("")):
+def rewards(hub_url_opt: str = typer.Option("", "--hub-url")):
     """Show reward summary."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         rows = httpx.get(f"{url}/rewards", timeout=5.0).json().get("summary", [])
         if not rows: typer.echo("No rewards yet."); return
@@ -318,9 +315,9 @@ def rewards(hub_url: str = typer.Option("")):
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("watchlist")
-def watchlist(hub_url: str = typer.Option("")):
+def watchlist(hub_url_opt: str = typer.Option("", "--hub-url")):
     """Show watchlist entries (suspended/blocked IPs, operators, agents)."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         entries = httpx.get(f"{url}/watchlist", timeout=5.0).json().get("entries", [])
         if not entries: typer.echo("Watchlist is empty."); return
@@ -332,9 +329,9 @@ def watchlist(hub_url: str = typer.Option("")):
 
 @app.command("unblock")
 def unblock(entity_id: str = typer.Argument(..., help="IP, operator_id, or agent_id to unblock"),
-            hub_url: str = typer.Option("")):
+            hub_url_opt: str = typer.Option("", "--hub-url")):
     """Remove an entity from the watchlist."""
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         resp = httpx.delete(f"{url}/watchlist/{entity_id}", timeout=5.0)
         resp.raise_for_status()
@@ -346,13 +343,13 @@ def unblock(entity_id: str = typer.Argument(..., help="IP, operator_id, or agent
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("export")
-def export_results(hub_url: str = typer.Option(""),
+def export_results(hub_url_opt: str = typer.Option("", "--hub-url"),
                    output: str = typer.Option("", "--output", "-o", help="Output file path (default: results-<hub_id>.json)"),
                    label: str = typer.Option("", "--label", "-l", help="Label for this test run (e.g. 'hub-on-machine-A')"),
                    limit: int = typer.Option(500)):
     """Export completed task results to a JSON file for offline analysis."""
     from datetime import datetime
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         health = httpx.get(f"{url}/health", timeout=5.0).json()
         hub_id = health.get("hub_id", "unknown")
@@ -376,7 +373,7 @@ def export_results(hub_url: str = typer.Option(""),
     except Exception as exc: typer.echo(f"Error: {exc}", err=True); raise typer.Exit(1)
 
 @app.command("test")
-def test_run(hub_url: str = typer.Option(""),
+def test_run(hub_url_opt: str = typer.Option("", "--hub-url"),
              prompts_file: str = typer.Option("", "--prompts", "-p", help="Path to prompts JSON file (default: tests/lan/prompts.json)"),
              category: Optional[str] = typer.Option(None, "--category", "-c", help="Run only this category (default: all)"),
              concurrency: int = typer.Option(1, "--concurrency", "-j", help="Parallel task submissions"),
@@ -387,7 +384,7 @@ def test_run(hub_url: str = typer.Option(""),
              list_categories: bool = typer.Option(False, "--list", help="List available categories and exit")):
     """Run test prompts against the grid and report results."""
     from tests.e2e.runner import load_prompts, run_categories
-    cfg = load_config(); url = (hub_url or cfg["hub_urls"][0]).rstrip("/")
+    cfg = load_config(); url = hub_url_opt or hub_url(cfg)
     try:
         prompts_dict = load_prompts(prompts_file or None)
     except FileNotFoundError:
@@ -427,13 +424,26 @@ def test_run(hub_url: str = typer.Option(""),
 
 @app.command("config")
 def config_cmd(set_key: Optional[str] = typer.Option(None, "--set"), show: bool = typer.Option(True)):
-    """View or update ~/.igrid/config.yaml."""
+    """View or update ~/.igrid/config.yaml.
+
+    Use dotted paths for nested keys: --set hub.port=9000  --set agent.name=duck
+    """
     if set_key:
-        if "=" not in set_key: typer.echo("Use --set key=value", err=True); raise typer.Exit(1)
-        k, v = set_key.split("=", 1); cfg = load_config(); cfg[k.strip()] = v.strip(); save_config(cfg)
-        typer.echo(f"Set {k.strip()} = {v.strip()}")
+        if "=" not in set_key: typer.echo("Use --set key=value or --set section.key=value", err=True); raise typer.Exit(1)
+        path, v = set_key.split("=", 1)
+        parts = [p.strip() for p in path.split(".")]
+        cfg = load_config()
+        node = cfg
+        for p in parts[:-1]:
+            if p not in node or not isinstance(node[p], dict):
+                node[p] = {}
+            node = node[p]
+        node[parts[-1]] = v.strip()
+        save_config(cfg)
+        typer.echo(f"Set {path.strip()} = {v.strip()}")
     if show:
-        for k, v in show_config().items(): typer.echo(f"  {k}: {v}")
+        import yaml as _yaml
+        typer.echo(_yaml.dump(show_config(), default_flow_style=False).rstrip())
 
 if __name__ == "__main__":
     app()

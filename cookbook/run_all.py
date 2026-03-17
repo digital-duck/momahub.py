@@ -1,64 +1,228 @@
 #!/usr/bin/env python3
-import subprocess
-import datetime
+"""run_all.py — Momahub Cookbook batch runner.
+
+Recipes are defined in cookbook/cookbook_catalog.json — edit that file to
+add, remove, or update recipes without touching Python code.
+
+Usage:
+    python cookbook/run_all.py                           # run all active recipes
+    python cookbook/run_all.py --hub http://host:8000    # custom hub
+    python cookbook/run_all.py --ids 04,08,13            # run specific recipes by ID
+    python cookbook/run_all.py --list                    # brief recipe list
+    python cookbook/run_all.py --catalog                 # full catalog table
+    python cookbook/run_all.py --catalog --category performance
+    python cookbook/run_all.py --catalog --status new
+"""
+
+import argparse
+import json
 import os
+import subprocess
 import sys
+from datetime import datetime
+from pathlib import Path
 
-# Recipe metadata: id, display name, command, directory for log, log filename base
-RECIPES = [
-    {"id": "01", "name": "Hello SPL", "cmd": "moma run ./01_single_node_hello/hello.spl", "dir": "01_single_node_hello", "log": "hello"},
-    {"id": "02", "name": "Multi-CTE Parallel", "cmd": "moma run ./02_multi_cte_parallel/multi_cte.spl", "dir": "02_multi_cte_parallel", "log": "multi_cte"},
-    {"id": "03", "name": "Batch Translate", "cmd": "python ./03_batch_translate/translate.py 'Hello Momahub'", "dir": "03_batch_translate", "log": "translate"},
-    {"id": "04", "name": "Benchmark Models", "cmd": "python ./04_benchmark_models/benchmark.py", "dir": "04_benchmark_models", "log": "benchmark"},
-    {"id": "05", "name": "RAG on Grid", "cmd": "moma run ./05_rag_on_grid/rag_query.spl", "dir": "05_rag_on_grid", "log": "rag_query"},
-    {"id": "06", "name": "Arxiv Paper Digest", "cmd": "python ./06_arxiv_paper_digest/digest.py 2312.00752", "dir": "06_arxiv_paper_digest", "log": "digest"},
-    {"id": "07", "name": "Stress Test", "cmd": "python ./07_stress_test/stress.py -n 5", "dir": "07_stress_test", "log": "stress"},
-    {"id": "08", "name": "Model Arena", "cmd": "python ./08_model_arena/arena.py --prompt 'Explain factorials'", "dir": "08_model_arena", "log": "arena"},
-    {"id": "09", "name": "Doc Pipeline", "cmd": "python ./09_doc_pipeline/pipeline.py ../docs/spl-paper-v3.0.pdf", "dir": "09_doc_pipeline", "log": "pipeline"},
-    {"id": "10", "name": "Chain Relay", "cmd": "python ./10_chain_relay/chain.py 'quantum computing'", "dir": "10_chain_relay", "log": "chain"},
-    {"id": "13", "name": "Throughput Scaling", "cmd": "python ./13_multi_agent_throughput/throughput.py", "dir": "13_multi_agent_throughput", "log": "throughput"},
-    {"id": "18", "name": "Smart Router", "cmd": "python ./18_smart_router/smart_router.py", "dir": "18_smart_router", "log": "smart_router"},
-    {"id": "19", "name": "Privacy Chunk Demo", "cmd": "python ./19_privacy_chunk_demo/privacy_demo.py", "dir": "19_privacy_chunk_demo", "log": "privacy_demo"},
-    {"id": "24", "name": "Compiler Pipeline", "cmd": "python ./24_spl_compiler_pipeline/compiler_demo.py", "dir": "24_spl_compiler_pipeline", "log": "compiler_demo"},
-    {"id": "26", "name": "Code Guardian", "cmd": "python ./26_code_guardian/guardian.py ./26_code_guardian/guardian.py", "dir": "26_code_guardian", "log": "guardian"},
-]
+COOKBOOK_DIR = Path(__file__).resolve().parent
 
-def run_all():
-    start_time = datetime.datetime.now()
-    print(f"=== Momahub Cookbook Batch Run Start: {start_time.strftime('%Y-%m-%d %H:%M:%S')} ===")
-    
-    # Ensure we are in the cookbook directory
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+# Approval status values
+STATUS_APPROVED = "approved"
+STATUS_NEW      = "new"
+STATUS_WIP      = "wip"
+STATUS_DISABLED = "disabled"
+STATUS_REJECTED = "rejected"
 
-    for recipe in RECIPES:
-        ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        log_path = os.path.join(recipe["dir"], f"{recipe['log']}_{ts}.log")
-        
-        print(f"\n[{recipe['id']}] Running {recipe['name']}...")
-        print(f"    Command: {recipe['cmd']}")
-        print(f"    Logging to: {log_path}")
-        
-        # Run process, redirecting stderr to stdout, and capture output
+# Status markers (visual indicators)
+MARKERS = {
+    "active":         "✅",
+    STATUS_NEW:       "🆕",
+    STATUS_WIP:       "🔧",
+    STATUS_DISABLED:  "⏸ ",
+    STATUS_REJECTED:  "❌",
+}
+
+
+def load_catalog() -> list[dict]:
+    path = COOKBOOK_DIR / "cookbook_catalog.json"
+    with open(path) as f:
+        data = json.load(f)
+    return data["recipes"]
+
+
+def default_hub_url() -> str:
+    config_path = Path.home() / ".igrid" / "config.yaml"
+    if config_path.exists():
         try:
-            with open(log_path, 'w') as log_file:
-                # Use subprocess.Popen to stream to both terminal and file (simulating 'tee')
-                process = subprocess.Popen(recipe["cmd"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-                
-                for line in process.stdout:
-                    sys.stdout.write(line)
-                    log_file.write(line)
-                
-                process.wait()
-                if process.returncode == 0:
-                    print(f"    Result: SUCCESS")
-                else:
-                    print(f"    Result: FAILED (Exit Code: {process.returncode})")
-                    
-        except Exception as e:
-            print(f"    Result: ERROR ({str(e)})")
+            import yaml
+            with open(config_path) as f:
+                cfg = yaml.safe_load(f) or {}
+            hub = cfg.get("hub", {})
+            urls = hub.get("urls", [])
+            if urls:
+                return urls[0].rstrip("/")
+            port = hub.get("port")
+            if port:
+                return f"http://localhost:{port}"
+        except Exception:
+            pass
+    return "http://localhost:8000"
 
-    end_time = datetime.datetime.now()
-    print(f"\n=== Batch Run Complete: {end_time.strftime('%Y-%m-%d %H:%M:%S')} (Duration: {end_time - start_time}) ===")
+
+def apply_filters(recipes: list[dict], cat_filter: str, status_filter: str) -> list[dict]:
+    out = []
+    for r in recipes:
+        if cat_filter and r.get("category") != cat_filter:
+            continue
+        if status_filter and r.get("approval_status") != status_filter:
+            continue
+        out.append(r)
+    return out
+
+
+def status_marker(r: dict) -> str:
+    if r.get("is_active"):
+        return MARKERS["active"]
+    return MARKERS.get(r.get("approval_status", ""), "  ")
+
+
+def print_list(recipes: list[dict], cat_filter: str, status_filter: str) -> None:
+    filtered = apply_filters(recipes, cat_filter, status_filter)
+    label = f" (category={cat_filter!r} status={status_filter!r})" if (cat_filter or status_filter) else ""
+    print(f"Momahub Cookbook — {len(filtered)} recipes{label}")
+    for r in filtered:
+        print(f"  {r['id']:<4}  {status_marker(r)}  {r['name']:<28}  {r.get('approval_status',''):<12}  {r.get('category',''):<14}  {r.get('description','')}")
+
+
+def print_catalog(recipes: list[dict], cat_filter: str, status_filter: str) -> None:
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filtered = apply_filters(recipes, cat_filter, status_filter)
+
+    counts: dict[str, int] = {}
+    for r in recipes:
+        if r.get("is_active"):
+            counts["active"] = counts.get("active", 0) + 1
+        status = r.get("approval_status", "")
+        counts[status] = counts.get(status, 0) + 1
+
+    print(f"=== Momahub Cookbook Catalog — {now} ===")
+    if cat_filter or status_filter:
+        print(f"    Filter: category={cat_filter!r}  status={status_filter!r}  → {len(filtered)}/{len(recipes)} recipes\n")
+    else:
+        print(f"    Total: {len(recipes)} recipes  |  {counts.get('active', 0)} active  |  {counts.get(STATUS_NEW, 0)} new  |  {counts.get(STATUS_DISABLED, 0)} disabled\n")
+
+    print(f"{'ID':<4}  {'':2}  {'Name':<28}  {'Category':<14}  {'Status':<12}  Description")
+    print("-" * 100)
+    for r in filtered:
+        print(f"{r['id']:<4}  {status_marker(r)}  {r['name']:<28}  {r.get('category',''):<14}  {r.get('approval_status',''):<12}  {r.get('description','')}")
+
+    print()
+    print("Markers: ✅ active  🆕 new  🔧 wip  ⏸  disabled  ❌ rejected\n")
+    print("Run active recipes:           python cookbook/run_all.py")
+    print("Run specific recipe:          python cookbook/run_all.py --ids 04,13")
+    print("Run any (incl. inactive):     python cookbook/run_all.py --ids 29")
+    print("Filter catalog by category:   python cookbook/run_all.py --catalog --category performance")
+    print("Filter catalog by status:     python cookbook/run_all.py --catalog --status new")
+
+    cat_counts: dict[str, int] = {}
+    for r in recipes:
+        c = r.get("category", "")
+        cat_counts[c] = cat_counts.get(c, 0) + 1
+    parts = [f"{c}({n})" for c, n in sorted(cat_counts.items())]
+    print(f"\nCategories: {'  '.join(parts)}")
+
+
+def run_recipe(args: list[str], log_path: Path, cwd: Path) -> tuple[bool, float]:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    start = datetime.now()
+    try:
+        with open(log_path, "w") as log_file:
+            process = subprocess.Popen(
+                args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                text=True, cwd=str(cwd),
+            )
+            for line in (process.stdout or []):
+                sys.stdout.write(f"     | {line}")
+                log_file.write(line)
+            process.wait()
+            ok = process.returncode == 0
+    except Exception as e:
+        print(f"     | ERROR: {e}")
+        ok = False
+    elapsed = (datetime.now() - start).total_seconds()
+    return ok, elapsed
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Momahub Cookbook batch runner")
+    parser.add_argument("--hub", default=None, help="Hub URL (default: from ~/.igrid/config.yaml)")
+    parser.add_argument("--ids", default="", help="Comma-separated recipe IDs to run")
+    parser.add_argument("--list", action="store_true", dest="list_recipes", help="List recipes and exit")
+    parser.add_argument("--catalog", action="store_true", help="Print full catalog table and exit")
+    parser.add_argument("--category", default="", help="Filter by category (use with --catalog or --list)")
+    parser.add_argument("--status", default="", help="Filter by approval_status (use with --catalog or --list)")
+    args = parser.parse_args()
+
+    hub_url = (args.hub or default_hub_url()).rstrip("/")
+    recipes = load_catalog()
+
+    if args.catalog:
+        print_catalog(recipes, args.category, args.status)
+        return
+
+    if args.list_recipes:
+        print_list(recipes, args.category, args.status)
+        return
+
+    # Build ID filter set
+    id_filter: set[str] = set()
+    if args.ids:
+        id_filter = {i.strip() for i in args.ids.split(",")}
+
+    start_all = datetime.now()
+    print(f"=== Momahub Cookbook Batch Run — {start_all.strftime('%Y-%m-%d %H:%M:%S')} ===")
+    print(f"    Hub: {hub_url}\n")
+
+    os.chdir(COOKBOOK_DIR)
+
+    results: list[dict] = []
+
+    for recipe in recipes:
+        rid = recipe["id"]
+
+        if id_filter:
+            if rid not in id_filter:
+                continue
+        elif not recipe.get("is_active"):
+            print(f"[{rid}] {recipe['name']}  (skipping — {recipe.get('approval_status','').upper()})\n")
+            continue
+
+        # Substitute {hub} placeholder in args
+        cmd_args = [a.replace("{hub}", hub_url) for a in recipe["args"]]
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_path = COOKBOOK_DIR / recipe["dir"] / f"{recipe['log']}_{ts}.log"
+
+        print(f"[{rid}] {recipe['name']}")
+        print(f"     cmd : {' '.join(cmd_args)}")
+        print(f"     log : {log_path}")
+
+        ok, elapsed = run_recipe(cmd_args, log_path, COOKBOOK_DIR)
+        status = "SUCCESS" if ok else "FAILED"
+        print(f"     result: {status}  ({elapsed:.1f}s)\n")
+
+        results.append({"id": rid, "name": recipe["name"], "ok": ok, "elapsed": elapsed})
+
+    # Summary table
+    total = len(results)
+    passed = sum(1 for r in results if r["ok"])
+    total_elapsed = (datetime.now() - start_all).total_seconds()
+    print(f"=== Summary: {passed}/{total} Success  (total {total_elapsed:.1f}s) ===\n")
+
+    print(f"{'ID':<4}  {'Recipe':<28}  {'Status':<8}  {'Elapsed':>8}")
+    print("-" * 56)
+    for r in results:
+        status = "OK" if r["ok"] else "FAILED"
+        print(f"{r['id']:<4}  {r['name']:<28}  {status:<8}  {r['elapsed']:>7.1f}s")
+    print()
+
 
 if __name__ == "__main__":
-    run_all()
+    main()

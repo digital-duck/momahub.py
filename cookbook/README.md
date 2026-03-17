@@ -43,6 +43,14 @@ moma join http://<hub-ip>:8000   # start agent(s)
 | 23 | Wake/Sleep Resilience | `resilience.py` | Tasks flow continuously as agents join/leave dynamically | - |
 | 24 | SPL Compiler Pipeline | `compiler_demo.py` | 5-step: translate → concepts → optimise → generate → format | - |
 | 25 | Model Diversity | `model_diversity.py` | All 14 models benchmarked on 6 domains — latency, TPS, quality | - |
+| 26 | Code Guardian | `guardian.py` | Continuous code quality watcher — review + fix + test in one pipeline | - |
+| 27 | Model Health Check | `model_health.py` | Per-model load time and inference TPS across all online agents | - |
+| 28 | Federated Search | `search.py` | Partition query -> parallel search -> synthesize final report | - |
+| 29 | Model Fingerprinting | `model_fingerprinting.py` | Cross-agent consistency: same prompt, measure output variance | - |
+| 30 | Academic Paper Pipeline | `academic_pipeline.py` | 4 parallel analysis stages + 1 synthesis — distributed research workflow | - |
+| 33 | Micro-Learning Grid | `learning.py` | Plan -> parallel chapter writing -> Markdown textbook synthesis | - |
+| 34 | Junior Developer Assistant | `junior_dev_assistant.py` | Code review + refactoring (parallel) + documentation (sequential) | - |
+| 80 | Fibonacci Sequence | `fib_seq.py` | Simple Click CLI example — calculate Fibonacci numbers less than N | x |
 | 90 | Two-Hub Cluster | `setup.py` | Set up and test hub peering and task forwarding | - |
 
 

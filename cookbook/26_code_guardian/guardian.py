@@ -12,14 +12,14 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from igrid.spl.runner import run_spl_file
-from igrid.cli.config import load_config
+from igrid.cli.config import load_config, hub_url as _hub_url
 
 @click.command()
 @click.argument("file_path", type=click.Path(exists=True))
 @click.option("--hub", help="Momahub Hub URL")
 def main(file_path, hub):
     config = load_config()
-    hub_url = hub or (config.get("hub_urls")[0] if config.get("hub_urls") else "http://localhost:8000")
+    hub_url = hub or _hub_url(config)
     
     with open(file_path, 'r') as f:
         code_content = f.read()
